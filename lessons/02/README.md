@@ -1,4 +1,4 @@
-# Lesson One
+# Lesson 2
 
 In this lesson you will learn how to add RAJA and Umpire as dependencies to your application.
 
@@ -19,4 +19,4 @@ $ make two
 $ ./two
 Hello, world (with RAJA and Umpire)!
 
-In the next lesson, we will start writing some code.
+In the next lesson, we will start writing some code!

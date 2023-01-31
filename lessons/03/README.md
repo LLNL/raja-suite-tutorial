@@ -1,4 +1,4 @@
-# Lesson Three
+# Lesson 3
 
 The fundamental concept for accessing memory through Umpire is the
 umpire::Allocator. An umpire::Allocator is a C++ object that can be used to

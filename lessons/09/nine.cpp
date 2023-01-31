@@ -33,7 +33,7 @@ int main()
       for (int k = 0; k < N; ++k) {
         dot += Aview(row, k) * Bview(k, col);
       }
-      Cview(row, col) = dot;
+      C(row, col) = dot;
     });
   });
 

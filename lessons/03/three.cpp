@@ -11,7 +11,6 @@ int main()
 
   std::cout << "Address of a: " << a << std::endl;
 
-
   // TODO: deallocate a
 
 }

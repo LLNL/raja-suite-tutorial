@@ -1,4 +1,4 @@
-# Lesson One
+# Lesson 1
 
 In this lesson you will learn how to use BLT and CMake to build an executable.
 
@@ -53,3 +53,4 @@ Hello, world!
 
 In the next lesson, we will show you how to add RAJA and Umpire as dependencies
 to the application.
+
