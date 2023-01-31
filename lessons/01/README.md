@@ -29,6 +29,8 @@ all the source code files that make up your application:
 For now, we have filled these out for you, but in later lessons you will need to
 make some edits yourself.
 
+For a full tutorial on BLT, please see: https://llnl-blt.readthedocs.io/en/develop/tutorial/index.html
+
 ## Building the Lessons 
 
 We have already run CMake for you in this container to generate the make-based
@@ -48,7 +50,7 @@ $ make one
 You will see some output as the code is compiled. You can then run the
 executable:
 
-$ ./one
+$ ./bin/one
 Hello, world!
 
 In the next lesson, we will show you how to add RAJA and Umpire as dependencies

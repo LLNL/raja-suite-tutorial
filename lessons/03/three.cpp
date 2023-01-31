@@ -5,11 +5,11 @@
 
 int main()
 {
-  double* a{nullptr};
+  double* data{nullptr};
 
   // TODO: allocate an array of 100 doubles using the HOST allocator
 
-  std::cout << "Address of a: " << a << std::endl;
+  std::cout << "Address of data: " << data << std::endl;
 
   // TODO: deallocate a
 

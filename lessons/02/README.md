@@ -1,6 +1,7 @@
 # Lesson 2
 
-In this lesson you will learn how to add RAJA and Umpire as dependencies to your application.
+In this lesson you will learn how to add RAJA and Umpire as dependencies to your
+application.
 
 Like the previous lesson, we have a CMakeLists.txt file that will describe our
 application using the `blt_add_executable` macro.
@@ -16,7 +17,7 @@ before. As a reminder, open the VSCode terminal (Shift+^+`), and then move to
 the build directory (`cd build`). You can then compile and run the lesson:
 
 $ make two
-$ ./two
+$ ./bin/two
 Hello, world (with RAJA and Umpire)!
 
 In the next lesson, we will start writing some code!
