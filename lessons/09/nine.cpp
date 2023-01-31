@@ -20,6 +20,8 @@ int main()
   c = pool.allocate(SIZE*SIZE*sizeof(double));
 
   // TODO: Create a view for A, B, and C
+
+
   RAJA::forall<RAJA::loop_exec>( row_range, [=](int row) {
     RAJA::forall<RAJA::loop_exec>( col_range, [=](int col) {
       A(row, col) = row;

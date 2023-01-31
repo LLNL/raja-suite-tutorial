@@ -28,7 +28,6 @@ blt_add_executable(
     SOURCES one.cpp)
 ```
 
-
 For now, we have filled these out for you, but in later lessons you will need to
 make some edits yourself.
 
@@ -42,19 +41,25 @@ build system. So now you can compile and run the first lesson.
 First, open the VSCode terminal (Shift+^+`), and then move to the
 build directory:
 
-  $ cd build
+```
+$ cd build
+```
 
 Compiling your project in a different directory to the source code is a best
 practice when using CMake.  Once you are in the build directory, you can use the
 `make` command to compile the executable:
 
-  $ make one
+```
+$ make one
+```
 
 You will see some output as the code is compiled. You can then run the
 executable:
 
-  $ ./bin/one
-  Hello, world!
+```
+$ ./bin/one
+Hello, world!
+```
 
 In the next lesson, we will show you how to add RAJA and Umpire as dependencies
 to the application.

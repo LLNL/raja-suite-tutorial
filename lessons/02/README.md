@@ -16,8 +16,10 @@ Once you have added the dependencies, you can build and run the lesson as
 before. As a reminder, open the VSCode terminal (Shift+^+`), and then move to
 the build directory (`cd build`). You can then compile and run the lesson:
 
+```
 $ make two
 $ ./bin/two
 Hello, world (with RAJA and Umpire)!
+```
 
 In the next lesson, we will start writing some code!
