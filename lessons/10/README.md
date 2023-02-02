@@ -11,7 +11,7 @@ Take a look at the RAJA documentation for a detailed explanation of the
 https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/kernel_nested_loop_reorder.html
 
 We have created the two ranges you need, and the body of the loops can be the
-same as in the previous lesson. You will need to add the RAJA::kernel method
+same as in the previous lesson. You will need to add the `RAJA::kernel` method
 call, and define an execution policy `EXEC_POL` that will correctly execute the
 kernel. 
 
@@ -22,6 +22,6 @@ https://github.com/LLNL/RAJA/blob/develop/examples/tut_matrix-multiply.cpp
 When you have finished making your changes, compile and run the code:
 
 ```
-make ten
-./bin/ten
+$ make ten
+$ ./bin/ten
 ```
