@@ -44,6 +44,10 @@ int main()
 
   dot = cudot.get();
 
-  allocator.deallocate(a);
-  allocator.deallocate(b);
+  pool.deallocate(a);
+  pool.deallocate(b);
+  host_allocator.deallocate(a_h);
+  host_allocator.deallocate(b_h);
+
+  return 0;
 }

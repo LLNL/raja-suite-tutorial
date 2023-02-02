@@ -51,4 +51,6 @@ int main()
   pool.deallocate(a);
   pool.deallocate(b);
   pool.deallocate(c);
+
+  return 0;
 }
