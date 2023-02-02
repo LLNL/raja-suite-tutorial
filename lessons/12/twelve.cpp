@@ -5,11 +5,11 @@
 
 int main()
 {
-  constexpr std::size_t SIZE{10000};
+  constexpr int SIZE{10000};
   constexpr std::size_t CUDA_BLOCK_SIZE{256};
-  double* a;
-  double* b;
-  double* c;
+  double* a{nullptr};
+  double* b{nullptr};
+  double* c{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
 
@@ -20,16 +20,23 @@ int main()
   b = pool.allocate(SIZE*SIZE*sizeof(double));
   c = pool.allocate(SIZE*SIZE*sizeof(double));
 
- using EXEC_POL =
-    RAJA::KernelPolicy<
-      RAJA::statement::CudaKernel<
-        RAJA::statement::For<1, RAJA::cuda_block_x_loop,
-          RAJA::statement::For<0, RAJA::cuda_thread_x_loop,
-            RAJA::statement::Lambda<0>
+  RAJA::View<double, RAJA::Layout<DIM>> A(a, N, N);
+  RAJA::View<double, RAJA::Layout<DIM>> B(b, N, N);
+  RAJA::View<double, RAJA::Layout<DIM>> C(c, N, N);
+
+  RAJA::TypedRangeSegment<int> row_range(0, N);
+  RAJA::TypedRangeSegment<int> col_range(0, N);
+
+  using EXEC_POL =
+      RAJA::KernelPolicy<
+        RAJA::statement::CudaKernel<
+          RAJA::statement::For<1, RAJA::cuda_block_x_loop,
+            RAJA::statement::For<0, RAJA::cuda_thread_x_loop,
+              RAJA::statement::Lambda<0>
+            >
           >
         >
-      >
-    >;
+      >;
 
   RAJA::kernel<EXEC_POL>(RAJA::make_tuple(col_range, row_range),
     [=] (int col, int row) {

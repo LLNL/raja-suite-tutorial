@@ -5,11 +5,11 @@
 
 int main()
 {
-  constexpr std::size_t SIZE{10000};
+  constexpr int SIZE{10000};
   constexpr std::size_t CUDA_BLOCK_SIZE{256};
-  double* a;
-  double* b;
-  double* c;
+  double* a{nullptr};
+  double* b{nullptr};
+  double* c{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
 
@@ -19,6 +19,9 @@ int main()
   a = pool.allocate(SIZE*SIZE*sizeof(double));
   b = pool.allocate(SIZE*SIZE*sizeof(double));
   c = pool.allocate(SIZE*SIZE*sizeof(double));
+
+  RAJA::TypedRangeSegment<int> row_range(0, N);
+  RAJA::TypedRangeSegment<int> col_range(0, N);
 
  // TODO: convert EXEC_POL to use CUDA
  using EXEC_POL =

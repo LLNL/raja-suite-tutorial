@@ -5,10 +5,10 @@
 
 int main()
 {
-  constexpr std::size_t N{10000};
-  double* a;
-  double* b;
-  double* c;
+  constexpr int N{10000};
+  double* a{nullptr};
+  double* b{nullptr};
+  double* c{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
 

@@ -5,13 +5,13 @@
 
 int main()
 {
-  constexpr std::size_t N{10000};
+  constexpr int N{10000};
   constexpr std::size_t CUDA_BLOCK_SIZE{256};
   constexpr std::size_t DIM{2};
 
-  double* a;
-  double* b;
-  double* c;
+  double* a{nullptr};
+  double* b{nullptr};
+  double* c{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
 

@@ -5,7 +5,7 @@
 
 int main()
 {
-  constexpr std::size_t N{10000};
+  constexpr int N{10000};
   constexpr std::size_t CUDA_BLOCK_SIZE{256};
   double* a{nullptr};
   double* b{nullptr};
@@ -22,7 +22,7 @@ int main()
   b_h = static_cast<double*>(host_allocator.allocate(N*sizeof(double)));
 
   RAJA::forall< RAJA::loop_exec >(
-    RAJA::TypedRangeSegment<std::size_t>(0, SIZE), [=] (std::size_t i) {
+    RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
       a_h[i] = 1.0;
       b_h[i] = 1.0;
     }
@@ -33,8 +33,8 @@ int main()
   double dot{0.0};
   RAJA::ReduceSum<RAJA::cuda_reduce, double> cudot(0.0);
 
-  RAJA::forall<RAJA::cuda_exec<CUDA_BLOCK_SIZE>>(RAJA::RangeSegment(0, SIZE), 
-    [=] RAJA_DEVICE (std::size_t i) { 
+  RAJA::forall<RAJA::cuda_exec<CUDA_BLOCK_SIZE>>(RAJA::TypedRangeSegment<int>(0, SIZE), 
+    [=] RAJA_DEVICE (int i) { 
     cudot += a[i] * b[i]; 
   });    
 
@@ -42,4 +42,8 @@ int main()
 
   allocator.deallocate(a);
   allocator.deallocate(b);
+  host_allocator.deallocate(a_h);
+  host_allocator.deallocate(b_h);
+
+  return 0;
 }
