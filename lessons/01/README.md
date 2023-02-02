@@ -5,7 +5,7 @@ In this lesson you will learn how to use BLT and CMake to build an executable.
 RAJA and Umpire use BLT and CMake as their build systems, and we recommend them
 for other applications, like this tutorial! CMake uses information in a set of
 CMakeLists.txt to generate files to build your project. In this case, we will be
-using the `make` program to actual compile everything.
+using the `make` program to actually compile everything.
 
 BLT provides a set of CMake macros that make it easy to write CMake code for HPC
 applications targetting multiple hardware architectures.
