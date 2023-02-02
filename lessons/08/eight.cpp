@@ -14,7 +14,7 @@ int main()
 
   auto& rm = umpire::ResourceManager::getInstance();
 
-  auto allocator = rm.getAllocator("CUDA");
+  auto allocator = rm.getAllocator("DEVICE");
   auto host_allocator = rm.getAllocator("HOST");
 
   // TODO: create an allocator called "pool" using the QuickPool strategy
