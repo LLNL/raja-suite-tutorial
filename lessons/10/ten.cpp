@@ -18,13 +18,17 @@ int main()
   auto allocator = rm.getAllocator("HOST");
   auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("POOL", allocator);
 
-  a = pool.allocate(SIZE*SIZE*sizeof(double));
-  b = pool.allocate(SIZE*SIZE*sizeof(double));
-  c = pool.allocate(SIZE*SIZE*sizeof(double));
+  a = pool.allocate(N*N*sizeof(double));
+  b = pool.allocate(N*N*sizeof(double));
+  c = pool.allocate(N*N*sizeof(double));
 
-  RAJA::View<double, RAJA::Layout<DIM>> A(A, N, N);
-  RAJA::View<double, RAJA::Layout<DIM>> B(B, N, N);
-  RAJA::View<double, RAJA::Layout<DIM>> C(C, N, N);
+  RAJA::View<double, RAJA::Layout<DIM>> A(a, N, N);
+  RAJA::View<double, RAJA::Layout<DIM>> B(b, N, N);
+  RAJA::View<double, RAJA::Layout<DIM>> C(c, N, N);
+
+  RAJA::TypedRangeSegment<int> row_range(0, N);
+  RAJA::TypedRangeSegment<int> col_range(0, N);
+  RAJA::TypedRangeSegment<int> dot_range(0, N);
 
   // TODO: use RAJA::kernel to implement the nested loops
   // TODO: initialization loop
@@ -35,4 +39,6 @@ int main()
   pool.deallocate(a);
   pool.deallocate(b);
   pool.deallocate(c);
+
+  return 0;
 }
