@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "RAJA/RAJA.hpp"
-#include "umpire/umpire.hpp"
+#include "umpire/Umpire.hpp"
 
 int main()
 {

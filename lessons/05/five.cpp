@@ -1,23 +1,23 @@
 #include <iostream>
 
 #include "RAJA/RAJA.hpp"
-#include "umpire/umpire.hpp"
+#include "umpire/Umpire.hpp"
 
 int main()
 {
-  constexpr SIZE{10000};
-  double* a;
-  double* b;
-  double* c;
+  constexpr int N{10000};
+  double* a{nullptr};
+  double* b{nullptr};
+  double* c{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
   auto allocator = rm.getAllocator("HOST");
 
-  a = allocator.allocate(SIZE*sizeof(double));
-  b = allocator.allocate(SIZE*sizeof(double));
+  a = static_cast<double*>(allocator.allocate(N*sizeof(double)));
+  b = static_cast<double*>(allocator.allocate(N*sizeof(double)));
 
   RAJA::forall< RAJA::loop_exec >(
-    RAJA::TypedRangeSegment<std::size_t>(0, SIZE), [=] (std::size_t i) {
+    RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
       a[i] = 1.0;
       b[i] = 1.0;
     }

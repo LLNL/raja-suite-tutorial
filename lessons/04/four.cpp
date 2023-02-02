@@ -1,16 +1,16 @@
 #include <iostream>
 
 #include "RAJA/RAJA.hpp"
-#include "umpire/umpire.hpp"
+#include "umpire/Umpire.hpp"
 
 int main()
 {
-  double* data;
+  double* data{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
   auto allocator = rm.getAllocator("HOST");
 
-  data = allocator.allocate(100*sizeof(double));
+  data = static_cast<double*>(allocator.allocate(100*sizeof(double)));
 
   std::cout << "Address of data: " << data << std::endl;
 

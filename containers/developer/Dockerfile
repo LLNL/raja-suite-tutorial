@@ -21,7 +21,10 @@ RUN ls -la
 
 WORKDIR $HOME/tutorial/build
 RUN . /opt/spack/share/spack/setup-env.sh && spack load cuda && \
-    cmake -DCMAKE_CXX_COMPILER=g++ -DENABLE_CUDA=On -DCMAKE_CUDA_STANDARD=14 -DCMAKE_CUDA_ARCHITECTURES=70 -DENABLE_OPENMP=On .. 
+    cmake -DCMAKE_CXX_COMPILER=g++ -DENABLE_CUDA=On -DCMAKE_CUDA_STANDARD=14 -DCMAKE_CUDA_ARCHITECTURES=70 -DENABLE_OPENMP=On .. \
+    && make -j RAJA \
+    && make -j umpire
+
 
 WORKDIR /opt/archives
 RUN curl -L https://github.com/gitpod-io/openvscode-server/releases/download/openvscode-server-v1.69.1/openvscode-server-v1.69.1-linux-x64.tar.gz > \

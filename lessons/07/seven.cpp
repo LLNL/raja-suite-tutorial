@@ -1,23 +1,25 @@
 #include <iostream>
 
 #include "RAJA/RAJA.hpp"
-#include "umpire/umpire.hpp"
+#include "umpire/Umpire.hpp"
 
 int main()
 {
-  constexpr std::size_t SIZE{10000};
+  constexpr std::size_t N{10000};
   constexpr std::size_t CUDA_BLOCK_SIZE{256};
-  double* a;
-  double* b;
-  double* a_h;
-  double* b_h;
+  double* a{nullptr};
+  double* b{nullptr};
+  double* a_h{nullptr};
+  double* b_h{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
   auto allocator = rm.getAllocator("CUDA");
   auto host_allocator = rm.getAllocator("HOST");
 
-  a_h = host_allocator.allocate(SIZE*sizeof(double));
-  b_h = host_allocator.allocate(SIZE*sizeof(double));
+  a = static_cast<double*>(allocator.allocate(N*sizeof(double)));
+  b = static_cast<double*>(allocator.allocate(N*sizeof(double)));
+  a_h = static_cast<double*>(host_allocator.allocate(N*sizeof(double)));
+  b_h = static_cast<double*>(host_allocator.allocate(N*sizeof(double)));
 
   RAJA::forall< RAJA::loop_exec >(
     RAJA::TypedRangeSegment<std::size_t>(0, SIZE), [=] (std::size_t i) {

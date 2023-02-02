@@ -28,7 +28,6 @@ int main()
 
   RAJA::TypedRangeSegment<int> row_range(0, N);
   RAJA::TypedRangeSegment<int> col_range(0, N);
-  RAJA::TypedRangeSegment<int> dot_range(0, N);
 
   // TODO: use RAJA::kernel to implement the nested loops
   // TODO: initialization loop
