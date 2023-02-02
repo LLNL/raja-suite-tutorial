@@ -11,6 +11,7 @@ int main()
 
   std::cout << "Address of data: " << data << std::endl;
 
-  // TODO: deallocate a
+  // TODO: deallocate the array
 
+  return 0;
 }
