@@ -39,6 +39,9 @@ int main()
     });
   });
 
-  allocator.deallocate(a);
-  allocator.deallocate(b);
+  pool.deallocate(a);
+  pool.deallocate(b);
+  pool.deallocate(c);
+
+  return 0;
 }
