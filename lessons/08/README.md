@@ -12,14 +12,16 @@ The `QuickPool` strategy describes a certain type of pooling algorithm provided 
 As its name suggests, `QuickPool` has been shown to be performant for many use cases. 
 
 Umpire also provides other types of pooling strategies such as `DynamicPoolList` and `FixedPool`. 
-You can visit the documentation to learn more. 
+You can visit the documentation to learn more: https://umpire.readthedocs.io/en/develop/index.html 
 
 To create a new memory pool allocator using the `QuickPool` strategy, we can use the `ResourceManager`:
 ```
   umpire::Allocator pool = rm.makeAllocator<umpire::strategy::QuickPool>("pool_name", my_allocator);
 ```
 
-This newly created `pool` is an `umpire::Allocator` using the `QuickPool` strategy. As you can see above, we pass in the name we would like the pool to have and the allocator we previously created before with the `ResourceManager`.
+This newly created `pool` is an `umpire::Allocator` using the `QuickPool` strategy. As you can see above, we can use the `ResourceManager::makeAllocator` function to create the pool allocator. We just need to pass in (1) the name we would like the pool to have and (2) the allocator we previously created before with the `ResourceManager` (see line 17).
+
+There are other arguments that could be passed to the pool constructor if needed. See the documentation page for more: https://umpire.readthedocs.io/en/develop/doxygen/html/index.html
 
 When you have created your QuickPool allocator, compile and run the code:
 ```
