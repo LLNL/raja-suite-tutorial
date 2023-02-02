@@ -13,7 +13,7 @@ int main()
   double* b_h{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
-  auto allocator = rm.getAllocator("CUDA");
+  auto allocator = rm.getAllocator("DEVICE");
   auto host_allocator = rm.getAllocator("HOST");
 
   a = static_cast<double*>(allocator.allocate(N*sizeof(double)));

@@ -14,9 +14,9 @@ The copy method has the following signature:
 void umpire::ResourceManager::copy (void* dst_ptr, void * src_ptr, std::size_t size = 0)	
 ```
 
-note that the destination is the first argument.
+*Note:* The destination is the first argument.
 
-In the file seven.cpp there is a TODO comment where you should insert two copy
+In the file `seven.cpp` there is a `TODO` comment where you should insert two copy
 calls to copy data from the CPU memory to the DEVICE memory.
 
 When you are done editing the file, compile and run it:
