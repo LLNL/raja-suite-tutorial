@@ -1,7 +1,7 @@
 # Lesson 3
 
 In this lesson you will learn how to use Umpire to allocate memory. The file
-three.cpp contains some TODO: comments where you can add code to allocate and
+`three.cpp` contains some `TODO:` comments where you can add code to allocate and
 deallocate memory.
 
 The fundamental concept for accessing memory through Umpire is the
