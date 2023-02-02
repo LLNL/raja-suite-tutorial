@@ -17,7 +17,7 @@ We can create a `RAJA::TypedRangeSegment` to describe the iteration space:
 RAJA::TypedRangeSegment<int>(0, N)
 ```
 
-this is a contiguous sequence of integers [0, N).
+this is a contiguous sequence of integers `[0, N)`.
 
 The lambda function needs to take one argument, the loop index:
 
@@ -33,7 +33,7 @@ this example, we will use the `RAJA::loop_exec` policy to execute this loop on
 the CPU. In later lessons we will learn about other policies that allow us to
 run code on a GPU.
 
-In the file four.cpp you will see a TODO comment where you can add a RAJA forall
+In the file four.cpp you will see a `TODO` comment where you can add a RAJA forall
 loop to initialize the array you allocated in the previous lesson.
 
 When you have made your changes, compile and run the code in the same way as the
