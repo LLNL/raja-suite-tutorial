@@ -9,7 +9,6 @@ int main()
   constexpr std::size_t CUDA_BLOCK_SIZE{256};
   double* a{nullptr};
   double* b{nullptr};
-  double* c{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
   // TODO: allocate with CUDA

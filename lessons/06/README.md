@@ -22,7 +22,7 @@ The predefined names can include:
 In this example, you can use the "UM" resource so that the data can be accessed
 by the CPU or GPU.
 
-There is a TODO comment in six.cpp where you can modify the code to allocate GPU
+There is a `TODO` comment in `six.cpp` where you can modify the code to allocate GPU
 memory. When you are done, build and run the example:
 
 ```

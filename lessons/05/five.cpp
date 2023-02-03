@@ -27,4 +27,6 @@ int main()
 
   allocator.deallocate(a);
   allocator.deallocate(b);
+
+  return 0;
 }
