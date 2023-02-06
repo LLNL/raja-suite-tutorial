@@ -1,6 +1,6 @@
 # Lesson 6
 
-In this lesson you will learn how to use Umpire's different memory resources to
+In this lesson, you will learn how to use Umpire's different memory resources to
 allocate memory on a GPU. 
 
 Each computer system will have a number of distinct places in which the system
@@ -22,8 +22,9 @@ The predefined names can include:
 In this example, you can use the "UM" resource so that the data can be accessed
 by the CPU or GPU.
 
-There is a `TODO` comment in `six.cpp` where you can modify the code to allocate GPU
-memory. When you are done, build and run the example:
+There is a `TODO` comment in the `six.cpp` exercise file where you 
+can modify the code to allocate GPU memory. When you are done, build 
+and run the example:
 
 ```
 $ make six
