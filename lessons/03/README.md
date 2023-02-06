@@ -1,12 +1,12 @@
 # Lesson 3
 
-In this lesson you will learn how to use Umpire to allocate memory. The file
+In this lesson, you will learn how to use Umpire to allocate memory. The file
 `three.cpp` contains some `TODO:` comments where you can add code to allocate and
 deallocate memory.
 
 The fundamental concept for accessing memory through Umpire is the
 `umpire::Allocator`. An `umpire::Allocator` is a C++ object that can be used to
-allocate and deallocate memory, as well as query a pointer to get some extra
+allocate and deallocate memory, as well as query a pointer to get
 information about it.
 
 All `umpire::Allocator` objects are created and managed by Umpire’s
@@ -20,7 +20,7 @@ auto allocator = rm.getAllocator("HOST");
 ```
 
 The Allocator class provides methods for allocating and deallocating memory. You
-can view these methods in the Doxygen documentation here:
+can view these methods in the Umpire source code documentation here:
 https://umpire.readthedocs.io/en/develop/doxygen/html/classumpire_1_1Allocator.html
 
 ```
