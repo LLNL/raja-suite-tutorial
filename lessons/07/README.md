@@ -1,6 +1,6 @@
 # Lesson 7
 
-In this lesson you will learn how to use Umpire's operations to copy data
+In this lesson, you will learn how to use Umpire's operations to copy data
 between CPU and GPU memory in a portable way.
 
 Umpire provides a number of operations implemented as methods on the
@@ -16,7 +16,7 @@ void umpire::ResourceManager::copy (void* dst_ptr, void * src_ptr, std::size_t s
 
 *Note:* The destination is the first argument.
 
-In the file `seven.cpp` there is a `TODO` comment where you should insert two copy
+In the file `seven.cpp`, there is a `TODO` comment where you should insert two copy
 calls to copy data from the CPU memory to the DEVICE memory.
 
 When you are done editing the file, compile and run it:
