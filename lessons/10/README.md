@@ -1,6 +1,6 @@
 # Lesson 10
 
-In this lesson you will learn how to use `RAJA::kernel` to write nested loops.
+In this lesson, you will learn how to use `RAJA::kernel` to write nested loops.
 
 The previous lesson used multiple `RAJA::forall` calls, nested inside each
 other, to implement a matrix multiplication. This pattern will work when
