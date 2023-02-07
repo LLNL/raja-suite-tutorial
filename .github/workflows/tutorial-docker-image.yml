@@ -1,0 +1,35 @@
+name: Build tutorial image
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/tutorial
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Log into registry ${{ env.REGISTRY }}
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: build docker image
+      run: docker build --build-arg njobs=2 --file developer/Dockerfile --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
+
+    - name: push docker image
+      run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
