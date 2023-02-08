@@ -11,28 +11,24 @@ ARG USER=rajadev
 ENV HOME /home/${USER}
 
 RUN apt-get update && apt-get install -y supervisor
-
 RUN useradd --create-home --shell /bin/bash ${USER}
-USER ${USER}
-
-COPY --chown=rajadev:rajadev . $HOME/tutorial/
-
-RUN ls -la
-
-WORKDIR $HOME/tutorial/build
-RUN . /opt/spack/share/spack/setup-env.sh && spack load cuda && \
-    cmake -DCMAKE_CXX_COMPILER=g++ -DENABLE_CUDA=On -DCMAKE_CUDA_STANDARD=14 -DCMAKE_CUDA_ARCHITECTURES=70 -DCMAKE_CUDA_FLAGS="--expt-extended-lambda" -DENABLE_OPENMP=On .. \
-    && make -j RAJA \
-    && make -j umpire
-
 
 WORKDIR /opt/archives
 RUN curl -L https://github.com/gitpod-io/openvscode-server/releases/download/openvscode-server-v1.69.1/openvscode-server-v1.69.1-linux-x64.tar.gz > \
     /opt/archives/openvscode-server-v1.69.1-linux-x64.tar.gz
 RUN tar xzf openvscode-server-v1.69.1-linux-x64.tar.gz && chown -R ${USER}:${USER} openvscode-server-v1.69.1-linux-x64
 
+USER ${USER}
+
+COPY --chown=rajadev:rajadev . $HOME/tutorial/
+RUN . /opt/spack/share/spack/setup-env.sh && spack load cuda && mkdir -p ${HOME}/tutorial/build && cd ${HOME}/tutorial/build && \
+    cmake -DCMAKE_CXX_COMPILER=g++ -DENABLE_CUDA=On -DCMAKE_CUDA_STANDARD=14 -DCMAKE_CUDA_ARCHITECTURES=70 -DCMAKE_CUDA_FLAGS="--expt-extended-lambda" -DENABLE_OPENMP=On .. \
+    && make -j RAJA \
+    && make -j umpire
+
+
 USER root
-ADD ./containers/developer/supervisord.conf /etc/supervisord.conf
+ADD ./containers/tutorial/supervisord.conf /etc/supervisord.conf
 RUN sed -i "s/XXX/${USER}/g" /etc/supervisord.conf
 
 RUN touch /var/log/openvscode-server.log && chown -R ${USER}:${USER} /var/log/openvscode-server.log
