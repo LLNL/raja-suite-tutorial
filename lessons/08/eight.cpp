@@ -43,6 +43,7 @@ int main()
   });    
 
   dot = cudot.get();
+  std::cout << "dot = " << dot << std::endl;
 
   pool.deallocate(a);
   pool.deallocate(b);

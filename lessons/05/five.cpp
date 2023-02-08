@@ -8,7 +8,6 @@ int main()
   constexpr int N{10000};
   double* a{nullptr};
   double* b{nullptr};
-  double* c{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
   auto allocator = rm.getAllocator("HOST");
@@ -23,7 +22,7 @@ int main()
     }
   );
 
-  // TODO: use a reduction to calculate the dotproduct of a and b
+  // TODO: use a reduction to calculate and output the dotproduct of a and b
 
   allocator.deallocate(a);
   allocator.deallocate(b);

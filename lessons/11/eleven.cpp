@@ -25,18 +25,22 @@ int main()
 
  // TODO: convert EXEC_POL to use CUDA
  using EXEC_POL =
-    RAJA::KernelPolicy<
-          // ??
-    >;
+   RAJA::KernelPolicy<
+     RAJA::statement::For<1, RAJA::loop_exec,    // row
+       RAJA::statement::For<0, RAJA::loop_exec,  // col
+         RAJA::statement::Lambda<0>
+       >
+     >
+   >;
 
   RAJA::kernel<EXEC_POL>(RAJA::make_tuple(col_range, row_range),
-    [=] (int col, int row) {
+    [=] RAJA_DEVICE (int col, int row) {
       A(row, col) = row;
       B(row, col) = col;
     }
 
   RAJA::kernel<EXEC_POL>(RAJA::make_tuple(col_range, row_range),
-    [=](int col, int row) {
+    [=] RAJA_DEVICE (int col, int row) {
 
     double dot = 0.0;
     for (int k = 0; k < N; ++k) {

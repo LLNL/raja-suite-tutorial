@@ -33,12 +33,13 @@ int main()
   double dot{0.0};
   RAJA::ReduceSum<RAJA::cuda_reduce, double> cudot(0.0);
 
-  RAJA::forall<RAJA::cuda_exec<CUDA_BLOCK_SIZE>>(RAJA::TypedRangeSegment<int>(0, SIZE), 
+  RAJA::forall<RAJA::cuda_exec<CUDA_BLOCK_SIZE>>(RAJA::TypedRangeSegment<int>(0, N), 
     [=] RAJA_DEVICE (int i) { 
     cudot += a[i] * b[i]; 
   });    
 
   dot = cudot.get();
+  std::cout << "dot = " << dot << std::endl;
 
   allocator.deallocate(a);
   allocator.deallocate(b);
