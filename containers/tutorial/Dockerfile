@@ -21,7 +21,7 @@ RUN ls -la
 
 WORKDIR $HOME/tutorial/build
 RUN . /opt/spack/share/spack/setup-env.sh && spack load cuda && \
-    cmake -DCMAKE_CXX_COMPILER=g++ -DENABLE_CUDA=On -DCMAKE_CUDA_STANDARD=14 -DCMAKE_CUDA_ARCHITECTURES=70 -DENABLE_OPENMP=On .. \
+    cmake -DCMAKE_CXX_COMPILER=g++ -DENABLE_CUDA=On -DCMAKE_CUDA_STANDARD=14 -DCMAKE_CUDA_ARCHITECTURES=70 -DCMAKE_CUDA_FLAGS="--expt-extended-lambda" -DENABLE_OPENMP=On .. \
     && make -j RAJA \
     && make -j umpire
 
