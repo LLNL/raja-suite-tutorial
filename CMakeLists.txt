@@ -13,4 +13,5 @@ set(BLT_CXX_STD "c++14")
 include(blt/SetupBLT.cmake)
 
 add_subdirectory(tpl)
-add_subdirectory(lessons)
+add_subdirectory(Intro_Tutorial)
+add_subdirectory(Intermediate_Tutorial)

@@ -1,16 +1,19 @@
-# RAJA Portability Suite Tutorial
+# RAJA Portability Suite Tutorial Series
 
-Welcome to the RAJA Portability Suite tutorial. In this tutorial you will learn
-how to write an simple application that can target different hardware
-architectures using the RAJA and Umpire libraries.
+Welcome to the RAJA Portability Suite tutorial series. In this repo, you
+will find a set of tutorials. This set includes an introductory tutorial
+which will provide guided set of lessons to follow to learn how to get
+started with the RAJA Portability Suite. The set also includes a more
+advanced (i.e. Intermediate) tutorial meant for those who would like more 
+hands-on instruction for RAJA. We would suggest starting with the Intro 
+tutorial and then moving on to the Intermediate tutorial.
 
-## Lessons
+Be sure to do the following before continuing to the tutorials:
+`module load cmake/3.20.2`
+`module load gcc/8.3.1`
 
-You can find lessons in the lessons subdirectory. Each lesson has a README file
-which will introduce new concepts and provide instructions to move forward. 
-
-Each lesson builds upon the previous one, so if you get stuck, you can look at
-the next lesson to see the complete code.
+(Note: you need a cmake version greater than 3.19 and you need a more
+recent gcc version which can handle c++14.)
 
 # License
 
