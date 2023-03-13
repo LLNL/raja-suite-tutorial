@@ -6,10 +6,12 @@
 ###############################################################################
 
 raja_add_executable(
-  NAME fractal-ex1-serial
-  SOURCES fractal-ex1-serial.cpp)
+  NAME fractal-ex1-RAJA-loop
+  SOURCES fractal-ex1-RAJA-loop.cpp)
 
-#add_subdirectory(RAJA-BACKENDS)
+if(RAJA_ENABLE_HIP)
+add_subdirectory(HIP)
+endif()
 
 if(RAJA_ENABLE_CUDA)
   add_subdirectory(CUDA)

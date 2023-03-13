@@ -11,7 +11,17 @@ set (ENABLE_BENCHMARKS Off CACHE BOOL "")
 
 set(BLT_CXX_STD "c++14")
 include(blt/SetupBLT.cmake)
-
 add_subdirectory(tpl)
+
+if (ENABLE_CUDA)
+  if (DEFINED CMAKE_CUDA_ARCHITECTURES)
+    if ("${CMAKE_CUDA_ARCHITECTURES}" STREQUAL "70")
+      message(STATUS "CUDA compute architecture set to 70")
+    else ()
+      set(CMAKE_CUDA_ARCHITECTURES "70" CACHE STRING "Set CMAKE_CUDA_ARCHITECTURES to RAJA minimum supported" FORCE)
+    endif ()
+  endif()
+endif()
+
 add_subdirectory(Intro_Tutorial)
 add_subdirectory(Intermediate_Tutorial)

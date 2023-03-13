@@ -6,13 +6,8 @@
 ###############################################################################
 
 raja_add_executable(
-  NAME fractal-ex2-CUDA 
-  SOURCES fractal-ex2-CUDA.cpp
-  DEPENDS_ON cuda)
-
-raja_add_executable(
-  NAME fractal-ex3-RAJA-CUDA 
-  SOURCES fractal-ex3-RAJA-CUDA.cpp
+  NAME fractal-ex2-RAJA-CUDA 
+  SOURCES fractal-ex2-RAJA-CUDA.cpp
   DEPENDS_ON cuda)
 
 add_subdirectory(solutions)

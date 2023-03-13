@@ -12,9 +12,3 @@ raja_add_executable(
   DEPENDS_ON blt::hip blt::hip_runtime)
 endif()
 
-if(RAJA_ENABLE_OPENMP)
-raja_add_executable(
-  NAME fractal-RAJA-OpenMP 
-  SOURCES fractal-RAJA-OpenMP.cpp
-  DEPENDS_ON openmp)
-endif()

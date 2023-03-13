@@ -58,7 +58,6 @@ int main(int argc, char *argv[])
 {
   double dx, dy;
   int width, maxdepth;
-  //unsigned char *cnt;
   struct timeval start, end;
 
   #define THREADS 512 
@@ -70,79 +69,53 @@ int main(int argc, char *argv[])
   maxdepth = atoi(argv[2]);
   if (maxdepth < 10) {fprintf(stderr, "max_depth must be at least 10\n"); exit(-1);}
 
-  //unsigned char *d_cnt;
- 
   dx = (xMax - xMin) / width;
   dy = (yMax - yMin) / width;
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  //cudaHostAlloc((void**)&cnt, (width * width * sizeof(unsigned char)), cudaHostAllocDefault);
-  unsigned char *d_cnt = (unsigned char*)malloc(width * width * sizeof(unsigned char));
-  /* allocate space on GPU */
-  //cudaMalloc((void**)&d_cnt, width * width * sizeof(unsigned char));
-  //cudaMalloc((void**)&d_maxdepth, sizeof(int));
-  //cudaMalloc((void**)&d_dx, sizeof(double));
-  //cudaMalloc((void**)&d_dy, sizeof(double));
+  unsigned char *cnt = (unsigned char*)malloc(width * width * sizeof(unsigned char));
 
-  //cudaMemcpy(d_maxdepth, maxdepth, sizeof(int), cudaMemcpyHostToDevice);
-  //cudaMemcpy(d_dx, dx, sizeof(double), cudaMemcpyHostToDevice);
-  //cudaMemcpy(d_dy, dy, sizeof(double), cudaMemcpyHostToDevice);
-
-  //fractal<<<((width * width + THREADS-1) / THREADS), THREADS>>>( d_cnt, width, maxdepth, dx, dy); 
-  //cudaDeviceSynchronize();
   using KERNEL_POLICY = RAJA::KernelPolicy<
-    //RAJA::statement::CudaKernel<
-      RAJA::statement::For<1, RAJA::omp_parallel_for_exec, //RAJA::cuda_thread_y_direct,
-        RAJA::statement::For<0, RAJA::loop_exec, //RAJA::cuda_thread_x_direct,
+      RAJA::statement::For<1, RAJA::loop_exec,
+        RAJA::statement::For<0, RAJA::loop_exec,
           RAJA::statement::Lambda<0>
         >
       > 
-    //>
   >;
+
   gettimeofday(&start, NULL);
   RAJA::kernel<KERNEL_POLICY>(
         RAJA::make_tuple(RAJA::TypedRangeSegment<int>(0, width),
                          RAJA::TypedRangeSegment<int>(0, width)),
-        [=] /*RAJA_DEVICE*/ (int row, int col) {
+        [=] (int row, int col) {
     double x2, y2, x, y, cx, cy;
     int depth;
-    //int row, col;
 
-    //if ( < (width * width)) {
-      /* compute fractal */
-      //row = (i / width); //compute row #
-      //col = (i % width); //compute column #
-
-      cy = yMin + row * dy; //compute row #
-      cx = xMin + col * dx; //compute column #
-      x = -cx;
-      y = -cy;
-      depth = maxdepth;
-      do {
-        x2 = x * x;
-        y2 = y * y;
-        y = 2 * x * y - cy;
-        x = x2 - y2 - cx;
-        depth--;
-      } while ((depth > 0) && ((x2 + y2) <= 5.0));
-      d_cnt[row * width + col] = depth & 255;
-    //}
+    cy = yMin + row * dy; //compute row #
+    cx = xMin + col * dx; //compute column #
+    x = -cx;
+    y = -cy;
+    depth = maxdepth;
+    do {
+      x2 = x * x;
+      y2 = y * y;
+      y = 2 * x * y - cy;
+      x = x2 - y2 - cx;
+      depth--;
+    } while ((depth > 0) && ((x2 + y2) <= 5.0));
+    cnt[row * width + col] = depth & 255;
   });
 						
   /* end time */
   gettimeofday(&end, NULL);
   printf("compute time: %.8f s\n", end.tv_sec + end.tv_usec / 1000000.0 - start.tv_sec - start.tv_usec / 1000000.0);
 
-  //cudaMemcpyAsync(cnt, d_cnt, width * width * sizeof(unsigned char), cudaMemcpyDeviceToHost);
-
   /* verify result by writing it to a file */
   if (width <= 1024) {
-    WriteBMP(width, width, d_cnt, "fractal.bmp");
+    WriteBMP(width, width, cnt, "fractal.bmp");
   }
 
-  //cudaFreeHost(cnt);
-  //cudaFree(d_cnt);
-  free(d_cnt);
+  free(cnt);
   return 0;
 }
