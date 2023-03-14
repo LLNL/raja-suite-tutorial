@@ -8,6 +8,6 @@
 raja_add_executable(
   NAME fractal-ex2-RAJA-CUDA 
   SOURCES fractal-ex2-RAJA-CUDA.cpp
-  DEPENDS_ON cuda)
+  DEPENDS_ON cuda writeBMP)
 
 add_subdirectory(solutions)

@@ -8,6 +8,6 @@
 raja_add_executable(
   NAME fractal-ex3-RAJA-HIP
   SOURCES fractal-ex3-RAJA-HIP.cpp
-  DEPENDS_ON blt::hip blt::hip_runtime)
+  DEPENDS_ON blt::hip blt::hip_runtime writeBMP)
 
 add_subdirectory(solutions)
