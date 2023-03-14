@@ -11,7 +11,6 @@ set (ENABLE_BENCHMARKS Off CACHE BOOL "")
 
 set(BLT_CXX_STD "c++14")
 include(blt/SetupBLT.cmake)
-add_subdirectory(tpl)
 
 if (ENABLE_CUDA)
   if (DEFINED CMAKE_CUDA_ARCHITECTURES)
@@ -23,5 +22,6 @@ if (ENABLE_CUDA)
   endif()
 endif()
 
+add_subdirectory(tpl)
 add_subdirectory(Intro_Tutorial)
 add_subdirectory(Intermediate_Tutorial)

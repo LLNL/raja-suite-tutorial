@@ -7,7 +7,8 @@
 
 raja_add_executable(
   NAME fractal-ex1-RAJA-loop
-  SOURCES fractal-ex1-RAJA-loop.cpp)
+  SOURCES fractal-ex1-RAJA-loop.cpp
+  DEPENDS_ON writeBMP)
 
 if(RAJA_ENABLE_HIP)
 add_subdirectory(HIP)
