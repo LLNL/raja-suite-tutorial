@@ -22,16 +22,15 @@
 int main(int argc, char *argv[])
 {
   double dx, dy;
-  int width, maxdepth;
+  int width;
+  const int maxdepth = 256;
   struct timeval start, end;
   writebmp wbmp;
 
   /* check command line */
-  if(argc != 3) {fprintf(stderr, "usage: exe <width> <depth>\n"); exit(-1);}
+  if(argc != 2) {fprintf(stderr, "usage: exe <width>\n"); exit(-1);}
   width = atoi(argv[1]);
   if (width < 10) {fprintf(stderr, "edge_length must be at least 10\n"); exit(-1);}
-  maxdepth = atoi(argv[2]);
-  if (maxdepth < 10) {fprintf(stderr, "max_depth must be at least 10\n"); exit(-1);}
 
   dx = (xMax - xMin) / width;
   dy = (yMax - yMin) / width;

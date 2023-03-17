@@ -2,11 +2,6 @@
 
 void writebmp::WriteBMP(int x, int y, unsigned char *bmp, const char * name)
 {
-  const unsigned char bmphdr[54] = {66, 77, 255, 255, 255, 255, 0, 0, 0, 0, 54, 4, 0, 0, 40, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 1, 0, 8, 0, 0, 0, 0, 0, 255, 255, 255, 255, 196, 14, 0, 0, 196, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  //unsigned char hdr[1078];
-  int i, j, c, xcorr, diff;
-  FILE *f;
-
   xcorr = (x+3) >> 2 << 2;  // BMPs have to be a multiple of 4 pixels wide.
   diff = xcorr - x;
   for (i = 0; i < 54; i++) hdr[i] = bmphdr[i];
