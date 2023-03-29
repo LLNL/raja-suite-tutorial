@@ -6,16 +6,17 @@ This tutorial includes several implementations of a Mandelbrot set Fractal code.
 The code originated from Dr. Martin Burtscher of the Efficient Computing Lab at
 Texas State University. You can find more here: https://userweb.cs.txstate.edu/~burtscher/research.html
 
-The tutorial first starts with a RAJA loop-exec policy which is very similar to a serial 
-RAJA loop implementation of the fractal code. From there, we edit the loop-exec version
-to instead use RAJA-CUDA RAJA-HIP execution policies. Plus, I have added a few "extras"
-which includes a few other RAJA implementations such as OpenMP and even a native CUDA
-implementation just for comparison.
-
-TODO: The final lessons include a more complex fractal implementation that includes
+The tutorial first starts with a RAJA loop-exec policy implementation of the fractal code. 
+From there, we learn how to use RAJA-CUDA and RAJA-HIP execution policies. 
+The final lessons include a more complex fractal implementation that includes
 RAJA-TEAMS.
 
-To start, let's build the tutorial within the build directory of the RAJA repo:: 
+In the "extras" directories, there are a few other RAJA implementations such 
+as OpenMP and even a native CUDA implementation just for comparison. You can reference
+these implementation to study the differences in implementation and runtime comparison.
+
+To start, let's build the tutorial within a newly created, empty `build` directory located
+in the `raja-suite-tutorial` repo:: 
 
         module load cuda/11.2.0
         module load cmake/3.20.2
@@ -28,14 +29,12 @@ To start, let's build the tutorial within the build directory of the RAJA repo::
 
 Now, we can build the RAJA loop-exec implementation with `./bin/fractal 1024`. The first argument
 is the width of the fractal (1024). It may be interesting to see how the fractal changes with 
-different width values.
+different width values. 
 
-Be sure to study the loop-exec implementation of the fractal before continuing. It is important to note:
- * Read-only, write-only, and read-write variables used in the main computation
- * The main data structure that holds the values of the fractal pixels
- * Any data dependencies, if any, throughout the computation of the pixels
+To verify your results in each lesson, you can look at the resulting .bmp file output. If you
+have completed everything correctly, you will see a complete image of the fractal.
+Currently, there is an `if` statement that makes sure the `writeBMP` function
+is only called for smaller fractal runs (of width <= 2048). You can edit this `if` statement, but be careful because trying
+to write a .bmp file that is too large will take a very long time.
 
-TODO: Add more info on what RAJA's loop-exec does and why it's a good first step for learning.
-
-Next, we will parallelize this using RAJA-CUDA.
-
+Continue on to the first lesson located in the `LOOP` directory.

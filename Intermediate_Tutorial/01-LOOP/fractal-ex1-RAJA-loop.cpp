@@ -31,6 +31,8 @@ int main(int argc, char *argv[])
 
   unsigned char *cnt = (unsigned char*)malloc(width * width * sizeof(unsigned char));
 
+  //TODO: Create a RAJA Kernel Policy which uses the loop_exec policy. We want to start
+  //with a normal serial nested loop first before continuing onward.
   using KERNEL_POLICY = RAJA::KernelPolicy<
       RAJA::statement::For<1, RAJA::loop_exec,
         RAJA::statement::For<0, RAJA::loop_exec,
