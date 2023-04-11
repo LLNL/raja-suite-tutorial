@@ -9,7 +9,7 @@
 #include <sys/time.h>
 
 #include "RAJA/RAJA.hpp"
-#include "../../tpl/writeBMP.hpp"
+#include "../../../tpl/writeBMP.hpp"
 
 #define xMin 0.74395
 #define xMax 0.74973

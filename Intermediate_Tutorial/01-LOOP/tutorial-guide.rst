@@ -9,7 +9,8 @@ before continuing. It is important to note:
  * Any data dependencies, if any, throughout the computation of the pixels
 
 Look for the `TODO` comments in the source code. This is where you will need to fill in
-what's needed. You will need to create an Umpire allocator for the fractal and
+what's needed. You will need to create an Umpire pooled allocator (just like you did for
+lesson 12 from the Introduction Tutorial) for the fractal and
 complete the appropriate `RAJA::Kernel` statement using the `RAJA::loop_exec` execution
 policy.
 
@@ -19,4 +20,5 @@ when transitioning to CUDA, HIP, etc.
 
 The `loop_exec` is better than just the `seq_exec` policy because it allows the compiler to 
 generate any optimizations that its heuristics deem beneficial.
+In fact, in upcoming releases of RAJA, `seq_exec` will become deprecated.
 To learn more about the `loop_exec` RAJA execution policy, see `here <https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/policies.html?highlight=loop_exec#raja-loop-kernel-execution-policies>`_.
