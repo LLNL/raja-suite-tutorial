@@ -8,4 +8,4 @@
 blt_add_executable(
   NAME fractal-ex1-RAJA-loop
   SOURCES fractal-ex1-RAJA-loop.cpp
-  DEPENDS_ON RAJA writeBMP umpire)
+  DEPENDS_ON RAJA umpire writeBMP)
