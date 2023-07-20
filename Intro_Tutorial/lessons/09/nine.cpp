@@ -2,6 +2,7 @@
 
 #include "RAJA/RAJA.hpp"
 #include "umpire/Umpire.hpp"
+#include "umpire/strategy/QuickPool.hpp"
 
 int main()
 {
@@ -15,14 +16,18 @@ int main()
   auto allocator = rm.getAllocator("HOST");
   auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("POOL", allocator);
 
-  a = pool.allocate(N*N*sizeof(double));
-  b = pool.allocate(N*N*sizeof(double));
-  c = pool.allocate(N*N*sizeof(double));
+  a = static_cast<double *>(pool.allocate(N*N*sizeof(double)));
+  b = static_cast<double *>(pool.allocate(N*N*sizeof(double)));
+  c = static_cast<double *>(pool.allocate(N*N*sizeof(double)));
 
   RAJA::TypedRangeSegment<int> row_range(0, N);
   RAJA::TypedRangeSegment<int> col_range(0, N);
 
   // TODO: Create a view for A, B, and C
+  constexpr int DIM = 2;
+  RAJA::View<double, RAJA::Layout<DIM>> A(a, N, N);
+  RAJA::View<double, RAJA::Layout<DIM>> B(b, N, N);
+  RAJA::View<double, RAJA::Layout<DIM>> C(c, N, N);
 
   RAJA::forall<RAJA::loop_exec>( row_range, [=](int row) {
     RAJA::forall<RAJA::loop_exec>( col_range, [=](int col) {
@@ -35,7 +40,7 @@ int main()
     RAJA::forall<RAJA::loop_exec>( col_range, [=](int col) {
       double dot = 0.0;
       for (int k = 0; k < N; ++k) {
-        dot += Aview(row, k) * Bview(k, col);
+        dot += A(row, k) * B(k, col);
       }
       C(row, col) = dot;
     });

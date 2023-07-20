@@ -8,4 +8,4 @@
 blt_add_executable(
   NAME fractal-ex4-RAJA-launch
   SOURCES fractal-ex4-RAJA-launch.cpp
-  DEPENDS_ON RAJA umpire writeBMP)
+  DEPENDS_ON cuda RAJA umpire writeBMP)

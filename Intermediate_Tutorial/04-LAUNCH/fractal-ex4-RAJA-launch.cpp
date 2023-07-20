@@ -39,39 +39,75 @@ int main(int argc, char *argv[])
 
   //TODO: Create a RAJA Kernel Policy which uses the loop_exec policy. We want to start
   //with a normal serial nested loop first before continuing onward.
-  using KERNEL_POLICY =
-    RAJA::KernelPolicy<
-      RAJA::statement::For<1, RAJA::loop_exec,
-        RAJA::statement::For<0, RAJA::loop_exec,
-          RAJA::statement::Lambda<0>
-        >
-      >
+
+  using host_launch = RAJA::expt::seq_launch_t;
+
+  using device_launch = RAJA::expt::cuda_launch_t<false>;
+
+#if defined(RAJA_ENABLE_CUDA)
+  // __device_launch_start
+  // __device_launch_end
+#elif defined(RAJA_ENABLE_HIP)
+  using device_launch = RAJA::expt::hip_launch_t<false>;
+#endif
+
+  using launch_policy = RAJA::expt::LaunchPolicy<
+    host_launch
+#if defined(RAJA_DEVICE_ACTIVE)
+    ,device_launch
+#endif
     >;
 
+  using col_loop = RAJA::expt::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_x>;
+
+  using row_loop = RAJA::expt::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_y>;
+
+#if 0
   /* start time */
   gettimeofday(&start, NULL);
-  RAJA::kernel<KERNEL_POLICY>(
-        RAJA::make_tuple(RAJA::TypedRangeSegment<int>(0, width),
-                         RAJA::TypedRangeSegment<int>(0, width)),
-        [=] (int row, int col) {
-    double x2, y2, x, y, cx, cy;
-    int depth;
+  //RAJA::kernel<KERNEL_POLICY>(
+  //RAJA::make_tuple(RAJA::TypedRangeSegment<int>(0, width),
+  //RAJA::TypedRangeSegment<int>(0, width)),
+  //[=] (int row, int col) {
 
-    cy = yMin + row * dy; //compute row #
-    cx = xMin + col * dx; //compute column #
-    x = -cx;
-    y = -cy;
-    depth = maxdepth;
-    do {
-      x2 = x * x;
-      y2 = y * y;
-      y = 2 * x * y - cy;
-      x = x2 - y2 - cx;
-      depth--;
-    } while ((depth > 0) && ((x2 + y2) <= 5.0));
-    cnt[row * width + col] = depth & 255;
-  });
+  constexpr int block_sz = 256;
+  constexpr int n_blocks = (width-1)/block_sz + 1;
 
+  RAJA::expt::launch<launch_policy>
+    (RAJA::expt::DEVICE,
+     RAJA::expt::Grid(RAJA::expt::Teams(n_block, n_blocks),
+                      RAJA::expt::Threads(block_sz, block_sz)),
+     [=] RAJA_HOST_DEVICE (RAJA::expt::LaunchContext ctx) {
+
+
+
+#if 0
+      RAJA::expt::loop<col_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int col) {
+          RAJA::expt::loop<row_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int row) {
+
+              double x2, y2, x, y, cx, cy;
+              int depth;
+
+              cy = yMin + row * dy; //compute row #
+              cx = xMin + col * dx; //compute column #
+              x = -cx;
+              y = -cy;
+              depth = maxdepth;
+              do {
+                x2 = x * x;
+                y2 = y * y;
+                y = 2 * x * y - cy;
+                x = x2 - y2 - cx;
+                depth--;
+              } while ((depth > 0) && ((x2 + y2) <= 5.0));
+              cnt[row * width + col] = depth & 255;
+
+            });
+        });
+#endif
+
+    });
+#endif
   /* end time */
   gettimeofday(&end, NULL);
   printf("compute time: %.8f s\n", end.tv_sec + end.tv_usec / 1000000.0 - start.tv_sec - start.tv_usec / 1000000.0);

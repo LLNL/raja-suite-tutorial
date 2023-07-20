@@ -2,6 +2,7 @@
 
 #include "RAJA/RAJA.hpp"
 #include "umpire/Umpire.hpp"
+#include "umpire/strategy/QuickPool.hpp"
 
 int main()
 {
@@ -18,11 +19,12 @@ int main()
   auto host_allocator = rm.getAllocator("HOST");
 
   // TODO: create an allocator called "pool" using the QuickPool strategy
+  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("POOL", allocator);
 
-  a = pool.allocate(N*sizeof(double));
-  b = pool.allocate(N*sizeof(double));
-  a_h = host_allocator.allocate(N*sizeof(double));
-  b_h = host_allocator.allocate(N*sizeof(double));
+  a = static_cast<double *>(pool.allocate(N*sizeof(double)));
+  b = static_cast<double *>(pool.allocate(N*sizeof(double)));
+  a_h = static_cast<double *>(host_allocator.allocate(N*sizeof(double)));
+  b_h = static_cast<double *>(host_allocator.allocate(N*sizeof(double)));
 
   RAJA::forall< RAJA::loop_exec >(
     RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
@@ -37,10 +39,10 @@ int main()
   double dot{0.0};
   RAJA::ReduceSum<RAJA::cuda_reduce, double> cudot(0.0);
 
-  RAJA::forall<RAJA::cuda_exec<CUDA_BLOCK_SIZE>>(RAJA::TypedRangeSegment<int>(0, N), 
-    [=] RAJA_DEVICE (int i) { 
-    cudot += a[i] * b[i]; 
-  });    
+  RAJA::forall<RAJA::cuda_exec<CUDA_BLOCK_SIZE>>(RAJA::TypedRangeSegment<int>(0, N),
+    [=] RAJA_DEVICE (int i) {
+    cudot += a[i] * b[i];
+  });
 
   dot = cudot.get();
   std::cout << "dot = " << dot << std::endl;

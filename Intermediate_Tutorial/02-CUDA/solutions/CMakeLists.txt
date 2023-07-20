@@ -8,4 +8,4 @@
 raja_add_executable(
   NAME fractal-solution-RAJA-CUDA
   SOURCES fractal-solution-RAJA-CUDA.cpp
-  DEPENDS_ON cuda writeBMP)
+  DEPENDS_ON cuda writeBMP umpire RAJA)

@@ -2,4 +2,4 @@
 blt_add_executable(
   NAME two
   SOURCES two.cpp
-  DEPENDS_ON )
+  DEPENDS_ON cuda RAJA umpire)
