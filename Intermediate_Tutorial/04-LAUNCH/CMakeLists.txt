@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: (BSD-3-Clause)
 ###############################################################################
 
-#raja_add_executable(
-#  NAME fractal-ex1-RAJA-loop
-#  SOURCES fractal-ex1-RAJA-loop.cpp
-#  DEPENDS_ON writeBMP umpire)
+blt_add_executable(
+  NAME fractal-ex4-RAJA-launch
+  SOURCES fractal-ex4-RAJA-launch.cpp
+  DEPENDS_ON RAJA umpire writeBMP)

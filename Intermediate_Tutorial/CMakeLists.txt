@@ -6,15 +6,15 @@
 ###############################################################################
 
 add_subdirectory(01-LOOP)
+add_subdirectory(04-LAUNCH)
 
 if(RAJA_ENABLE_CUDA)
   add_subdirectory(02-CUDA)
-  add_subdirectory(04-TEAMS)
 endif()
 
 if(RAJA_ENABLE_HIP)
   add_subdirectory(03-HIP)
-  add_subdirectory(04-TEAMS)
+  add_subdirectory(04-LAUNCH)
 endif()
 
 
