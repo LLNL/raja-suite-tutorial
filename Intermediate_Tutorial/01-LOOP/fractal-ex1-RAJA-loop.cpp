@@ -2,7 +2,8 @@
 #include <sys/time.h>
 
 #include "RAJA/RAJA.hpp"
-#include "umpire/umpire.hpp"
+#include "umpire/Umpire.hpp"
+#include "umpire/strategy/QuickPool.hpp"
 #include "../../tpl/writeBMP.hpp"
 
 #define xMin 0.74395
@@ -28,23 +29,23 @@ int main(int argc, char *argv[])
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  //TODO: Create an Umpire QuickPool allocator with Unified Memory that will hold the 
+  //TODO: Create an Umpire QuickPool allocator with Unified Memory that will hold the
   // pixels of the fractal image.
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};
   auto allocator = rm.getAllocator("UM");
   auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
-  cnt = pool.allocate(width * width * sizeof(unsigned char));
+  cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
   //TODO: Create a RAJA Kernel Policy which uses the loop_exec policy. We want to start
   //with a normal serial nested loop first before continuing onward.
-  using KERNEL_POLICY = 
+  using KERNEL_POLICY =
     RAJA::KernelPolicy<
       RAJA::statement::For<1, RAJA::loop_exec,
         RAJA::statement::For<0, RAJA::loop_exec,
           RAJA::statement::Lambda<0>
         >
-      > 
+      >
     >;
 
   /* start time */
@@ -70,7 +71,7 @@ int main(int argc, char *argv[])
     } while ((depth > 0) && ((x2 + y2) <= 5.0));
     cnt[row * width + col] = depth & 255;
   });
-						
+
   /* end time */
   gettimeofday(&end, NULL);
   printf("compute time: %.8f s\n", end.tv_sec + end.tv_usec / 1000000.0 - start.tv_sec - start.tv_usec / 1000000.0);
