@@ -42,11 +42,8 @@ int main(int argc, char *argv[])
 
   using host_launch = RAJA::seq_launch_t;
 
-  using device_launch = RAJA::cuda_launch_t<false>;
-
 #if defined(RAJA_ENABLE_CUDA)
-  // __device_launch_start
-  // __device_launch_end
+  using device_launch = RAJA::cuda_launch_t<false>;
 #elif defined(RAJA_ENABLE_HIP)
   using device_launch = RAJA::hip_launch_t<false>;
 #endif
@@ -62,24 +59,18 @@ int main(int argc, char *argv[])
 
   using row_loop = RAJA::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_y>;
 
-#if 0
   /* start time */
   gettimeofday(&start, NULL);
-  //RAJA::kernel<KERNEL_POLICY>(
-  //RAJA::make_tuple(RAJA::TypedRangeSegment<int>(0, width),
-  //RAJA::TypedRangeSegment<int>(0, width)),
-  //[=] (int row, int col) {
 
   constexpr int block_sz = 256;
-  constexpr int n_blocks = (width-1)/block_sz + 1;
+  int n_blocks = (width-1)/block_sz + 1;
 
   RAJA::launch<launch_policy>
-    (RAJA::DEVICE,
-     RAJA::LaunchParams(RAJA::Teams(n_block, n_blocks),
+    (RAJA::ExecPlace::DEVICE,
+     RAJA::LaunchParams(RAJA::Teams(n_blocks, n_blocks),
                       RAJA::Threads(block_sz, block_sz)),
      [=] RAJA_HOST_DEVICE (RAJA::LaunchContext ctx) {
 
-#if 0
       RAJA::loop<col_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int col) {
           RAJA::loop<row_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int row) {
 
@@ -102,10 +93,9 @@ int main(int argc, char *argv[])
 
             });
         });
-#endif
 
     });
-#endif
+
   /* end time */
   gettimeofday(&end, NULL);
   printf("compute time: %.8f s\n", end.tv_sec + end.tv_usec / 1000000.0 - start.tv_sec - start.tv_usec / 1000000.0);
