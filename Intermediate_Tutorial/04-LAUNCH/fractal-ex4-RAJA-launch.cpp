@@ -40,27 +40,27 @@ int main(int argc, char *argv[])
   //TODO: Create a RAJA Kernel Policy which uses the loop_exec policy. We want to start
   //with a normal serial nested loop first before continuing onward.
 
-  using host_launch = RAJA::expt::seq_launch_t;
+  using host_launch = RAJA::seq_launch_t;
 
-  using device_launch = RAJA::expt::cuda_launch_t<false>;
+  using device_launch = RAJA::cuda_launch_t<false>;
 
 #if defined(RAJA_ENABLE_CUDA)
   // __device_launch_start
   // __device_launch_end
 #elif defined(RAJA_ENABLE_HIP)
-  using device_launch = RAJA::expt::hip_launch_t<false>;
+  using device_launch = RAJA::hip_launch_t<false>;
 #endif
 
-  using launch_policy = RAJA::expt::LaunchPolicy<
+  using launch_policy = RAJA::LaunchPolicy<
     host_launch
 #if defined(RAJA_DEVICE_ACTIVE)
     ,device_launch
 #endif
     >;
 
-  using col_loop = RAJA::expt::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_x>;
+  using col_loop = RAJA::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_x>;
 
-  using row_loop = RAJA::expt::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_y>;
+  using row_loop = RAJA::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_y>;
 
 #if 0
   /* start time */
@@ -73,17 +73,15 @@ int main(int argc, char *argv[])
   constexpr int block_sz = 256;
   constexpr int n_blocks = (width-1)/block_sz + 1;
 
-  RAJA::expt::launch<launch_policy>
-    (RAJA::expt::DEVICE,
-     RAJA::expt::Grid(RAJA::expt::Teams(n_block, n_blocks),
-                      RAJA::expt::Threads(block_sz, block_sz)),
-     [=] RAJA_HOST_DEVICE (RAJA::expt::LaunchContext ctx) {
-
-
+  RAJA::launch<launch_policy>
+    (RAJA::DEVICE,
+     RAJA::LaunchParams(RAJA::Teams(n_block, n_blocks),
+                      RAJA::Threads(block_sz, block_sz)),
+     [=] RAJA_HOST_DEVICE (RAJA::LaunchContext ctx) {
 
 #if 0
-      RAJA::expt::loop<col_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int col) {
-          RAJA::expt::loop<row_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int row) {
+      RAJA::loop<col_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int col) {
+          RAJA::loop<row_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int row) {
 
               double x2, y2, x, y, cx, cy;
               int depth;
