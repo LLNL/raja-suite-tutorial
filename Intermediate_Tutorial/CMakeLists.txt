@@ -6,10 +6,10 @@
 ###############################################################################
 
 add_subdirectory(01-LOOP)
-add_subdirectory(04-LAUNCH)
 
 if(RAJA_ENABLE_CUDA)
   add_subdirectory(02-CUDA)
+  add_subdirectory(04-LAUNCH)
 endif()
 
 if(RAJA_ENABLE_HIP)

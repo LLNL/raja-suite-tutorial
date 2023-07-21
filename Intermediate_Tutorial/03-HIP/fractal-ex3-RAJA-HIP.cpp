@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
   /* TODO: Create the "cnt" array to store the pixels and allocate space for it on CPU using pinned memory */
   unsigned char *cnt;
-  hipHostAlloc((void**)&cnt, (width * width * sizeof(unsigned char)), hipHostAllocDefault);
+  hipHostMalloc((void**)&cnt, (width * width * sizeof(unsigned char)), hipHostRegisterDefault);
 
   /* TODO: Create the "d_cnt" array to store pixels on the GPU and allocate space for it on the GPU */
   unsigned char *d_cnt;
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
   }
 
   /* TODO: Free the memory we allocated. */
-  hipFreeHost(cnt);
+  hipHostFree(cnt);
   hipFree(d_cnt);
   return 0;
 }

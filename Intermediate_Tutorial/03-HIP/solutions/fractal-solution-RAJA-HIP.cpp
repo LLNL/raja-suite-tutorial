@@ -13,6 +13,7 @@
 
 /* TODO: include the RAJA header file */
 #include "RAJA/RAJA.hpp"
+#include "../../tpl/writeBMP.hpp"
 
 #define xMin 0.74395
 #define xMax 0.74973
@@ -22,54 +23,12 @@
 /* TODO: create a variable called "THREADS" to be used when calling the kernel*/
 #define THREADS 512 
 
-static void WriteBMP(int x, int y, unsigned char *bmp, const char * name)
-{
-  const unsigned char bmphdr[54] = {66, 77, 255, 255, 255, 255, 0, 0, 0, 0, 54, 4, 0, 0, 40, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 1, 0, 8, 0, 0, 0, 0, 0, 255, 255, 255, 255, 196, 14, 0, 0, 196, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  unsigned char hdr[1078];
-  int i, j, c, xcorr, diff;
-  FILE *f;
-
-  xcorr = (x+3) >> 2 << 2;  // BMPs have to be a multiple of 4 pixels wide.
-  diff = xcorr - x;
-  for (i = 0; i < 54; i++) hdr[i] = bmphdr[i];
-    *((int*)(&hdr[18])) = xcorr;
-    *((int*)(&hdr[22])) = y;
-    *((int*)(&hdr[34])) = xcorr*y;
-    *((int*)(&hdr[2])) = xcorr*y + 1078;
-    for (i = 0; i < 256; i++) {
-      j = i*4 + 54;
-      hdr[j+0] = i;  // blue
-      hdr[j+1] = i;  // green
-      hdr[j+2] = i;  // red
-      hdr[j+3] = 0;  // dummy
-    }
-
-    f = fopen(name, "wb");
-    assert(f != NULL);
-    c = fwrite(hdr, 1, 1078, f);
-    assert(c == 1078);
-    if (diff == 0) {
-      c = fwrite(bmp, 1, x*y, f);
-      assert(c == x*y);
-    } else {
-      *((int*)(&hdr[0])) = 0;  // need up to three zero bytes
-      for (j = 0; j < y; j++) {
-        c = fwrite(&bmp[j * x], 1, x, f);
-	assert(c == x);
-	c = fwrite(hdr, 1, diff, f);
-	assert(c == diff);
-      }
-    }
-  fclose(f);
-}
-
-/* TODO: Get rid of the kernel now - this code goes back to main! */
-
 int main(int argc, char *argv[])
 {
   double dx, dy;
   int width, maxdepth;
   struct timeval start, end;
+  writebmp wbmp;
 
   /* check command line */
   if(argc != 3) {fprintf(stderr, "usage: exe <width> <depth>\n"); exit(-1);}
@@ -85,7 +44,7 @@ int main(int argc, char *argv[])
 
   /* TODO: Create the "cnt" array to store the pixels and allocate space for it on CPU using pinned memory */
   unsigned char *cnt;
-  hipHostAlloc((void**)&cnt, (width * width * sizeof(unsigned char)), hipHostAllocDefault);
+  hipHostMalloc((void**)&cnt, (width * width * sizeof(unsigned char)), hipHostRegisterDefault);
 
   /* TODO: Create the "d_cnt" array to store pixels on the GPU and allocate space for it on the GPU */
   unsigned char *d_cnt;
@@ -142,11 +101,11 @@ int main(int argc, char *argv[])
 
   /* verify result by writing it to a file */
   if (width <= 2048) {
-    WriteBMP(width, width, cnt, "fractal.bmp");
+    wbmp.WriteBMP(width, width, cnt, "fractal.bmp");
   }
 
   /* TODO: Free the memory we allocated. */
-  hipFreeHost(cnt);
+  hipHostFree(cnt);
   hipFree(d_cnt);
   return 0;
 }

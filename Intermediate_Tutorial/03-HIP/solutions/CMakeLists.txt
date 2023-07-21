@@ -8,7 +8,7 @@
 if(RAJA_ENABLE_HIP)
 raja_add_executable(
   NAME fractal-RAJA-HIP
-  SOURCES fractal-RAJA-HIP.cpp
-  DEPENDS_ON blt::hip blt::hip_runtime)
+  SOURCES fractal-solution-RAJA-HIP.cpp 
+  DEPENDS_ON blt::hip RAJA umpire writeBMP)
 endif()
 
