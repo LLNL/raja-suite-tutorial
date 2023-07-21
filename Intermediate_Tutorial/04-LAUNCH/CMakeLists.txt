@@ -5,7 +5,9 @@
 # SPDX-License-Identifier: (BSD-3-Clause)
 ###############################################################################
 
-blt_add_executable(
-  NAME fractal-ex4-RAJA-launch
-  SOURCES fractal-ex4-RAJA-launch.cpp
-  DEPENDS_ON cuda RAJA umpire writeBMP)
+if (ENABLE_CUDA)
+  blt_add_executable(
+    NAME fractal-ex4-RAJA-launch
+    SOURCES fractal-ex4-RAJA-launch.cpp
+    DEPENDS_ON cuda RAJA umpire writeBMP)
+endif()

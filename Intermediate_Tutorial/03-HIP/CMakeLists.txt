@@ -5,9 +5,11 @@
 # SPDX-License-Identifier: (BSD-3-Clause)
 ###############################################################################
 
-raja_add_executable(
-  NAME fractal-ex3-RAJA-HIP
-  SOURCES fractal-ex3-RAJA-HIP.cpp
-  DEPENDS_ON blt::hip blt::hip_runtime writeBMP)
+if (ENABLE_HIP)
+  raja_add_executable(
+    NAME fractal-ex3-RAJA-HIP
+    SOURCES fractal-ex3-RAJA-HIP.cpp
+    DEPENDS_ON blt::hip blt::hip_runtime writeBMP)
+endif()
 
 add_subdirectory(solutions)
