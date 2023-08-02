@@ -14,3 +14,9 @@
 
 add_subdirectory(umpire)
 add_subdirectory(raja)
+
+blt_add_library(
+    NAME writeBMP
+    HEADERS writeBMP.hpp
+    SOURCES writeBMP.cpp
+    OBJECT TRUE)
