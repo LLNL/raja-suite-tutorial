@@ -34,7 +34,8 @@ where `data` is a `double*`, and `N` is the size of each dimension. The size of
 `data` should be at least `N*N`.
 
 In the file `nine.cpp`, there is a `TODO` comment where you should create three
-views, A, B, and C. When you are ready, you can compile and run the code:
+views, A, B, and C. When you are ready, uncomment the COMPILE define on line 7;
+then you can compile and run the code:
 
 ```
 $ make nine

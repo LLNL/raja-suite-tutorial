@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
   //TODO: Create an Umpire QuickPool allocator with Unified Memory that will hold the
-  //pixels of the fractal image.
+  // pixels of the fractal image.
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};
   auto allocator = rm.getAllocator("UM");
@@ -39,38 +39,62 @@ int main(int argc, char *argv[])
 
   //TODO: Create a RAJA Kernel Policy which uses the loop_exec policy. We want to start
   //with a normal serial nested loop first before continuing onward.
-  using KERNEL_POLICY =
-    RAJA::KernelPolicy<
-      RAJA::statement::For<1, RAJA::loop_exec,
-        RAJA::statement::For<0, RAJA::loop_exec,
-          RAJA::statement::Lambda<0>
-        >
-      >
+
+  using host_launch = RAJA::seq_launch_t;
+
+#if defined(RAJA_ENABLE_CUDA)
+  using device_launch = RAJA::cuda_launch_t<false>;
+#elif defined(RAJA_ENABLE_HIP)
+  using device_launch = RAJA::hip_launch_t<false>;
+#endif
+
+  using launch_policy = RAJA::LaunchPolicy<
+    host_launch
+#if defined(RAJA_DEVICE_ACTIVE)
+    ,device_launch
+#endif
     >;
+
+  using col_loop = RAJA::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_x>;
+
+  using row_loop = RAJA::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_y>;
 
   /* start time */
   gettimeofday(&start, NULL);
-  RAJA::kernel<KERNEL_POLICY>(
-        RAJA::make_tuple(RAJA::TypedRangeSegment<int>(0, width),
-                         RAJA::TypedRangeSegment<int>(0, width)),
-        [=] (int row, int col) {
-    double x2, y2, x, y, cx, cy;
-    int depth;
 
-    cy = yMin + row * dy; //compute row #
-    cx = xMin + col * dx; //compute column #
-    x = -cx;
-    y = -cy;
-    depth = maxdepth;
-    do {
-      x2 = x * x;
-      y2 = y * y;
-      y = 2 * x * y - cy;
-      x = x2 - y2 - cx;
-      depth--;
-    } while ((depth > 0) && ((x2 + y2) <= 5.0));
-    cnt[row * width + col] = depth & 255;
-  });
+  constexpr int block_sz = 256;
+  int n_blocks = (width-1)/block_sz + 1;
+
+  RAJA::launch<launch_policy>
+    (RAJA::ExecPlace::DEVICE,
+     RAJA::LaunchParams(RAJA::Teams(n_blocks, n_blocks),
+                      RAJA::Threads(block_sz, block_sz)),
+     [=] RAJA_HOST_DEVICE (RAJA::LaunchContext ctx) {
+
+      RAJA::loop<col_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int col) {
+          RAJA::loop<row_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int row) {
+
+              double x2, y2, x, y, cx, cy;
+              int depth;
+
+              cy = yMin + row * dy; //compute row #
+              cx = xMin + col * dx; //compute column #
+              x = -cx;
+              y = -cy;
+              depth = maxdepth;
+              do {
+                x2 = x * x;
+                y2 = y * y;
+                y = 2 * x * y - cy;
+                x = x2 - y2 - cx;
+                depth--;
+              } while ((depth > 0) && ((x2 + y2) <= 5.0));
+              cnt[row * width + col] = depth & 255;
+
+            });
+        });
+
+    });
 
   /* end time */
   gettimeofday(&end, NULL);

@@ -11,8 +11,12 @@
 #define yMin 0.11321
 #define yMax 0.11899
 
+// #define COMPILE
+
 int main(int argc, char *argv[])
 {
+#if defined(COMPILE)
+
   double dx, dy;
   int width;
   const int maxdepth = 256;
@@ -33,11 +37,10 @@ int main(int argc, char *argv[])
   // pixels of the fractal image.
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};
-  auto allocator = rm.getAllocator("UM");
-  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
+
   cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
-  //TODO: Create a RAJA Kernel Policy which uses the loop_exec policy. We want to start
+  //TODO: Create a RAJA Launch Policy which uses a device policy. We want to start
   //with a normal serial nested loop first before continuing onward.
 
   using host_launch = RAJA::seq_launch_t;
@@ -106,6 +109,7 @@ int main(int argc, char *argv[])
   }
 
   //TODO: Use the Umpire pooled allocator to deallocate the memory.
-  pool.deallocate(cnt);
+
+#endif
   return 0;
 }

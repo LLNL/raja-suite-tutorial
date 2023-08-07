@@ -25,7 +25,8 @@ file `eight.cpp`).
 
 There are other arguments that could be passed to the pool constructor if needed. See the documentation page for more: https://umpire.readthedocs.io/en/develop/doxygen/html/index.html
 
-When you have created your QuickPool allocator, compile and run the code:
+When you have created your QuickPool allocator, uncomment the COMPILE define on line 7;
+then compile and run the code:
 ```
 $ make eight
 $ ./bin/eight

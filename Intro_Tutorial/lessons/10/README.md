@@ -19,7 +19,8 @@ If you are stuck, you can reference the matrix-multiply example in the RAJA
 repository:
 https://github.com/LLNL/RAJA/blob/develop/examples/tut_matrix-multiply.cpp
 
-When you have finished making your changes, compile and run the code:
+When you have finished making your changes, uncomment the COMPILE define on line 7;
+then compile and run the code:
 
 ```
 $ make ten

@@ -4,8 +4,13 @@
 #include "umpire/Umpire.hpp"
 #include "umpire/strategy/QuickPool.hpp"
 
+//#define COMPILE
+
 int main()
 {
+
+#if defined(COMPILE)
+
   constexpr int N{10000};
   constexpr std::size_t CUDA_BLOCK_SIZE{256};
   constexpr std::size_t DIM{2};
@@ -32,36 +37,18 @@ int main()
 
   // TODO: use RAJA::kernel to implement the nested loops
   // TODO: initialization loop
-  using EXEC_POL =
-    RAJA::KernelPolicy<
-      RAJA::statement::For<1, RAJA::loop_exec,    // row
-        RAJA::statement::For<0, RAJA::loop_exec,  // col
-          RAJA::statement::Lambda<0>
-        >
-      >
-    >;
 
-  RAJA::kernel<EXEC_POL>(RAJA::make_tuple(col_range, row_range),
-                         [=] (int col, int row) {
-      A(row, col) = row;
-      B(row, col) = col;
-  });
+
 
   // TODO: use RAJA::kernel to implement the nested loops
   // TODO: matrix multiply loop
-  RAJA::kernel<EXEC_POL>(RAJA::make_tuple(col_range, row_range),
-                         [=] (int col, int row) {
-      double dot = 0.0;
-      for (int k = 0; k < N; ++k) {
-        dot += A(row, k) * B(k, col);
-      }
-      C(row, col) = dot;
-  });
 
 
   pool.deallocate(a);
   pool.deallocate(b);
   pool.deallocate(c);
+
+#endif 
 
   return 0;
 }

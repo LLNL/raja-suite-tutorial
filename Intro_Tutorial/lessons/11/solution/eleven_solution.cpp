@@ -4,12 +4,8 @@
 #include "umpire/Umpire.hpp"
 #include "umpire/strategy/QuickPool.hpp"
 
-//#define COMPILE
-
 int main()
 {
-#if defined(COMPILE)
-
   constexpr int N{10000};
   double* a{nullptr};
   double* b{nullptr};
@@ -34,7 +30,16 @@ int main()
   RAJA::TypedRangeSegment<int> col_range(0, N);
 
  // TODO: convert EXEC_POL to use CUDA
-
+  using EXEC_POL =
+      RAJA::KernelPolicy<
+        RAJA::statement::CudaKernel<
+          RAJA::statement::For<1, RAJA::cuda_block_x_loop,
+            RAJA::statement::For<0, RAJA::cuda_thread_x_loop,
+              RAJA::statement::Lambda<0>
+            >
+          >
+        >
+      >;
 
   RAJA::kernel<EXEC_POL>(RAJA::make_tuple(col_range, row_range),
     [=] RAJA_DEVICE (int col, int row) {
@@ -57,7 +62,5 @@ int main()
   pool.deallocate(b);
   pool.deallocate(c);
 
-#endif
-  
   return 0;
 }
