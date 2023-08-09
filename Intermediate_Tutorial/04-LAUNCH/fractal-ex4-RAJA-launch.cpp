@@ -11,7 +11,7 @@
 #define yMin 0.11321
 #define yMax 0.11899
 
-// #define COMPILE
+//#define COMPILE
 
 int main(int argc, char *argv[])
 {
@@ -24,8 +24,21 @@ int main(int argc, char *argv[])
   writebmp wbmp;
 
   /* check command line */
-  if(argc != 2) {fprintf(stderr, "usage: exe <width> \n"); exit(-1);}
-  width = atoi(argv[1]);
+  if(argc != 3) {fprintf(stderr, "usage: exe host <width> or exe device <width> \n"); exit(-1);}
+
+  std::string exec_space = argv[1];
+  if(!(exec_space.compare("host") == 0 || exec_space.compare("device") == 0 )){
+    RAJA_ABORT_OR_THROW("usage: exe host <width> or exe device <width>");
+    return 0;
+  }
+
+  RAJA::ExecPlace select_cpu_or_gpu;
+  if(exec_space.compare("host") == 0)
+    { select_cpu_or_gpu = RAJA::ExecPlace::HOST; printf("Running RAJA-Launch fractals example on the host \n"); }
+  if(exec_space.compare("device") == 0)
+    { select_cpu_or_gpu = RAJA::ExecPlace::DEVICE; printf("Running RAJA-Launch fractals example on the device \n"); }
+
+  width = atoi(argv[2]);
   if (width < 10) {fprintf(stderr, "edge_length must be at least 10\n"); exit(-1);}
 
   dx = (xMax - xMin) / width;
@@ -37,26 +50,28 @@ int main(int argc, char *argv[])
   // pixels of the fractal image.
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};
-
+  auto allocator = rm.getAllocator("UM");
+  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
   cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
-  //TODO: Create a RAJA Launch Policy which uses a device policy. We want to start
-  //with a normal serial nested loop first before continuing onward.
+  //TODO: Create a RAJA launch policy for the host and device
 
-  using host_launch = RAJA::seq_launch_t;
+  using host_launch =
 
 #if defined(RAJA_ENABLE_CUDA)
-  using device_launch = RAJA::cuda_launch_t<false>;
+  using device_launch =
 #elif defined(RAJA_ENABLE_HIP)
-  using device_launch = RAJA::hip_launch_t<false>;
+  using device_launch =
 #endif
 
   using launch_policy = RAJA::LaunchPolicy<
     host_launch
-#if defined(RAJA_DEVICE_ACTIVE)
+#if defined(RAJA_GPU_ACTIVE)
     ,device_launch
 #endif
     >;
+
+  //RAJA loop policies take a pair of policies enabling run time selection of
 
   using col_loop = RAJA::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_x>;
 
@@ -65,13 +80,12 @@ int main(int argc, char *argv[])
   /* start time */
   gettimeofday(&start, NULL);
 
-  constexpr int block_sz = 256;
-  int n_blocks = (width-1)/block_sz + 1;
+  constexpr int block_sz = 16;
+  int n_blocks = (width + block_sz - 1) / block_sz + 1;
 
   RAJA::launch<launch_policy>
-    (RAJA::ExecPlace::DEVICE,
-     RAJA::LaunchParams(RAJA::Teams(n_blocks, n_blocks),
-                      RAJA::Threads(block_sz, block_sz)),
+    (select_cpu_or_gpu, RAJA::LaunchParams(RAJA::Teams(n_blocks, n_blocks),
+                                           RAJA::Threads(block_sz, block_sz)),
      [=] RAJA_HOST_DEVICE (RAJA::LaunchContext ctx) {
 
       RAJA::loop<col_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int col) {

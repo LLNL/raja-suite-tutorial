@@ -43,14 +43,7 @@ int main(int argc, char *argv[])
 
   //TODO: Create a RAJA Kernel Policy which uses the seq_exec policy. We want to start
   //with a normal serial nested loop first before continuing onward.
-  using KERNEL_POLICY =
-    RAJA::KernelPolicy<
-      RAJA::statement::For<1, RAJA::seq_exec,
-        RAJA::statement::For<0, RAJA::seq_exec,
-          RAJA::statement::Lambda<0>
-        >
-      >
-    >;
+
 
   /* start time */
   gettimeofday(&start, NULL);
@@ -86,7 +79,6 @@ int main(int argc, char *argv[])
   }
 
   //TODO: Use the Umpire pooled allocator to deallocate the memory.
-  pool.deallocate(cnt);
 
 #endif
 

@@ -20,8 +20,21 @@ int main(int argc, char *argv[])
   writebmp wbmp;
 
   /* check command line */
-  if(argc != 2) {fprintf(stderr, "usage: exe <width> \n"); exit(-1);}
-  width = atoi(argv[1]);
+  if(argc != 3) {fprintf(stderr, "usage: exe host <width> or exe device <width> \n"); exit(-1);}
+
+  std::string exec_space = argv[1];
+  if(!(exec_space.compare("host") == 0 || exec_space.compare("device") == 0 )){
+    RAJA_ABORT_OR_THROW("usage: exe host <width> or exe device <width>");
+    return 0;
+  }
+
+  RAJA::ExecPlace select_cpu_or_gpu;
+  if(exec_space.compare("host") == 0)
+    { select_cpu_or_gpu = RAJA::ExecPlace::HOST; printf("Running RAJA-Launch fractals example on the host \n"); }
+  if(exec_space.compare("device") == 0)
+    { select_cpu_or_gpu = RAJA::ExecPlace::DEVICE; printf("Running RAJA-Launch fractals example on the device \n"); }
+
+  width = atoi(argv[2]);
   if (width < 10) {fprintf(stderr, "edge_length must be at least 10\n"); exit(-1);}
 
   dx = (xMax - xMin) / width;
@@ -50,7 +63,7 @@ int main(int argc, char *argv[])
 
   using launch_policy = RAJA::LaunchPolicy<
     host_launch
-#if defined(RAJA_DEVICE_ACTIVE)
+#if defined(RAJA_GPU_ACTIVE)
     ,device_launch
 #endif
     >;
@@ -62,13 +75,12 @@ int main(int argc, char *argv[])
   /* start time */
   gettimeofday(&start, NULL);
 
-  constexpr int block_sz = 256;
-  int n_blocks = (width-1)/block_sz + 1;
+  constexpr int block_sz = 16;
+  int n_blocks = (width + block_sz-1) / block_sz + 1;
 
   RAJA::launch<launch_policy>
-    (RAJA::ExecPlace::DEVICE,
-     RAJA::LaunchParams(RAJA::Teams(n_blocks, n_blocks),
-                      RAJA::Threads(block_sz, block_sz)),
+    (select_cpu_or_gpu, RAJA::LaunchParams(RAJA::Teams(n_blocks, n_blocks),
+                                           RAJA::Threads(block_sz, block_sz)),
      [=] RAJA_HOST_DEVICE (RAJA::LaunchContext ctx) {
 
       RAJA::loop<col_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int col) {
