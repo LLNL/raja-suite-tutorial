@@ -37,12 +37,12 @@ int main(int argc, char *argv[])
   auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
   cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
-  //TODO: Create a RAJA Kernel Policy which uses the loop_exec policy. We want to start
-  //with a normal serial nested loop first before continuing onward.
+  //TODO: Create a RAJA Kernel Policy which uses the seq_exec policy. We want to start
+  //with a normal serial nested seq first before continuing onward.
   using KERNEL_POLICY =
     RAJA::KernelPolicy<
-      RAJA::statement::For<1, RAJA::loop_exec,
-        RAJA::statement::For<0, RAJA::loop_exec,
+      RAJA::statement::For<1, RAJA::seq_exec,
+        RAJA::statement::For<0, RAJA::seq_exec,
           RAJA::statement::Lambda<0>
         >
       >

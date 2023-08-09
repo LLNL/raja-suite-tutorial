@@ -4,8 +4,12 @@
 #include "umpire/Umpire.hpp"
 #include "umpire/strategy/QuickPool.hpp"
 
+//#define COMPILE
+
 int main()
 {
+#if defined(COMPILE)
+
   constexpr int N{10000};
   double* a{nullptr};
   double* b{nullptr};
@@ -25,9 +29,6 @@ int main()
 
   // TODO: Create a view for A, B, and C
   constexpr int DIM = 2;
-  RAJA::View<double, RAJA::Layout<DIM>> A(a, N, N);
-  RAJA::View<double, RAJA::Layout<DIM>> B(b, N, N);
-  RAJA::View<double, RAJA::Layout<DIM>> C(c, N, N);
 
   RAJA::forall<RAJA::loop_exec>( row_range, [=](int row) {
     RAJA::forall<RAJA::loop_exec>( col_range, [=](int col) {
@@ -49,6 +50,8 @@ int main()
   pool.deallocate(a);
   pool.deallocate(b);
   pool.deallocate(c);
+
+#endif
 
   return 0;
 }

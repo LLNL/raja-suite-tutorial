@@ -6,6 +6,6 @@
 ###############################################################################
 
 blt_add_executable(
-  NAME fractal-ex1-RAJA-loop
-  SOURCES fractal-ex1-RAJA-loop.cpp
+  NAME fractal-ex1-RAJA-seq
+  SOURCES fractal-ex1-RAJA-seq.cpp
   DEPENDS_ON cuda RAJA umpire writeBMP)

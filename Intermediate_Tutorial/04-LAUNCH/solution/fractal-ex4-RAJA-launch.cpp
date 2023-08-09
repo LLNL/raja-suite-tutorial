@@ -11,12 +11,8 @@
 #define yMin 0.11321
 #define yMax 0.11899
 
-//#define COMPILE
-
 int main(int argc, char *argv[])
 {
-#if defined(COMPILE)
-
   double dx, dy;
   int width;
   const int maxdepth = 256;
@@ -54,14 +50,15 @@ int main(int argc, char *argv[])
   auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
   cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
-  //TODO: Create a RAJA launch policy for the host and device
+  //TODO: Create a RAJA Kernel Policy which uses the loop_exec policy. We want to start
+  //with a normal serial nested loop first before continuing onward.
 
-  using host_launch =
+  using host_launch = RAJA::seq_launch_t;
 
 #if defined(RAJA_ENABLE_CUDA)
-  using device_launch =
+  using device_launch = RAJA::cuda_launch_t<false>;
 #elif defined(RAJA_ENABLE_HIP)
-  using device_launch =
+  using device_launch = RAJA::hip_launch_t<false>;
 #endif
 
   using launch_policy = RAJA::LaunchPolicy<
@@ -71,8 +68,6 @@ int main(int argc, char *argv[])
 #endif
     >;
 
-  //RAJA loop policies take a pair of policies enabling run time selection of
-
   using col_loop = RAJA::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_x>;
 
   using row_loop = RAJA::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_y>;
@@ -81,7 +76,7 @@ int main(int argc, char *argv[])
   gettimeofday(&start, NULL);
 
   constexpr int block_sz = 16;
-  int n_blocks = (width + block_sz - 1) / block_sz + 1;
+  int n_blocks = (width + block_sz-1) / block_sz + 1;
 
   RAJA::launch<launch_policy>
     (select_cpu_or_gpu, RAJA::LaunchParams(RAJA::Teams(n_blocks, n_blocks),
@@ -123,7 +118,6 @@ int main(int argc, char *argv[])
   }
 
   //TODO: Use the Umpire pooled allocator to deallocate the memory.
-
-#endif
+  pool.deallocate(cnt);
   return 0;
 }

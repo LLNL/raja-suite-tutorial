@@ -24,7 +24,7 @@ can view these methods in the Umpire source code documentation here:
 https://umpire.readthedocs.io/en/develop/doxygen/html/classumpire_1_1Allocator.html
 
 ```
-void* memory = allocator.allocate(1024);
+void* memory = allocator.allocate(size in bytes);
 ```
 
 For more details, you can check out the Umpire documentation:

@@ -2,14 +2,10 @@
 
 #include "RAJA/RAJA.hpp"
 #include "umpire/Umpire.hpp"
-
-//Uncomment to compile
-//#define COMPILE
+#include "umpire/strategy/QuickPool.hpp"
 
 int main()
 {
-#if defined(COMPILE)
-
   constexpr int N{10000};
   constexpr std::size_t CUDA_BLOCK_SIZE{256};
   double* a{nullptr};
@@ -23,6 +19,7 @@ int main()
   auto host_allocator = rm.getAllocator("HOST");
 
   // TODO: create an allocator called "pool" using the QuickPool strategy
+  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("POOL", allocator);
 
   a = static_cast<double *>(pool.allocate(N*sizeof(double)));
   b = static_cast<double *>(pool.allocate(N*sizeof(double)));
@@ -54,8 +51,6 @@ int main()
   pool.deallocate(b);
   host_allocator.deallocate(a_h);
   host_allocator.deallocate(b_h);
-
-#endif
 
   return 0;
 }

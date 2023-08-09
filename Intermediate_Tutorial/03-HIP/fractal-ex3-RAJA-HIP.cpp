@@ -17,7 +17,7 @@
 #define yMax 0.11899
 
 /* TODO: create a variable called "THREADS" to be used when calling the kernel*/
-#define THREADS 512 
+#define THREADS 512
 
 int main(int argc, char *argv[])
 {
@@ -39,25 +39,25 @@ int main(int argc, char *argv[])
 
   /* TODO: Create the "cnt" array to store the pixels and allocate space for it on CPU using pinned memory */
   unsigned char *cnt;
-  hipHostMalloc((void**)&cnt, (width * width * sizeof(unsigned char)), hipHostRegisterDefault);
+  cudaHostMalloc((void**)&cnt, (width * width * sizeof(unsigned char)), cudaHostRegisterDefault);
 
   /* TODO: Create the "d_cnt" array to store pixels on the GPU and allocate space for it on the GPU */
   unsigned char *d_cnt;
-  hipMalloc((void**)&d_cnt, width * width * sizeof(unsigned char));
+  cudaMalloc((void**)&d_cnt, width * width * sizeof(unsigned char));
 
-  /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a hip kernel with one outer loop 
-   * and one inner loop. Only the inner for loop will be calculating pixels. 
+  /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a cuda kernel with one outer loop
+   * and one inner loop. Only the inner for loop will be calculating pixels.
    */
   using KERNEL_POLICY = RAJA::KernelPolicy<
-    RAJA::statement::HipKernel<
-      RAJA::statement::For<1, RAJA::hip_block_x_loop,
-        RAJA::statement::For<0, RAJA::hip_thread_x_loop,
+    RAJA::statement::CudaKernel<
+      RAJA::statement::For<1, RAJA::cuda_block_x_loop,
+        RAJA::statement::For<0, RAJA::cuda_thread_x_loop,
           RAJA::statement::Lambda<0>
         >
-      > 
+      >
     >
   >;
-  
+
   /* compute fractal */
   gettimeofday(&start, NULL);
   /* TODO: Add a RAJA::Kernel which takes the KERNEL_POLICY you just created above.
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
   printf("compute time: %.8f s\n", end.tv_sec + end.tv_usec / 1000000.0 - start.tv_sec - start.tv_usec / 1000000.0);
 
   /* TODO: In order to create a bmp image, we need to copy the completed fractal to the Host memory space */
-  hipMemcpyAsync(cnt, d_cnt, width * width * sizeof(unsigned char), hipMemcpyDeviceToHost);
+  cudaMemcpyAsync(cnt, d_cnt, width * width * sizeof(unsigned char), cudaMemcpyDeviceToHost);
 
   /* verify result by writing it to a file */
   if (width <= 2048) {
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
   }
 
   /* TODO: Free the memory we allocated. */
-  hipHostFree(cnt);
-  hipFree(d_cnt);
+  cudaHostFree(cnt);
+  cudaFree(d_cnt);
   return 0;
 }

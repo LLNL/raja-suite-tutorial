@@ -11,7 +11,7 @@ A complete description of the different policies is available in the online RAJA
 documentation:
 https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/kernel_exec_pols.html#
 
-Once you are ready, you can build and run the example:
+Once you are ready, uncomment the COMPILE define on line 7; then you can build and run the example:
 
 ```
 $ make eleven

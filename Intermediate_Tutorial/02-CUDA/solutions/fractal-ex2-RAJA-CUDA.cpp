@@ -5,13 +5,9 @@
 // SPDX-License-Identifier: (BSD-3-Clause)
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <malloc.h>
-#include <assert.h>
 #include <sys/time.h>
 
-/* TODO: include the RAJA header file */
 #include "RAJA/RAJA.hpp"
 #include "../../tpl/writeBMP.hpp"
 
@@ -26,16 +22,15 @@
 int main(int argc, char *argv[])
 {
   double dx, dy;
-  int width, maxdepth;
+  int width;
+  const int maxdepth = 256;
   struct timeval start, end;
   writebmp wbmp;
 
   /* check command line */
-  if(argc != 3) {fprintf(stderr, "usage: exe <width> <depth>\n"); exit(-1);}
+  if(argc != 2) {fprintf(stderr, "usage: exe <width>\n"); exit(-1);}
   width = atoi(argv[1]);
   if (width < 10) {fprintf(stderr, "edge_length must be at least 10\n"); exit(-1);}
-  maxdepth = atoi(argv[2]);
-  if (maxdepth < 10) {fprintf(stderr, "max_depth must be at least 10\n"); exit(-1);}
 
   dx = (xMax - xMin) / width;
   dy = (yMax - yMin) / width;
@@ -44,19 +39,19 @@ int main(int argc, char *argv[])
 
   /* TODO: Create the "cnt" array to store the pixels and allocate space for it on CPU using pinned memory */
   unsigned char *cnt;
-  hipHostMalloc((void**)&cnt, (width * width * sizeof(unsigned char)), hipHostRegisterDefault);
+  cudaHostAlloc((void**)&cnt, (width * width * sizeof(unsigned char)), cudaHostAllocDefault);
 
   /* TODO: Create the "d_cnt" array to store pixels on the GPU and allocate space for it on the GPU */
   unsigned char *d_cnt;
-  hipMalloc((void**)&d_cnt, width * width * sizeof(unsigned char));
+  cudaMalloc((void**)&d_cnt, width * width * sizeof(unsigned char));
 
-  /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a hip kernel with one outer loop 
+  /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a cuda kernel with one outer loop 
    * and one inner loop. Only the inner for loop will be calculating pixels. 
    */
   using KERNEL_POLICY = RAJA::KernelPolicy<
-    RAJA::statement::HipKernel<
-      RAJA::statement::For<1, RAJA::hip_block_x_loop,
-        RAJA::statement::For<0, RAJA::hip_thread_x_loop,
+    RAJA::statement::CudaKernel<
+      RAJA::statement::For<1, RAJA::cuda_block_x_loop,
+        RAJA::statement::For<0, RAJA::cuda_thread_x_loop,
           RAJA::statement::Lambda<0>
         >
       > 
@@ -97,7 +92,7 @@ int main(int argc, char *argv[])
   printf("compute time: %.8f s\n", end.tv_sec + end.tv_usec / 1000000.0 - start.tv_sec - start.tv_usec / 1000000.0);
 
   /* TODO: In order to create a bmp image, we need to copy the completed fractal to the Host memory space */
-  hipMemcpyAsync(cnt, d_cnt, width * width * sizeof(unsigned char), hipMemcpyDeviceToHost);
+  cudaMemcpyAsync(cnt, d_cnt, width * width * sizeof(unsigned char), cudaMemcpyDeviceToHost);
 
   /* verify result by writing it to a file */
   if (width <= 2048) {
@@ -105,7 +100,7 @@ int main(int argc, char *argv[])
   }
 
   /* TODO: Free the memory we allocated. */
-  hipHostFree(cnt);
-  hipFree(d_cnt);
+  cudaFreeHost(cnt);
+  cudaFree(d_cnt);
   return 0;
 }
