@@ -11,6 +11,9 @@ A complete description of the different policies is available in the online RAJA
 documentation:
 https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/kernel_exec_pols.html#
 
+Note that `RAJA_DEVICE` in the `RAJA::kernel` needs to be uncommented
+before this will work!
+
 Once you are ready, uncomment the COMPILE define on line 7; then you can build and run the example:
 
 ```
