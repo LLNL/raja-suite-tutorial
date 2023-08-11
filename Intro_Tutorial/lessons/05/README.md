@@ -30,11 +30,12 @@ The second parameter, the `TYPE` parameter, is just the data type of the
 variable, such as `int`.
 
 In the file `five.cpp`, follow the instruction in the `TODO` comment to create
-a RAJA Reduction using OpenMP. Once you have filled in the correct reduction 
-statement, compile and run:
+a RAJA Reduction using `seq_exec`. 
 
 BONUS: If you have extra time, try changing the execution policy of the `RAJA::forall`
-which initializes the values of our `a` and `b` arrays to also be for OpenMP.
+which initializes the values of our `a` and `b` arrays to the SIMD execution policy.
+
+Once you have filled in the correct reduction statement, compile and run:
 
 ```
 $ make five
