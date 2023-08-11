@@ -30,15 +30,15 @@ int main()
   // TODO: Create a view for A, B, and C
   constexpr int DIM = 2;
 
-  RAJA::forall<RAJA::loop_exec>( row_range, [=](int row) {
-    RAJA::forall<RAJA::loop_exec>( col_range, [=](int col) {
+  RAJA::forall<RAJA::seq_exec>( row_range, [=](int row) {
+    RAJA::forall<RAJA::seq_exec>( col_range, [=](int col) {
       A(row, col) = row;
       B(row, col) = col;
     });
   });
 
-  RAJA::forall<RAJA::loop_exec>( row_range, [=](int row) {
-    RAJA::forall<RAJA::loop_exec>( col_range, [=](int col) {
+  RAJA::forall<RAJA::seq_exec>( row_range, [=](int row) {
+    RAJA::forall<RAJA::seq_exec>( col_range, [=](int col) {
       double dot = 0.0;
       for (int k = 0; k < N; ++k) {
         dot += A(row, k) * B(k, col);
