@@ -30,7 +30,7 @@ int main()
   );
 
   double dot{0.0};
-  //TODO: create a RAJA::ReduceSum with cuda_reduce called "cudot"
+  //TODO: create a RAJA::ReduceSum with cuda_reduce called "cudot" for the GPU
 
   //TODO: fill in the forall statement with the CUDA execution policy
   //TODO: and its block size argument. Then be sure to use RAJA_DEVICE

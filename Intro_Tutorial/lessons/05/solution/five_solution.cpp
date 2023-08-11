@@ -25,16 +25,6 @@ int main()
     }
   );
 
-  // TODO: use an openmp reduction to calculate and output the dotproduct of a and b
-  double dot{0.0};
-  RAJA::ReduceSum<RAJA::omp_reduce, double> ompdot(0.0);
-
-  RAJA::forall<RAJA::omp_exec>(
-    RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
-    ompdot += a[i] * b[i];
-  });
-
-  dot = ompdot.get();
   std::cout << "dot product is "<< dot << std::endl;
 
   allocator.deallocate(a);
