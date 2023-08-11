@@ -24,7 +24,7 @@ The lambda expression needs to take one argument, the loop index:
 [=](int i) { // loop body }
 ```
 
-the `[=]` syntax tells the lambda to capture arguments by value (e.g. create a
+The `[=]` syntax tells the lambda to capture arguments by value (e.g. create a
 copy, rather than a reference).
 
 The `EXEC_POLICY` template argument controls how the loop will be executed. In
@@ -45,7 +45,4 @@ $ ./bin/four
 Address of data: 
 data[50] = 50
 ```
-
-
-
 

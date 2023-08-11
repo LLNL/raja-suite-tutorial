@@ -8,13 +8,13 @@ In `seven.cpp`, we create an allocator for the GPU with:
 auto allocator = rm.getAllocator("DEVICE");
 ```
 
-and a separete allocator on the CPU with:
+and a separate allocator on the CPU with:
 
 ```
   auto host_allocator = rm.getAllocator("HOST");
 ```
 
-We will inialize the data on the CPU, but we want to do computations on
+We will initialize the data on the CPU, but we want to do computations on
 the GPU. Therefore, we have to take advantage of some Umpire "Operators".
 
 Umpire provides a number of operations implemented as methods on the
