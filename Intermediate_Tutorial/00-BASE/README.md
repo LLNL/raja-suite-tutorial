@@ -1,6 +1,6 @@
-=================================
-Fractal Tutorial - Base Execution
-=================================
+===============================================
+Fractal Tutorial - Base (Sequential) Execution
+===============================================
 
 This file has no exercises but it
 is used as a base reference implementation.
