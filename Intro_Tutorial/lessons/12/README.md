@@ -9,7 +9,7 @@ For more information and tutorial examples, please see the RAJA and Umpire docum
 - https://umpire.readthedocs.io/en/develop/
 
 You can now move on to the Intermediate level RAJA tutorial for more practice
-using common RAJA features. Start on `01_SEQ` and move your way up to `04_LAUNCH`.
+using common RAJA features. Start on `00_BASE` and move your way up to `04_LAUNCH`.
 
 In the future, we will continue to expand this tutorial with more lessons, so
 feel free to star the repository and check back later. You can also reach out to
