@@ -2,11 +2,6 @@
 Fractal Tutorial - HIP Execution
 =================================
 
-Before starting, be sure to study the CUDA/HIP implementations in the 02-CUDA and 
-03-HIP directories before continuing. It is important to note:
- * Read-only, write-only, and read-write variables used in the main computation
- * The main data structure that holds the values of the fractal pixels
- * Any data dependencies, if any, throughout the computation of the pixels
 
 A notable difference between launch and other RAJA API's is the support for run-time
 backend selection. 
