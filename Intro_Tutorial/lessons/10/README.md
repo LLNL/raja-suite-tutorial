@@ -42,9 +42,9 @@ using KJI_EXECPOL = RAJA::KernelPolicy<
 Where the IRange, JRange, and KRange are simply defined like:
 
 ```
-RAJA::TypedRangeSegment<int> KRange(0, N);
-RAJA::TypedRangeSegment<int> JRange(0, N);
-RAJA::TypedRangeSegment<int> IRange(0, N);
+RAJA::TypedRangeSegment<int> KRange(0, kmax);
+RAJA::TypedRangeSegment<int> JRange(0, jmax);
+RAJA::TypedRangeSegment<int> IRange(0, imax);
 ```
 
 Take a look at the RAJA documentation for a detailed explanation of the
