@@ -1,13 +1,16 @@
 =================================
-Fractal Tutorial - HIP Execution
+Fractal Tutorial - LAUNCH Execution
 =================================
 
+The RAJA launch API introduces the concept of an execution space enabling
+developers to express algorithms in terms of nested RAJA::loops. As the kernel
+execution space is exposed to developers, static shared memory is avaible when
+using the CUDA/HIP backends. The launch abstraction also takes a more explicit
+approach in configuring device compute grid parameters. Finally, RAJA launch
+can take both a host and device execution policy enabling run-time dispatch selection.
 
-A notable difference between launch and other RAJA API's is the support for run-time
-backend selection. 
-
-Look for the `TODO` comments in the source code. Here you will have to choose 
- RAJA host and device policies for the launch. 
+Look for the `TODO` comments in the source code. The main task here is to select
+a host and device policy for the launch configuration and loop function.
 
 A complete description of the different policies is available in the online RAJA
 documentation:
