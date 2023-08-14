@@ -22,6 +22,8 @@ The `seq_exec` policy is a good first step because it allows us to get a sense o
 performance using serial nested seqs. From here, we have a good baseline to compare against
 when transitioning to CUDA, HIP, etc. 
 
+To run the code compile and run via:
+
 ```
 $ make fractal-ex1-RAJA-seq
 $ ./bin/fractal-ex1-RAJA-seq
