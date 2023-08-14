@@ -37,13 +37,13 @@ int main(int argc, char *argv[])
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  /* TODO: Create the "cnt" array to store the pixels and allocate space for it on CPU using pinned memory */
-  unsigned char *cnt;
-  hipHostMalloc((void**)&cnt, (width * width * sizeof(unsigned char)), hipHostRegisterDefault);
-
-  /* TODO: Create the "d_cnt" array to store pixels on the GPU and allocate space for it on the GPU */
-  unsigned char *d_cnt;
-  hipMalloc((void**)&d_cnt, width * width * sizeof(unsigned char));
+  //TODO: Create an Umpire QuickPool allocator with pinned memory that will hold the
+  //pixels of the fractal image.
+  auto& rm = umpire::ResourceManager::getInstance();
+  unsigned char *cnt{nullptr};
+  auto allocator = rm.getAllocator("PINNED");
+  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
+  cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
   /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a hip kernel with one outer loop 
    * and one inner loop. Only the inner for loop will be calculating pixels. 
@@ -68,7 +68,6 @@ int main(int argc, char *argv[])
         RAJA::make_tuple(RAJA::TypedRangeSegment<int>(0, width),
                          RAJA::TypedRangeSegment<int>(0, width)),
         [=] RAJA_DEVICE (int row, int col) {
-    //Remember, RAJA takes care of finding the global thread ID, so just index into the image like normal
     double x2, y2, x, y, cx, cy;
     int depth;
 
@@ -100,7 +99,6 @@ int main(int argc, char *argv[])
   }
 
   /* TODO: Free the memory we allocated. */
-  hipHostFree(cnt);
-  hipFree(d_cnt);
+  pool.deallocate(cnt);
   return 0;
 }

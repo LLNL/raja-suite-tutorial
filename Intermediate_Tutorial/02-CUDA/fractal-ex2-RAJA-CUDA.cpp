@@ -41,11 +41,13 @@ int main(int argc, char *argv[])
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  unsigned char *cnt;
-  cudaHostAlloc((void**)&cnt, (width * width * sizeof(unsigned char)), cudaHostAllocDefault);
-
-  unsigned char *d_cnt;
-  cudaMalloc((void**)&d_cnt, width * width * sizeof(unsigned char));
+  //TODO: Create an Umpire QuickPool allocator with pinned memory that will hold the
+  //pixels of the fractal image.
+  auto& rm = umpire::ResourceManager::getInstance();
+  unsigned char *cnt{nullptr};
+  auto allocator = rm.getAllocator("???");
+  auto pool = ???
+  cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
   /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a cuda kernel with one outer loop
    * and one inner loop. Only the inner for loop will be calculating pixels.
@@ -89,16 +91,13 @@ int main(int argc, char *argv[])
 
   printf("compute time: %.8f s\n", end.tv_sec + end.tv_usec / 1000000.0 - start.tv_sec - start.tv_usec / 1000000.0);
 
-  cudaMemcpyAsync(cnt, d_cnt, width * width * sizeof(unsigned char), cudaMemcpyDeviceToHost);
-
   /* verify result by writing it to a file */
   if (width <= 2048) {
     wbmp.WriteBMP(width, width, cnt, "fractal.bmp");
   }
 
-  cudaFreeHost(cnt);
-  cudaFree(d_cnt);
-
+  //TODO: Use the Umpire pooled allocator to deallocate the memory.
+  pool.deallocate(cnt);
 #endif
 
   return 0;

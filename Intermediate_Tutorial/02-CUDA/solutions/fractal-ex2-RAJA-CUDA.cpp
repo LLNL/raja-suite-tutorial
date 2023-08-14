@@ -37,13 +37,13 @@ int main(int argc, char *argv[])
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  /* TODO: Create the "cnt" array to store the pixels and allocate space for it on CPU using pinned memory */
-  unsigned char *cnt;
-  cudaHostAlloc((void**)&cnt, (width * width * sizeof(unsigned char)), cudaHostAllocDefault);
-
-  /* TODO: Create the "d_cnt" array to store pixels on the GPU and allocate space for it on the GPU */
-  unsigned char *d_cnt;
-  cudaMalloc((void**)&d_cnt, width * width * sizeof(unsigned char));
+  //TODO: Create an Umpire QuickPool allocator with pinned memory that will hold the
+  //pixels of the fractal image.
+  auto& rm = umpire::ResourceManager::getInstance();
+  unsigned char *cnt{nullptr};
+  auto allocator = rm.getAllocator("PINNED");
+  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
+  cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
   /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a cuda kernel with one outer loop 
    * and one inner loop. Only the inner for loop will be calculating pixels. 
@@ -91,16 +91,11 @@ int main(int argc, char *argv[])
 
   printf("compute time: %.8f s\n", end.tv_sec + end.tv_usec / 1000000.0 - start.tv_sec - start.tv_usec / 1000000.0);
 
-  /* TODO: In order to create a bmp image, we need to copy the completed fractal to the Host memory space */
-  cudaMemcpyAsync(cnt, d_cnt, width * width * sizeof(unsigned char), cudaMemcpyDeviceToHost);
-
   /* verify result by writing it to a file */
   if (width <= 2048) {
     wbmp.WriteBMP(width, width, cnt, "fractal.bmp");
   }
 
-  /* TODO: Free the memory we allocated. */
-  cudaFreeHost(cnt);
-  cudaFree(d_cnt);
+  pool.deallocate(cnt);
   return 0;
 }

@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};
-  auto allocator = rm.getAllocator("UM");
+  auto allocator = rm.getAllocator("PINNED");
   auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
   cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 

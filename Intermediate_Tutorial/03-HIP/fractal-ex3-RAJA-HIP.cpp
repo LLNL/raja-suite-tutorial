@@ -41,11 +41,13 @@ int main(int argc, char *argv[])
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  unsigned char *cnt;
-  hipHostAlloc((void**)&cnt, (width * width * sizeof(unsigned char)), hipHostAllocDefault);
-
-  unsigned char *d_cnt;
-  hipMalloc((void**)&d_cnt, width * width * sizeof(unsigned char));
+  //TODO: Create an Umpire QuickPool allocator with pinned memory that will hold the
+  //pixels of the fractal image.
+  auto& rm = umpire::ResourceManager::getInstance();
+  unsigned char *cnt{nullptr};
+  auto allocator = rm.getAllocator("PINNED");
+  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
+  cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
   /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a hip kernel with one outer loop
    * and one inner loop. Only the inner for loop will be calculating pixels.
@@ -89,15 +91,12 @@ int main(int argc, char *argv[])
 
   printf("compute time: %.8f s\n", end.tv_sec + end.tv_usec / 1000000.0 - start.tv_sec - start.tv_usec / 1000000.0);
 
-  hipMemcpyAsync(cnt, d_cnt, width * width * sizeof(unsigned char), hipMemcpyDeviceToHost);
-
   /* verify result by writing it to a file */
   if (width <= 2048) {
     wbmp.WriteBMP(width, width, cnt, "fractal.bmp");
   }
 
-  hipFreeHost(cnt);
-  hipFree(d_cnt);
+  pool.deallocate(cnt);
 
 #endif
 
