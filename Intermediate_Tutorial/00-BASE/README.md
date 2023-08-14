@@ -15,8 +15,8 @@ $ make fractal-ex0-c-loop
 $ ./bin/fractal-ex0-c-loop
 ```
 
-Before starting, be sure to study the seq-exec implementation of the fractal
-before continuing. It is important to note:
+Before starting, be sure to study the seq-exec implementation of the fractal. 
+It is important to note:
  * Read-only, write-only, and read-write variables used in the main computation
  * The main data structure that holds the values of the fractal pixels
  * Any data dependencies, if any, throughout the computation of the pixels
