@@ -11,6 +11,7 @@
 #define yMin 0.11321
 #define yMax 0.11899
 
+//TODO: uncomment this out in order to build!
 // #define COMPILE
 
 int main(int argc, char *argv[])
