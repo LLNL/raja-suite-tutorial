@@ -11,7 +11,6 @@ int main()
   double* b{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
-  // TODO: allocate with device unified memory
   auto allocator = rm.getAllocator("UM");
 
   a = static_cast<double*>(allocator.allocate(N*sizeof(double)));
@@ -38,4 +37,6 @@ int main()
 
   allocator.deallocate(a);
   allocator.deallocate(b);
+
+  return 0;
 }

@@ -25,8 +25,6 @@ int main()
     }
   );
 
-  // TODO: use a reduction to calculate and output the dotproduct of a and b
-
   std::cout << "dot product is "<< dot << std::endl;
 
   allocator.deallocate(a);

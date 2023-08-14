@@ -23,9 +23,14 @@ The Allocator class provides methods for allocating and deallocating memory. You
 can view these methods in the Umpire source code documentation here:
 https://umpire.readthedocs.io/en/develop/doxygen/html/classumpire_1_1Allocator.html
 
+To use an Umpire allocator, use the following code, replacing "size in bytes" with
+the desired size for your allocation:
+
 ```
 void* memory = allocator.allocate(size in bytes);
 ```
+
+Don't forget to deallocate your memory afterwards!
 
 For more details, you can check out the Umpire documentation:
 https://umpire.readthedocs.io/en/develop/sphinx/tutorial/allocators.html

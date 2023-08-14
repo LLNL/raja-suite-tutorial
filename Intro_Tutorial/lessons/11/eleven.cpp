@@ -4,6 +4,7 @@
 #include "umpire/Umpire.hpp"
 #include "umpire/strategy/QuickPool.hpp"
 
+//TODO: uncomment this out in order to build!
 //#define COMPILE
 
 int main()
@@ -17,7 +18,9 @@ int main()
 
   auto& rm = umpire::ResourceManager::getInstance();
 
-  auto allocator = rm.getAllocator("UM");
+  //TODO: Use a memory resource that allows you to access memory from both host
+  //TODO: and device
+  auto allocator = rm.getAllocator("????");
   auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("POOL", allocator);
 
   a = static_cast<double *>(pool.allocate(N*N*sizeof(double)));
@@ -33,17 +36,19 @@ int main()
   RAJA::TypedRangeSegment<int> row_range(0, N);
   RAJA::TypedRangeSegment<int> col_range(0, N);
 
- // TODO: convert EXEC_POL to use CUDA
+ // TODO: Create a EXEC_POL that uses CUDA
 
 
+  //TODO: Uncomment out RAJA_DEVICE so that the kernel knows where to run
   RAJA::kernel<EXEC_POL>(RAJA::make_tuple(col_range, row_range),
-    [=] RAJA_DEVICE (int col, int row) {
+    [=] /*RAJA_DEVICE*/ (int col, int row) {
       A(row, col) = row;
       B(row, col) = col;
    });
 
+  //TODO: Uncomment out RAJA_DEVICE so that the kernel knows where to run
   RAJA::kernel<EXEC_POL>(RAJA::make_tuple(col_range, row_range),
-    [=] RAJA_DEVICE (int col, int row) {
+    [=] /*RAJA_DEVICE*/ (int col, int row) {
 
     double dot = 0.0;
     for (int k = 0; k < N; ++k) {
