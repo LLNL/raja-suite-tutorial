@@ -3,7 +3,7 @@ Fractal Tutorial - Base Execution
 =================================
 
 This file has no exercises but it
-is used a base reference implementation.
+is used as a base reference implementation.
 
 Use the code to compare implementations
 between the RAJA kernel and launch abstractions.
