@@ -21,4 +21,4 @@ It is important to note:
  * The main data structure that holds the values of the fractal pixels
  * Any data dependencies, if any, throughout the computation of the pixels
 
-Also note that this is a serial implementation. Timing information will be output to the screen. As we add RAJA and Umpire, it will be interesting to see how performance improves.
+Also note that this is a sequential implementation. Timing information will be output to the screen. As we add RAJA and Umpire, it will be interesting to see how performance improves.
