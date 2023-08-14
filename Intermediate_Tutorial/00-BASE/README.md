@@ -8,7 +8,7 @@ is used as a base reference implementation.
 Use the code to compare implementations
 between the RAJA kernel and launch abstractions.
 
-To run the code compile and run via:
+Compile and run the code:
 
 ```
 $ make fractal-ex0-c-loop
