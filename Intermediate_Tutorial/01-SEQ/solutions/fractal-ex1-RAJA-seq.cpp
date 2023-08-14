@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  //TODO: Create an Umpire QuickPool allocator with host that will hold the
+  //TODO: Create an Umpire QuickPool allocator with host memory that will hold the
   //pixels of the fractal image.
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};
