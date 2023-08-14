@@ -32,8 +32,6 @@ variable, such as `int`.
 In the file `five.cpp`, follow the instruction in the `TODO` comment to create
 a RAJA Reduction using `seq_exec`. 
 
-BONUS: If you have extra time, try changing the execution policy of the `RAJA::forall`
-which initializes the values of our `a` and `b` arrays to the SIMD execution policy.
 
 Once you have filled in the correct reduction statement, compile and run:
 
