@@ -26,8 +26,7 @@ You will also find that we are adjusting the `RAJA::forall` to now work on the G
 In order for this to happen, we need a few extra things. First, we create a 
 `CUDA_BLOCK_SIZE` variable to tell RAJA how big we want our CUDA blocks to be.
 Since there are 32 threads in a warp, 256 tends to be a good value for a block size.
-Other sizes will work too, such as 128 or 512. Typically, this value works well
-at 256, but other values could also work well. This just depends on your GPU.
+Other sizes will work too, such as 128 or 512. This just depends on your GPU.
 
 Additionally, the `RAJA::forall` needs the CUDA execution policy. More on GPU
 execution policies can be found here: https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/policies.html#gpu-policies-for-cuda-and-hip
