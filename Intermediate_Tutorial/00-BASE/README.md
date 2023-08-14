@@ -1,8 +1,21 @@
 =================================
-Fractal Tutorial - LOOP Execution
+Fractal Tutorial - Base Execution
 =================================
 
-Before starting, be sure to study the loop-exec implementation of the fractal 
+This file has no exercises but it
+is used a base reference implementation.
+
+Use the code to compare implementations
+between the RAJA kernel and launch abstractions.
+
+To run the code compile and run via:
+
+```
+$ make fractal-ex0-c-loop
+$ ./bin/fractal-ex0-c-loop
+```
+
+Before starting, be sure to study the seq-exec implementation of the fractal
 before continuing. It is important to note:
  * Read-only, write-only, and read-write variables used in the main computation
  * The main data structure that holds the values of the fractal pixels
@@ -15,5 +28,5 @@ complete the appropriate `RAJA::Kernel` statement using the `RAJA::seq_exec` exe
 policy.
 
 The `seq_exec` policy is a good first step because it allows us to get a sense of the
-performance using serial nested loops. From here, we have a good baseline to compare against
-when transitioning to CUDA, HIP, etc. 
+performance using serial nested seqs. From here, we have a good baseline to compare against
+when transitioning to CUDA, HIP, etc.

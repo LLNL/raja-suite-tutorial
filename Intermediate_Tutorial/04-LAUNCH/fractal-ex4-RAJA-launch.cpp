@@ -46,8 +46,6 @@ int main(int argc, char *argv[])
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  //TODO: Create an Umpire QuickPool allocator with Unified Memory that will hold the
-  // pixels of the fractal image.
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};
   auto allocator = rm.getAllocator("UM");
@@ -55,37 +53,25 @@ int main(int argc, char *argv[])
   cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
   //TODO: Create a RAJA launch policy for the host and device
+  using launch_policy = RAJA::LaunchPolicy</* host launch policy */, /* device launch policies */>;
 
-  using host_launch =
 
-#if defined(RAJA_ENABLE_CUDA)
-  using device_launch =
-#elif defined(RAJA_ENABLE_HIP)
-  using device_launch =
-#endif
+  //TODO: create RAJA loop policies for the host and device
+  using col_loop = RAJA::LoopPolicy</*host policy */, /*device policy*/>;
 
-  using launch_policy = RAJA::LaunchPolicy<
-    host_launch
-#if defined(RAJA_GPU_ACTIVE)
-    ,device_launch
-#endif
-    >;
-
-  //RAJA loop policies take a pair of policies enabling run time selection of
-
-  using col_loop = RAJA::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_x>;
-
-  using row_loop = RAJA::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_y>;
+  using row_loop = RAJA::LoopPolicy</*host policy */, /*device policy*/>;
 
   /* start time */
   gettimeofday(&start, NULL);
 
-  constexpr int block_sz = 16;
-  int n_blocks = (width + block_sz - 1) / block_sz + 1;
+  //Calculate number of blocks
+  constexpr int team_sz = 16;
+  int n_teams = (width + team_sz - 1) / team_sz + 1;
 
+  //Teams are akin to to CUDA/HIP blocks
   RAJA::launch<launch_policy>
-    (select_cpu_or_gpu, RAJA::LaunchParams(RAJA::Teams(n_blocks, n_blocks),
-                                           RAJA::Threads(block_sz, block_sz)),
+    (select_cpu_or_gpu, RAJA::LaunchParams(RAJA::Teams(n_teams, n_teams),
+                                           RAJA::Threads(team_sz, team_sz)),
      [=] RAJA_HOST_DEVICE (RAJA::LaunchContext ctx) {
 
       RAJA::loop<col_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int col) {
@@ -122,8 +108,7 @@ int main(int argc, char *argv[])
     wbmp.WriteBMP(width, width, cnt, "fractal.bmp");
   }
 
-  //TODO: Use the Umpire pooled allocator to deallocate the memory.
-
+  pool.deallocate(cnt);
 #endif
   return 0;
 }
