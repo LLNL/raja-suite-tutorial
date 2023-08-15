@@ -8,7 +8,7 @@ Texas State University. You can find more here: https://userweb.cs.txstate.edu/~
 
 In the "extras" directories, there are a few other RAJA implementations such
 as OpenMP and even a native CUDA implementation just for comparison. You can reference
-these implementation to study the differences in implementation and runtime comparison.
+these implementations to study the differences in implementation and runtime comparison.
 However, anything beyond that is outside the scope of this tutorial.
 
 In the following lessons, you will compare RAJA implementations of the fractal generating code. 
