@@ -2,8 +2,8 @@
 Fractal Tutorial - SEQ Execution
 =================================
 
-Before starting, be sure to study the base implementation in the 00-BASE directory 
-before continuing. It is important to note:
+Before starting, be sure to study the base implementation in the 00-BASE directory.
+Remember, it is important to note:
  * Read-only, write-only, and read-write variables used in the main computation
  * The main data structure that holds the values of the fractal pixels
  * Any data dependencies, if any, throughout the computation of the pixels
@@ -19,8 +19,9 @@ documentation:
 https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/policies.html#raja-loop-kernel-execution-policies
 
 The `seq_exec` policy is a good first step because it allows us to get a sense of the
-performance using serial nested seqs. From here, we have a good baseline to compare against
-when transitioning to CUDA, HIP, etc. 
+performance using serial nested seqs with RAJA. 
+From here, we have a good baseline to compare against when transitioning to 
+CUDA, HIP, etc. 
 
 To run the code compile and run via:
 

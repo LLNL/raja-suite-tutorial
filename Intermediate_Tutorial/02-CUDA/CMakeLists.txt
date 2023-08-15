@@ -11,5 +11,3 @@ if (ENABLE_CUDA)
     SOURCES fractal-ex2-RAJA-CUDA.cpp
     DEPENDS_ON cuda writeBMP umpire RAJA)
 endif()
-
-add_subdirectory(solutions)
