@@ -11,6 +11,7 @@
 #define yMin 0.11321
 #define yMax 0.11899
 
+//TODO: uncomment this out in order to build!
 // #define COMPILE
 
 int main(int argc, char *argv[])
@@ -33,7 +34,7 @@ int main(int argc, char *argv[])
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  //TODO: Create an Umpire QuickPool allocator with Unified Memory that will hold the
+  //TODO: Create an Umpire QuickPool allocator with host memory that will hold the
   //pixels of the fractal image.
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};

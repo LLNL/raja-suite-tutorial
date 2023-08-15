@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: (BSD-3-Clause)
 ###############################################################################
 
+add_subdirectory(00-BASE)
+
 add_subdirectory(01-SEQ)
 
 if(RAJA_ENABLE_CUDA)

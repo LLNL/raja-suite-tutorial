@@ -6,14 +6,10 @@ This tutorial includes several implementations of a Mandelbrot set Fractal code.
 The code originated from Dr. Martin Burtscher of the Efficient Computing Lab at
 Texas State University. You can find more here: https://userweb.cs.txstate.edu/~burtscher/research.html
 
-The tutorial first starts with a RAJA loop-exec policy implementation of the fractal code. 
-From there, we learn how to use RAJA-CUDA and RAJA-HIP execution policies. 
-The final lessons include a more complex fractal implementation that includes
-RAJA-TEAMS.
-
 In the "extras" directories, there are a few other RAJA implementations such 
 as OpenMP and even a native CUDA implementation just for comparison. You can reference
 these implementation to study the differences in implementation and runtime comparison.
+However, anything beyond that is outside the scope of this tutorial.
 
 To start, let's build the tutorial within a newly created, empty `build` directory located
 in the `raja-suite-tutorial` repo:: 
@@ -37,4 +33,4 @@ Currently, there is an `if` statement that makes sure the `writeBMP` function
 is only called for smaller fractal runs (of width <= 2048). You can edit this `if` statement, but be careful because trying
 to write a .bmp file that is too large will take a very long time.
 
-Continue on to the first lesson located in the `LOOP` directory.
+Continue on to the first lesson located in the `00-BASE` directory.

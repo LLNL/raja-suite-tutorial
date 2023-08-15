@@ -11,5 +11,3 @@ if (ENABLE_HIP)
     SOURCES fractal-ex3-RAJA-HIP.cpp
     DEPENDS_ON blt::hip RAJA umpire writeBMP)
 endif()
-
-add_subdirectory(solutions)

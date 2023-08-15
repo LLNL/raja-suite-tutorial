@@ -16,11 +16,15 @@
 #define yMin 0.11321
 #define yMax 0.11899
 
-/* TODO: create a variable called "THREADS" to be used when calling the kernel*/
 #define THREADS 512
+
+//TODO: uncomment this out in order to build!
+// #define COMPILE
 
 int main(int argc, char *argv[])
 {
+#if defined(COMPILE)
+
   double dx, dy;
   int width;
   const int maxdepth = 256;
@@ -37,21 +41,21 @@ int main(int argc, char *argv[])
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  /* TODO: Create the "cnt" array to store the pixels and allocate space for it on CPU using pinned memory */
-  unsigned char *cnt;
-  cudaHostMalloc((void**)&cnt, (width * width * sizeof(unsigned char)), cudaHostRegisterDefault);
+  //TODO: Create an Umpire QuickPool allocator with pinned memory that will hold the
+  //pixels of the fractal image.
+  auto& rm = umpire::ResourceManager::getInstance();
+  unsigned char *cnt{nullptr};
+  auto allocator = rm.getAllocator("PINNED");
+  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
+  cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
-  /* TODO: Create the "d_cnt" array to store pixels on the GPU and allocate space for it on the GPU */
-  unsigned char *d_cnt;
-  cudaMalloc((void**)&d_cnt, width * width * sizeof(unsigned char));
-
-  /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a cuda kernel with one outer loop
+  /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a hip kernel with one outer loop
    * and one inner loop. Only the inner for loop will be calculating pixels.
    */
   using KERNEL_POLICY = RAJA::KernelPolicy<
-    RAJA::statement::CudaKernel<
-      RAJA::statement::For<1, RAJA::cuda_block_x_loop,
-        RAJA::statement::For<0, RAJA::cuda_thread_x_loop,
+    RAJA::statement::HipKernel<
+      RAJA::statement::For<1, /* HIP policy */
+        RAJA::statement::For<0, /* HIP policy */
           RAJA::statement::Lambda<0>
         >
       >
@@ -60,15 +64,11 @@ int main(int argc, char *argv[])
 
   /* compute fractal */
   gettimeofday(&start, NULL);
-  /* TODO: Add a RAJA::Kernel which takes the KERNEL_POLICY you just created above.
-   * It should take range segments that go the same range as our for-loops from before.
-   * The iterators inside the kernel body will describe the row and col of the image.
-   */
+
   RAJA::kernel<KERNEL_POLICY>(
         RAJA::make_tuple(RAJA::TypedRangeSegment<int>(0, width),
                          RAJA::TypedRangeSegment<int>(0, width)),
         [=] RAJA_DEVICE (int row, int col) {
-    //Remember, RAJA takes care of finding the global thread ID, so just index into the image like normal
     double x2, y2, x, y, cx, cy;
     int depth;
 
@@ -91,16 +91,14 @@ int main(int argc, char *argv[])
 
   printf("compute time: %.8f s\n", end.tv_sec + end.tv_usec / 1000000.0 - start.tv_sec - start.tv_usec / 1000000.0);
 
-  /* TODO: In order to create a bmp image, we need to copy the completed fractal to the Host memory space */
-  cudaMemcpyAsync(cnt, d_cnt, width * width * sizeof(unsigned char), cudaMemcpyDeviceToHost);
-
   /* verify result by writing it to a file */
   if (width <= 2048) {
     wbmp.WriteBMP(width, width, cnt, "fractal.bmp");
   }
 
-  /* TODO: Free the memory we allocated. */
-  cudaHostFree(cnt);
-  cudaFree(d_cnt);
+  pool.deallocate(cnt);
+
+#endif
+
   return 0;
 }

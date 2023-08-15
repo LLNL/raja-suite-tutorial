@@ -37,21 +37,21 @@ int main(int argc, char *argv[])
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  /* TODO: Create the "cnt" array to store the pixels and allocate space for it on CPU using pinned memory */
-  unsigned char *cnt;
-  cudaHostAlloc((void**)&cnt, (width * width * sizeof(unsigned char)), cudaHostAllocDefault);
+  //TODO: Create an Umpire QuickPool allocator with pinned memory that will hold the
+  //pixels of the fractal image.
+  auto& rm = umpire::ResourceManager::getInstance();
+  unsigned char *cnt{nullptr};
+  auto allocator = rm.getAllocator("PINNED");
+  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
+  cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
-  /* TODO: Create the "d_cnt" array to store pixels on the GPU and allocate space for it on the GPU */
-  unsigned char *d_cnt;
-  cudaMalloc((void**)&d_cnt, width * width * sizeof(unsigned char));
-
-  /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a cuda kernel with one outer loop 
+  /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a hip kernel with one outer loop 
    * and one inner loop. Only the inner for loop will be calculating pixels. 
    */
   using KERNEL_POLICY = RAJA::KernelPolicy<
-    RAJA::statement::CudaKernel<
-      RAJA::statement::For<1, RAJA::cuda_block_x_loop,
-        RAJA::statement::For<0, RAJA::cuda_thread_x_loop,
+    RAJA::statement::HipKernel<
+      RAJA::statement::For<1, RAJA::hip_block_x_loop,
+        RAJA::statement::For<0, RAJA::hip_thread_x_loop,
           RAJA::statement::Lambda<0>
         >
       > 
@@ -68,7 +68,6 @@ int main(int argc, char *argv[])
         RAJA::make_tuple(RAJA::TypedRangeSegment<int>(0, width),
                          RAJA::TypedRangeSegment<int>(0, width)),
         [=] RAJA_DEVICE (int row, int col) {
-    //Remember, RAJA takes care of finding the global thread ID, so just index into the image like normal
     double x2, y2, x, y, cx, cy;
     int depth;
 
@@ -92,7 +91,7 @@ int main(int argc, char *argv[])
   printf("compute time: %.8f s\n", end.tv_sec + end.tv_usec / 1000000.0 - start.tv_sec - start.tv_usec / 1000000.0);
 
   /* TODO: In order to create a bmp image, we need to copy the completed fractal to the Host memory space */
-  cudaMemcpyAsync(cnt, d_cnt, width * width * sizeof(unsigned char), cudaMemcpyDeviceToHost);
+  hipMemcpyAsync(cnt, d_cnt, width * width * sizeof(unsigned char), hipMemcpyDeviceToHost);
 
   /* verify result by writing it to a file */
   if (width <= 2048) {
@@ -100,7 +99,6 @@ int main(int argc, char *argv[])
   }
 
   /* TODO: Free the memory we allocated. */
-  cudaFreeHost(cnt);
-  cudaFree(d_cnt);
+  pool.deallocate(cnt);
   return 0;
 }

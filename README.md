@@ -8,8 +8,8 @@ advanced (i.e. Intermediate) tutorial meant for those who would like more
 hands-on instruction for RAJA. We would suggest starting with the Intro 
 tutorial and then moving on to the Intermediate tutorial.
 
-If you would like to build locally, be sure to do the following 
-to build and run the tutorials:
+If you are running on an LC machine and would like to build locally, 
+be sure to do the following to build and run the tutorials:
 ```
 module load cmake/3.20.2
 module load gcc/8.3.1
