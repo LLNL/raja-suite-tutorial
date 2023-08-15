@@ -23,7 +23,7 @@ This newly created `pool` is an `umpire::Allocator` using the `QuickPool` strate
 in: (1) the name we would like the pool to have, and (2) the allocator we previously created with the `ResourceManager` (see line 17 in the
 file `eight.cpp`).
 
-There are other arguments that could be passed to the pool constructor if needed. See the documentation page for more: https://umpire.readthedocs.io/en/develop/doxygen/html/index.html
+There are other arguments that could be passed to the pool constructor if needed. These additional option arguments are a bit advanced and are beyond the scope of this tutorial. However, you can visit the documentation page for more: https://umpire.readthedocs.io/en/develop/doxygen/html/index.html
 
 When you have created your QuickPool allocator, uncomment the COMPILE define on line 7;
 then compile and run the code:

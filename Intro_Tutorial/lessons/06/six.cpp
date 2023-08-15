@@ -3,10 +3,13 @@
 #include "RAJA/RAJA.hpp"
 #include "umpire/Umpire.hpp"
 
+#if defined(COMPILE)
+
 int main()
 {
   constexpr int N{10000};
-  constexpr std::size_t CUDA_BLOCK_SIZE{256};
+  //TODO: Set up a block size value
+  constexpr std::size_t CUDA_BLOCK_SIZE{????};
   double* a{nullptr};
   double* b{nullptr};
 
@@ -17,18 +20,22 @@ int main()
   a = static_cast<double*>(allocator.allocate(N*sizeof(double)));
   b = static_cast<double*>(allocator.allocate(N*sizeof(double)));
 
-  RAJA::forall< RAJA::cuda_exec<CUDA_BLOCK_SIZE> >(
-    RAJA::TypedRangeSegment<int>(0, N), [=] RAJA_DEVICE (int i) {
+  //TODO: fill in the forall statement with the CUDA execution policy
+  //TODO: and its block size argument. Then be sure to use RAJA_DEVICE
+  RAJA::forall<????? <?????> >(
+    RAJA::TypedRangeSegment<int>(0, N), [=] ?????? (int i) {
       a[i] = 1.0;
       b[i] = 1.0;
     }
   );
 
   double dot{0.0};
-  RAJA::ReduceSum<RAJA::cuda_reduce, double> cudot(0.0);
+  //TODO: create a RAJA::ReduceSum with cuda_reduce called "cudot" for the GPU
 
-  RAJA::forall<RAJA::cuda_exec<CUDA_BLOCK_SIZE>>(RAJA::TypedRangeSegment<int>(0, N), 
-    [=] RAJA_DEVICE (int i) { 
+  //TODO: fill in the forall statement with the CUDA execution policy
+  //TODO: and its block size argument. Then be sure to use RAJA_DEVICE
+  RAJA::forall<?????<????>>(RAJA::TypedRangeSegment<int>(0, N), 
+    [=] ???? (int i) { 
     cudot += a[i] * b[i]; 
   });    
 
@@ -38,4 +45,6 @@ int main()
 
   allocator.deallocate(a);
   allocator.deallocate(b);
+#endif
+  return 0;
 }

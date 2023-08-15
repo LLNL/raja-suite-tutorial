@@ -22,8 +22,22 @@ The predefined names can include:
 In this example, you can use the "UM" resource so that the data can be accessed
 by the CPU or GPU.
 
-There is a `TODO` comment in the `six.cpp` exercise file where you 
-can modify the code to allocate GPU memory. When you are done, build 
+You will also find that we are adjusting the `RAJA::forall` to now work on the GPU.
+In order for this to happen, we need a few extra things. First, we create a 
+`CUDA_BLOCK_SIZE` variable to tell RAJA how big we want our CUDA blocks to be.
+Since there are 32 threads in a warp, 256 tends to be a good value for a block size.
+Other sizes will work too, such as 128 or 512. This just depends on your GPU.
+
+Additionally, the `RAJA::forall` needs the CUDA execution policy. More on GPU
+execution policies can be found here: https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/policies.html#gpu-policies-for-cuda-and-hip
+
+The `cuda_exec` policy takes the cuda block size argument we created before
+as a template parameter. Finally, as we are filling in the lambda portion of
+the `RAJA::forall`, we need to specify where it will reside in GPU memory. 
+This can be done directly or by using the `RAJA_DEVICE` macro. 
+
+There are several `TODO` comments in the `six.cpp` exercise file where you 
+can modify the code to work on a GPU. When you are done, build 
 and run the example:
 
 ```
@@ -33,3 +47,8 @@ $ ./bin/six
 
 For more information on Umpire's resources, see our documentation:
 https://umpire.readthedocs.io/en/develop/index.html
+
+You can also read more about RAJA foralls and kernels here:
+https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/add_vectors.html?highlight=RAJA_DEVICE#basic-loop-execution-vector-addition
+and
+https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/dot_product.html#raja-variants

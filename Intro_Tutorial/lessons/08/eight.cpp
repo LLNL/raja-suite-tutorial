@@ -29,7 +29,7 @@ int main()
   a_h = static_cast<double *>(host_allocator.allocate(N*sizeof(double)));
   b_h = static_cast<double *>(host_allocator.allocate(N*sizeof(double)));
 
-  RAJA::forall< RAJA::loop_exec >(
+  RAJA::forall< RAJA::seq_exec >(
     RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
       a_h[i] = 1.0;
       b_h[i] = 1.0;

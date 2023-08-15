@@ -29,8 +29,11 @@ https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/policies.html#r
 The second parameter, the `TYPE` parameter, is just the data type of the 
 variable, such as `int`.
 
-In the file `five.cpp`, follow the instruction in the `TODO` comment. Once 
-you have filled in the correct reduction statement, compile and run:
+In the file `five.cpp`, follow the instruction in the `TODO` comment to create
+a RAJA Reduction using `seq_exec`. 
+
+
+Once you have filled in the correct reduction statement, compile and run:
 
 ```
 $ make five

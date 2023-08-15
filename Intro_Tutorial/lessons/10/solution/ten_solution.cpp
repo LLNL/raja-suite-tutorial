@@ -17,7 +17,7 @@ int main()
   auto& rm = umpire::ResourceManager::getInstance();
 
   auto allocator = rm.getAllocator("HOST");
-  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("POOL", allocator);
+  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("myPOOL", allocator);
 
   a = static_cast<double *>(pool.allocate(N*N*sizeof(double)));
   b = static_cast<double *>(pool.allocate(N*N*sizeof(double)));
@@ -34,8 +34,8 @@ int main()
   // TODO: initialization loop
   using EXEC_POL =
     RAJA::KernelPolicy<
-      RAJA::statement::For<1, RAJA::loop_exec,    // row
-        RAJA::statement::For<0, RAJA::loop_exec,  // col
+      RAJA::statement::For<1, RAJA::seq_exec,    // row
+        RAJA::statement::For<0, RAJA::seq_exec,  // col
           RAJA::statement::Lambda<0>
         >
       >

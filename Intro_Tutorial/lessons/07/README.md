@@ -3,6 +3,20 @@
 In this lesson, you will learn how to use Umpire's operations to copy data
 between CPU and GPU memory in a portable way.
 
+In `seven.cpp`, we create an allocator for the GPU with:
+```  
+auto allocator = rm.getAllocator("DEVICE");
+```
+
+and a separate allocator on the CPU with:
+
+```
+  auto host_allocator = rm.getAllocator("HOST");
+```
+
+We will initialize the data on the CPU, but we want to do computations on
+the GPU. Therefore, we have to take advantage of some Umpire "Operators".
+
 Umpire provides a number of operations implemented as methods on the
 `ResourceManager`. These typically take pointer and size arguments, but you do
 not need to tell Umpire which Allocator each pointer came from. Umpire keeps

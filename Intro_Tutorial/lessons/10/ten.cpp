@@ -22,7 +22,7 @@ int main()
   auto& rm = umpire::ResourceManager::getInstance();
 
   auto allocator = rm.getAllocator("HOST");
-  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("POOL", allocator);
+  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("myPOOL", allocator);
 
   a = static_cast<double *>(pool.allocate(N*N*sizeof(double)));
   b = static_cast<double *>(pool.allocate(N*N*sizeof(double)));
