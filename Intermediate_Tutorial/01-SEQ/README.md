@@ -19,7 +19,7 @@ documentation:
 https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/policies.html#raja-loop-kernel-execution-policies
 
 The `seq_exec` policy is a good first step because it allows us to get a sense of the
-performance using serial nested seqs with RAJA. 
+performance using sequential, nested loops with RAJA. 
 From here, we have a good baseline to compare against when transitioning to 
 CUDA, HIP, etc. 
 
