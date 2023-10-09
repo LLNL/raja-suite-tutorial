@@ -8,7 +8,6 @@
 
 int main()
 {
-
 #if defined(COMPILE)
 
   constexpr int N{1000};
