@@ -21,7 +21,8 @@ blt_add_executable(
     DEPENDS_ON )
 ```
 
-Once you have added the dependencies, you can build and run the lesson as
+Once you have added the dependencies, uncomment out the RAJA and Umpire header
+includes in the source code. Then, you can build and run the lesson as
 before. As a reminder, open the VSCode terminal (Shift + ^ + `), and then 
 move to the build directory: 
 
