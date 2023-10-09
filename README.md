@@ -18,7 +18,7 @@ cmake -DENABLE_CUDA=On -DENABLE_OPENMP=Off -DCMAKE_CUDA_ARCHITECTURES=70 -DCMAKE
 ```
 
 (Note: you need a cmake version greater than 3.19 and you need a more
-recent gcc version which can handle c++14.)
+recent gcc version which can handle c++14. For example, on the Lassen LC machine a cmake command like `cmake -DBLT_CXX_STD=c++14 -DCMAKE_CUDA_ARCHITECTURES=70 -DENABLE_CUDA=On -DCMAKE_CUDA_FLAGS="--expt-extended-lambda" ../` after loading appropriate cmake and gcc modules will work well.)
 
 # License
 
