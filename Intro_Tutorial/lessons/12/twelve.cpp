@@ -6,7 +6,7 @@
 
 int main()
 {
-  constexpr int N{10000};
+  constexpr int N{1000};
   double* a{nullptr};
   double* b{nullptr};
   double* c{nullptr};
