@@ -1,10 +1,5 @@
 #include "RAJA/RAJA.hpp"
 
-#include <iostream>
-
-int main(int RAJA_UNUSED_ARG(argc), char **RAJA_UNUSED_ARG(argv))
-{
-
   // GPU programming models such as CUDA and HIP peform computation
   // on a predefined grid composed of threads and blocks.
   // RAJA provides policies enabling users to utilize different
@@ -53,6 +48,9 @@ int main(int RAJA_UNUSED_ARG(argc), char **RAJA_UNUSED_ARG(argv))
   // and workgroups in the SYCL programming model.
   // Threads are analogous to threads within CUDA/HIP
   // and work-items within the SYCL programming model.
+
+int main(int RAJA_UNUSED_ARG(argc), char **RAJA_UNUSED_ARG(argv))
+{
 
 #if defined(RAJA_ENABLE_CUDA)
 
