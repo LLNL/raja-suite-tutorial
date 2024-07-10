@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: (BSD-3-Clause)
 ###############################################################################
 
-add_subdirectory(00-Kernel-Fusion)
-add_subdirectory(01-GPU-Threads)
-add_subdirectory(02-CAMP-resource)
+blt_add_executable(
+  NAME 02-CAMP-resource
+  SOURCES 02-CAMP-resource.cpp
+  DEPENDS_ON cuda umpire RAJA)
