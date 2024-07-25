@@ -14,16 +14,20 @@ jobs:
 
   build:
 
-    container:
-        image: kitware/cmake:3.23.1
-
     runs-on: ubuntu-latest
+
+    container:
+      image: kitware/cmake:3.23.1
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
         submodules: 'recursive'
+
+    - name: Set up CMake
+      run: |
+        cmake --version
 
     - name: Log into registry ${{ env.REGISTRY }}
       if: github.event_name != 'pull_request'
