@@ -31,7 +31,9 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: build docker image
-      run: docker build --build-arg njobs=2 --file containers/tutorial/Dockerfile --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
+      run: |
+      	   module load cmake/3.23.1
+      	   docker build --build-arg njobs=2 --file containers/tutorial/Dockerfile --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
 
     - name: push docker image
       if: github.event_name != 'pull_request'
