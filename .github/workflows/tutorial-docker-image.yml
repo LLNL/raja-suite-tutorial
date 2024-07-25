@@ -13,10 +13,10 @@ env:
 jobs:
 
   build:
-  
-  container:
-    image: kitware/cmake:3.23.1
-  
+
+    container:
+        image: kitware/cmake:3.23.1
+
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +35,7 @@ jobs:
 
     - name: build docker image
       run: docker build --build-arg njobs=2 --file containers/tutorial/Dockerfile --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
-      
+
     - name: push docker image
       if: github.event_name != 'pull_request'
       run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
