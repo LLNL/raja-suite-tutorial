@@ -8,9 +8,9 @@
 // have the capability of performing device operations
 // concurrently. The RAJA portability suite exposes 
 // concurrent kernel execution through the use of the 
-// CAMP::resources.
+// raja::resources.
 //
-// A CAMP::resources corresponds to device stream in
+// A raja::resources corresponds to device stream in
 // which we may guarantee that device operations will
 // be executed in sequential order. Different streams,
 // however; may operate concurrently. 

@@ -6,6 +6,6 @@
 ###############################################################################
 
 blt_add_executable(
-  NAME 02-CAMP-resource
-  SOURCES 02-CAMP-resource.cpp
+  NAME 02-raja-resource
+  SOURCES 02-raja-resource.cpp
   DEPENDS_ON cuda umpire RAJA)
