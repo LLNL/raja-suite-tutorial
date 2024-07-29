@@ -7,4 +7,4 @@
 
 add_subdirectory(00-Kernel-Fusion)
 add_subdirectory(01-GPU-Threads)
-add_subdirectory(02-CAMP-resource)
+add_subdirectory(02-RAJA-Resources)

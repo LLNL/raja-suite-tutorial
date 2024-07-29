@@ -57,38 +57,11 @@ int main(int RAJA_UNUSED_ARG(argc), char **RAJA_UNUSED_ARG(argv))
   // The examples below showcase commonly used GPU policies.
   // For the HIP and SYCL programming models, we offer analogous policies.
 
-  using launch_policy = RAJA::LaunchPolicy<RAJA::cuda_launch_t<false>>;
+  constexpr bool async = false; //asynchronous kernel execution
 
-  // Example 1. Global Indexing
-  // Main use case: Perfectly nested loops with large iteration spaces.
-  {
-    const int N_x        = 10000;
-    const int N_y        = 20000;
-    const int block_sz   = 256;
-    const int n_blocks_x = (N_x + block_sz) / block_sz + 1;
-    const int n_blocks_y = (N_y + block_sz) / block_sz + 1;
+  using launch_policy = RAJA::LaunchPolicy<RAJA::cuda_launch_t<async>>;
 
-    using global_pol_y = RAJA::LoopPolicy<RAJA::cuda_global_thread_y>;
-    using global_pol_x = RAJA::LoopPolicy<RAJA::cuda_global_thread_x>;
-
-    RAJA::launch<launch_policy>
-      (RAJA::LaunchParams(RAJA::Teams(n_blocks_x, n_blocks_y), RAJA::Threads(block_sz)),
-       [=] RAJA_HOST_DEVICE (RAJA::LaunchContext ctx) {
-
-	RAJA::loop<global_pol_y>(ctx, RAJA::RangeSegment(0, N_y), [&] (int gy) {
-	    RAJA::loop<global_pol_x>(ctx, RAJA::RangeSegment(0, N_x), [&] (int gx) {
-
-		//Do something
-
-	      });
-	  });
-
-      });
-
-  }
-
-
-  // Example 2. Block and thread direct polcies
+  // Example 1a. Block and thread direct polcies
   // Ideal for when iteration space can broken up into tiles
   // Teams can be assigned to a tile and threads can perform
   // computations within the tile
@@ -102,7 +75,6 @@ int main(int RAJA_UNUSED_ARG(argc), char **RAJA_UNUSED_ARG(argv))
   //   const int i = threadIdx.x;
   //   if(i < N) { //kernel }
   //
-
   {
     const int n_blocks = 50000;
     const int block_sz = 64;
@@ -115,22 +87,18 @@ int main(int RAJA_UNUSED_ARG(argc), char **RAJA_UNUSED_ARG(argv))
        [=] RAJA_HOST_DEVICE (RAJA::LaunchContext ctx) {
 
 	RAJA::loop<outer_pol>(ctx, RAJA::RangeSegment(0, n_blocks), [&] (int bx) {
-
-
 	    RAJA::loop<inner_pol>(ctx, RAJA::RangeSegment(0, block_sz), [&] (int tx) {
 
-		//Do something
+		//loop body
 
 	      });
 	  });
-
 
       });
 
   }
 
-
-  // Example 3. Block and thread loop polcies
+  // Example 1b. Block and thread loop polcies
   // Similar to the example above but using a thread loop
   // policy. The utility of the thread loop policy rises when
   // we consider multiple thread loops with varying iteration sizes.
@@ -159,16 +127,44 @@ int main(int RAJA_UNUSED_ARG(argc), char **RAJA_UNUSED_ARG(argv))
 	    //Iteration space is same as number of blocks per thread
 	    //We could also use direct policy here
 	    RAJA::loop<inner_pol>(ctx, RAJA::RangeSegment(0, block_sz), [&] (int tx) {
-		//Do something here
+		//loop body
 	      }); //inner loop
 
 
 	    //Iteration space is *more* than number of blocks per thread
 	    RAJA::loop<inner_pol>(ctx, RAJA::RangeSegment(0, 2*block_sz), [&] (int tx) {
-		//Do something here
+		//loop body
 	      }); //inner loop
 
 	  }); //outer loop
+
+      });
+
+  }
+
+  // Example 1c. Global Indexing
+  // Main use case: Perfectly nested loops with large iteration spaces.
+  {
+    const int N_x        = 10000;
+    const int N_y        = 20000;
+    const int block_sz   = 256;
+    const int n_blocks_x = (N_x + block_sz) / block_sz + 1;
+    const int n_blocks_y = (N_y + block_sz) / block_sz + 1;
+
+    using global_pol_y = RAJA::LoopPolicy<RAJA::cuda_global_thread_y>;
+    using global_pol_x = RAJA::LoopPolicy<RAJA::cuda_global_thread_x>;
+
+    RAJA::launch<launch_policy>
+      (RAJA::LaunchParams(RAJA::Teams(n_blocks_x, n_blocks_y), RAJA::Threads(block_sz)),
+       [=] RAJA_HOST_DEVICE (RAJA::LaunchContext ctx) {
+
+	RAJA::loop<global_pol_y>(ctx, RAJA::RangeSegment(0, N_y), [&] (int gy) {
+	    RAJA::loop<global_pol_x>(ctx, RAJA::RangeSegment(0, N_x), [&] (int gx) {
+
+		//loop body
+
+	      });
+	  });
 
       });
 

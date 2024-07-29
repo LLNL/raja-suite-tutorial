@@ -8,9 +8,9 @@
 // have the capability of performing device operations
 // concurrently. The RAJA portability suite exposes 
 // concurrent kernel execution through the use of the 
-// CAMP::resources.
+// raja::resources.
 //
-// A CAMP::resources corresponds to device stream in
+// A raja::resources corresponds to device stream in
 // which we may guarantee that device operations will
 // be executed in sequential order. Different streams,
 // however; may operate concurrently. 
@@ -45,7 +45,6 @@ int main(int RAJA_UNUSED_ARG(argc), char **RAJA_UNUSED_ARG(argv))
 
   RAJA::RangeSegment one_range(0, 1);
   RAJA::RangeSegment m_range(0, M);
-  RAJA::RangeSegment n_range(0, N);
 
   using launch_policy = RAJA::LaunchPolicy<RAJA::cuda_launch_t<true>>;
 
@@ -65,11 +64,11 @@ int main(int RAJA_UNUSED_ARG(argc), char **RAJA_UNUSED_ARG(argv))
       RAJA::resources::Event e =
         RAJA::launch<launch_policy>(res_cuda,
         RAJA::LaunchParams(RAJA::Teams(64),
-                         RAJA::Threads(1)),
+			   RAJA::Threads(1)), "RAJA resource example",
       [=] RAJA_HOST_DEVICE(RAJA::LaunchContext ctx)  {
 
-       RAJA::loop<teams_x>(ctx, m_range, [&] (int j) {
-         RAJA::loop<threads_x>(ctx, one_range, [&] (int k) {
+       RAJA::loop<outer_pol_x>(ctx, m_range, [&] (int j) {
+         RAJA::loop<inner_pol_x>(ctx, one_range, [&] (int k) {
 
            d_array[i*M + j] = i * M + j;
 
