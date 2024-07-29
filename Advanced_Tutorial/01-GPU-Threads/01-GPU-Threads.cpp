@@ -87,15 +87,12 @@ int main(int RAJA_UNUSED_ARG(argc), char **RAJA_UNUSED_ARG(argv))
        [=] RAJA_HOST_DEVICE (RAJA::LaunchContext ctx) {
 
 	RAJA::loop<outer_pol>(ctx, RAJA::RangeSegment(0, n_blocks), [&] (int bx) {
-
-
 	    RAJA::loop<inner_pol>(ctx, RAJA::RangeSegment(0, block_sz), [&] (int tx) {
 
-		//Do something
+		//loop body
 
 	      });
 	  });
-
 
       });
 
@@ -130,13 +127,13 @@ int main(int RAJA_UNUSED_ARG(argc), char **RAJA_UNUSED_ARG(argv))
 	    //Iteration space is same as number of blocks per thread
 	    //We could also use direct policy here
 	    RAJA::loop<inner_pol>(ctx, RAJA::RangeSegment(0, block_sz), [&] (int tx) {
-		//Do something here
+		//loop body
 	      }); //inner loop
 
 
 	    //Iteration space is *more* than number of blocks per thread
 	    RAJA::loop<inner_pol>(ctx, RAJA::RangeSegment(0, 2*block_sz), [&] (int tx) {
-		//Do something here
+		//loop body
 	      }); //inner loop
 
 	  }); //outer loop
@@ -164,7 +161,7 @@ int main(int RAJA_UNUSED_ARG(argc), char **RAJA_UNUSED_ARG(argv))
 	RAJA::loop<global_pol_y>(ctx, RAJA::RangeSegment(0, N_y), [&] (int gy) {
 	    RAJA::loop<global_pol_x>(ctx, RAJA::RangeSegment(0, N_x), [&] (int gx) {
 
-		//Do something
+		//loop body
 
 	      });
 	  });
