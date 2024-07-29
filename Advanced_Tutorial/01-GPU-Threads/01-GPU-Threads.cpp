@@ -57,7 +57,7 @@ int main(int RAJA_UNUSED_ARG(argc), char **RAJA_UNUSED_ARG(argv))
   // The examples below showcase commonly used GPU policies.
   // For the HIP and SYCL programming models, we offer analogous policies.
 
-  contexpr bool async = false; //asynchronous kernel execution
+  constexpr bool async = false; //asynchronous kernel execution
 
   using launch_policy = RAJA::LaunchPolicy<RAJA::cuda_launch_t<async>>;
 
