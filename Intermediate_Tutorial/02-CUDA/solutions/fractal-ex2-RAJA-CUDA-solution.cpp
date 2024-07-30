@@ -9,6 +9,8 @@
 #include <sys/time.h>
 
 #include "RAJA/RAJA.hpp"
+#include "umpire/Umpire.hpp"
+#include "umpire/strategy/QuickPool.hpp"
 #include "../../tpl/writeBMP.hpp"
 
 #define xMin 0.74395
@@ -17,7 +19,7 @@
 #define yMax 0.11899
 
 /* TODO: create a variable called "THREADS" to be used when calling the kernel*/
-#define THREADS 512 
+#define THREADS 512
 
 int main(int argc, char *argv[])
 {
@@ -41,23 +43,23 @@ int main(int argc, char *argv[])
   //pixels of the fractal image.
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};
-  auto allocator = rm.getAllocator("PINNED");
+  auto allocator = rm.getAllocator("UVM");
   auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
   cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
-  /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a cuda kernel with one outer loop 
-   * and one inner loop. Only the inner for loop will be calculating pixels. 
+  /* TODO: Set up a RAJA::KernelPolicy. The Policy should describe a cuda kernel with one outer loop
+   * and one inner loop. Only the inner for loop will be calculating pixels.
    */
   using KERNEL_POLICY = RAJA::KernelPolicy<
     RAJA::statement::CudaKernel<
-      RAJA::statement::For<1, RAJA::cuda_block_x_loop,
-        RAJA::statement::For<0, RAJA::cuda_thread_x_loop,
+      RAJA::statement::For<1, RAJA::cuda_global_thread_y,
+        RAJA::statement::For<0, RAJA::cuda_global_thread_x,
           RAJA::statement::Lambda<0>
         >
-      > 
+      >
     >
   >;
-  
+
   /* compute fractal */
   gettimeofday(&start, NULL);
   /* TODO: Add a RAJA::Kernel which takes the KERNEL_POLICY you just created above.
@@ -85,7 +87,7 @@ int main(int argc, char *argv[])
         x = x2 - y2 - cx;
         depth--;
       } while ((depth > 0) && ((x2 + y2) <= 5.0));
-      d_cnt[row * width + col] = depth & 255; //Remember to index the image like normal
+      cnt[row * width + col] = depth & 255; //Remember to index the image like normal
   });
   gettimeofday(&end, NULL); //By the time we exit the RAJA::Kernel, host and device are synchronized for us.
 
