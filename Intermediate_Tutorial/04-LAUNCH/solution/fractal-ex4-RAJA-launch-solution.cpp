@@ -42,20 +42,16 @@ int main(int argc, char *argv[])
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  //TODO: Create an Umpire QuickPool allocator with unified memory that will hold the
-  // pixels of the fractal image.
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};
   auto allocator = rm.getAllocator("UM");
   auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
   cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
-  //TODO: Create a RAJA Kernel Policy which uses the loop_exec policy. We want to start
-  //with a normal serial nested loop first before continuing onward.
-
-  constexpr int block_dim = 16;
+  constexpr int team_dim = 16;
   using host_launch = RAJA::seq_launch_t;
 
+  //TODO: create RAJA global thread loop policies for the host and device  
 #if defined(RAJA_ENABLE_CUDA)
   using device_launch = RAJA::cuda_launch_t<false>;
 #endif
@@ -69,24 +65,24 @@ int main(int argc, char *argv[])
 
   using col_loop = RAJA::LoopPolicy<RAJA::loop_exec
 #if defined(RAJA_ENABLE_CUDA)
-                                    ,RAJA::cuda_global_size_y_direct<block_dim>
+                                    ,RAJA::cuda_global_size_y_direct<team_dim>
 #endif
                                     >;
 
   using row_loop = RAJA::LoopPolicy<RAJA::loop_exec
 #if defined(RAJA_ENABLE_CUDA)
-                                    ,RAJA::cuda_global_size_x_direct<block_dim>
+                                    ,RAJA::cuda_global_size_x_direct<team_dim>
 #endif
                                     >;
 
   /* start time */
   gettimeofday(&start, NULL);
 
-  int n_blocks = (width + block_dim-1) / block_dim + 1;
+  int n_teams = (width + team_dim-1) / team_dim + 1;
 
   RAJA::launch<launch_policy>
-    (select_cpu_or_gpu, RAJA::LaunchParams(RAJA::Teams(n_blocks, n_blocks),
-                                           RAJA::Threads(block_dim, block_dim)),
+    (select_cpu_or_gpu, RAJA::LaunchParams(RAJA::Teams(n_teams, n_teams),
+                                           RAJA::Threads(team_dim, team_dim)),
      [=] RAJA_HOST_DEVICE (RAJA::LaunchContext ctx) {
 
       RAJA::loop<col_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int col) {
