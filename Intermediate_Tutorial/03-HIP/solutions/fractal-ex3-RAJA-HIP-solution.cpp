@@ -18,7 +18,6 @@
 #define yMin 0.11321
 #define yMax 0.11899
 
-/* TODO: create a variable called "THREADS" to be used when calling the kernel*/
 #define THREADS 256
 
 int main(int argc, char *argv[])
