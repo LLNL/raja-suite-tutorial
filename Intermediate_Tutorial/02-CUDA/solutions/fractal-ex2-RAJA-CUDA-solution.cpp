@@ -19,7 +19,7 @@
 #define yMax 0.11899
 
 /* TODO: create a variable called "THREADS" to be used when calling the kernel*/
-#define THREADS 512
+#define THREADS 256
 
 int main(int argc, char *argv[])
 {
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
   //pixels of the fractal image.
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};
-  auto allocator = rm.getAllocator("UVM");
+  auto allocator = rm.getAllocator("UM");
   auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
   cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
@@ -51,9 +51,9 @@ int main(int argc, char *argv[])
    * and one inner loop. Only the inner for loop will be calculating pixels.
    */
   using KERNEL_POLICY = RAJA::KernelPolicy<
-    RAJA::statement::CudaKernel<
-      RAJA::statement::For<1, RAJA::cuda_global_thread_y,
-        RAJA::statement::For<0, RAJA::cuda_global_thread_x,
+    RAJA::statement::CudaKernelFixed<THREADS,
+      RAJA::statement::For<1, RAJA::cuda_global_size_y_direct<16>,
+        RAJA::statement::For<0, RAJA::cuda_global_size_x_direct<16>,
           RAJA::statement::Lambda<0>
         >
       >

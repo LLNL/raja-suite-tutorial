@@ -9,6 +9,8 @@
 #include <sys/time.h>
 
 #include "RAJA/RAJA.hpp"
+#include "umpire/Umpire.hpp"
+#include "umpire/strategy/QuickPool.hpp"
 #include "../../tpl/writeBMP.hpp"
 
 #define xMin 0.74395
