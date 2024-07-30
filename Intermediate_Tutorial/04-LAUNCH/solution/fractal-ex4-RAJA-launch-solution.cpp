@@ -42,45 +42,51 @@ int main(int argc, char *argv[])
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  //TODO: Create an Umpire QuickPool allocator with Unified Memory that will hold the
+  //TODO: Create an Umpire QuickPool allocator with unified memory that will hold the
   // pixels of the fractal image.
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};
-  auto allocator = rm.getAllocator("PINNED");
+  auto allocator = rm.getAllocator("UM");
   auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
   cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
   //TODO: Create a RAJA Kernel Policy which uses the loop_exec policy. We want to start
   //with a normal serial nested loop first before continuing onward.
 
+  constexpr int block_dim = 16;
   using host_launch = RAJA::seq_launch_t;
 
 #if defined(RAJA_ENABLE_CUDA)
   using device_launch = RAJA::cuda_launch_t<false>;
-#elif defined(RAJA_ENABLE_HIP)
-  using device_launch = RAJA::hip_launch_t<false>;
 #endif
 
   using launch_policy = RAJA::LaunchPolicy<
     host_launch
-#if defined(RAJA_GPU_ACTIVE)
+#if defined(RAJA_ENABLE_CUDA)
     ,device_launch
 #endif
     >;
 
-  using col_loop = RAJA::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_x>;
+  using col_loop = RAJA::LoopPolicy<RAJA::loop_exec
+#if defined(RAJA_ENABLE_CUDA)
+                                    ,RAJA::cuda_global_size_y_direct<block_dim>
+#endif
+                                    >;
 
-  using row_loop = RAJA::LoopPolicy<RAJA::loop_exec, RAJA::cuda_global_thread_y>;
+  using row_loop = RAJA::LoopPolicy<RAJA::loop_exec
+#if defined(RAJA_ENABLE_CUDA)
+                                    ,RAJA::cuda_global_size_x_direct<block_dim>
+#endif
+                                    >;
 
   /* start time */
   gettimeofday(&start, NULL);
 
-  constexpr int block_sz = 16;
-  int n_blocks = (width + block_sz-1) / block_sz + 1;
+  int n_blocks = (width + block_dim-1) / block_dim + 1;
 
   RAJA::launch<launch_policy>
     (select_cpu_or_gpu, RAJA::LaunchParams(RAJA::Teams(n_blocks, n_blocks),
-                                           RAJA::Threads(block_sz, block_sz)),
+                                           RAJA::Threads(block_dim, block_dim)),
      [=] RAJA_HOST_DEVICE (RAJA::LaunchContext ctx) {
 
       RAJA::loop<col_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int col) {
