@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
   constexpr int team_dim = 16;
   using host_launch = RAJA::seq_launch_t;
 
-  //TODO: create RAJA global thread loop policies for the host and device  
+  //TODO: create RAJA global thread loop policies for the host and device
 #if defined(RAJA_ENABLE_CUDA)
   using device_launch = RAJA::cuda_launch_t<false>;
 #endif
@@ -63,13 +63,13 @@ int main(int argc, char *argv[])
 #endif
     >;
 
-  using col_loop = RAJA::LoopPolicy<RAJA::loop_exec
+  using col_loop = RAJA::LoopPolicy<RAJA::seq_exec
 #if defined(RAJA_ENABLE_CUDA)
                                     ,RAJA::cuda_global_size_y_direct<team_dim>
 #endif
                                     >;
 
-  using row_loop = RAJA::LoopPolicy<RAJA::loop_exec
+  using row_loop = RAJA::LoopPolicy<RAJA::seq_exec
 #if defined(RAJA_ENABLE_CUDA)
                                     ,RAJA::cuda_global_size_x_direct<team_dim>
 #endif
