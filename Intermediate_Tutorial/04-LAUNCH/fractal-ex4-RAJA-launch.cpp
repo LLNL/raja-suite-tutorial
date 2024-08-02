@@ -49,15 +49,18 @@ int main(int argc, char *argv[])
 
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};
-  auto allocator = rm.getAllocator("PINNED");
+  auto allocator = rm.getAllocator("UM");
   auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
   cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
+
+  constexpr int team_dim = 16;
+  using host_launch = RAJA::seq_launch_t;
 
   //TODO: Create a RAJA launch policy for the host and device
   using launch_policy = RAJA::LaunchPolicy</* host launch policy */, /* device launch policies */>;
 
 
-  //TODO: create RAJA loop policies for the host and device
+  //TODO: create RAJA global thread loop policies for the host and device
   using col_loop = RAJA::LoopPolicy</*host policy */, /*device policy*/>;
 
   using row_loop = RAJA::LoopPolicy</*host policy */, /*device policy*/>;
@@ -66,13 +69,12 @@ int main(int argc, char *argv[])
   gettimeofday(&start, NULL);
 
   //Calculate number of blocks
-  constexpr int team_sz = 16;
-  int n_teams = (width + team_sz - 1) / team_sz + 1;
+  int n_teams = (width + team_dim - 1) / team_dim + 1;
 
   //Teams are akin to to CUDA/HIP blocks
   RAJA::launch<launch_policy>
     (select_cpu_or_gpu, RAJA::LaunchParams(RAJA::Teams(n_teams, n_teams),
-                                           RAJA::Threads(team_sz, team_sz)),
+                                           RAJA::Threads(team_dim, team_dim)),
      [=] RAJA_HOST_DEVICE (RAJA::LaunchContext ctx) {
 
       RAJA::loop<col_loop>(ctx, RAJA::RangeSegment(0, width), [&] (int col) {

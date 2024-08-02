@@ -9,6 +9,8 @@
 #include <sys/time.h>
 
 #include "RAJA/RAJA.hpp"
+#include "umpire/Umpire.hpp"
+#include "umpire/strategy/QuickPool.hpp"
 #include "../../tpl/writeBMP.hpp"
 
 #define xMin 0.74395
@@ -16,7 +18,7 @@
 #define yMin 0.11321
 #define yMax 0.11899
 
-#define THREADS 512
+#define THREADS 256
 
 //TODO: uncomment this out in order to build!
 // #define COMPILE
@@ -41,11 +43,11 @@ int main(int argc, char *argv[])
 
   printf("computing %d by %d fractal with a maximum depth of %d\n", width, width, maxdepth);
 
-  //TODO: Create an Umpire QuickPool allocator with pinned memory that will hold the
+  //TODO: Create an Umpire QuickPool allocator with unified memory that will hold the
   //pixels of the fractal image.
   auto& rm = umpire::ResourceManager::getInstance();
   unsigned char *cnt{nullptr};
-  auto allocator = rm.getAllocator("PINNED");
+  auto allocator = rm.getAllocator("UM");
   auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("qpool", allocator);
   cnt = static_cast<unsigned char*>(pool.allocate(width * width * sizeof(unsigned char)));
 
@@ -85,7 +87,7 @@ int main(int argc, char *argv[])
         x = x2 - y2 - cx;
         depth--;
       } while ((depth > 0) && ((x2 + y2) <= 5.0));
-      d_cnt[row * width + col] = depth & 255; //Remember to index the image like normal
+      cnt[row * width + col] = depth & 255; //Remember to index the image like normal
   });
   gettimeofday(&end, NULL); //By the time we exit the RAJA::Kernel, host and device are synchronized for us.
 
