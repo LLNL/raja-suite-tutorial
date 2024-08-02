@@ -16,9 +16,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    container:
-      image: kitware/cmake:3.23.1
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
