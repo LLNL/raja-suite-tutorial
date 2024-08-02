@@ -11,6 +11,7 @@ ARG USER=rajadev
 ENV HOME /home/${USER}
 
 RUN apt-get update && apt-get install -y supervisor
+RUN apt-get install cmake
 RUN useradd --create-home --shell /bin/bash ${USER}
 
 WORKDIR /opt/archives

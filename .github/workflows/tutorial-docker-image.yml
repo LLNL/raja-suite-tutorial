@@ -22,12 +22,6 @@ jobs:
       with:
         submodules: 'recursive'
 
-    - name: Set up CMake
-      run: |
-        sudo apt-get update
-        sudo apt-get install cmake
-        cmake --version
-
     - name: Log into registry ${{ env.REGISTRY }}
       if: github.event_name != 'pull_request'
       uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
