@@ -24,8 +24,8 @@ jobs:
 
     - name: Set up CMake
       run: |
-        apt-get update
-        apt-get install cmake
+        sudo apt-get update
+        sudo apt-get install cmake
         cmake --version
 
     - name: Log into registry ${{ env.REGISTRY }}
