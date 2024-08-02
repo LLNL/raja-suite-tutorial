@@ -12,6 +12,7 @@ ENV HOME /home/${USER}
 
 RUN apt-get update && apt-get install -y supervisor
 RUN apt-get install cmake
+RUN cmake --version
 RUN useradd --create-home --shell /bin/bash ${USER}
 
 WORKDIR /opt/archives
@@ -22,6 +23,7 @@ RUN tar xzf openvscode-server-v1.69.1-linux-x64.tar.gz && chown -R ${USER}:${USE
 USER ${USER}
 
 COPY --chown=rajadev:rajadev . $HOME/tutorial/
+RUN cmake --version
 RUN . /opt/spack/share/spack/setup-env.sh && spack load cuda && mkdir -p ${HOME}/tutorial/build && cd ${HOME}/tutorial/build && \
     cmake -DCMAKE_CXX_COMPILER=g++ -DENABLE_CUDA=On -DBLT_CXX_STD=c++14 -DCMAKE_CUDA_STANDARD=14 -DCMAKE_CUDA_ARCHITECTURES=70 -DCMAKE_CUDA_FLAGS="--expt-extended-lambda" -DENABLE_OPENMP=On .. \
     && make -j RAJA \
