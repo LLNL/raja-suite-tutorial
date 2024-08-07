@@ -10,8 +10,10 @@ FROM ghcr.io/llnl/radiuss:ubuntu-22.04-gcc-13 AS nvcc11
 ARG USER=rajadev
 ENV HOME /home/${USER}
 
-RUN sudo apt-get update && sudo apt-get install -y supervisor
-RUN sudo useradd --create-home --shell /bin/bash ${USER}
+RUN sudo -i
+
+RUN apt-get update && apt-get install -y supervisor
+RUN useradd --create-home --shell /bin/bash ${USER}
 
 WORKDIR /opt/archives
 RUN curl -L https://github.com/gitpod-io/openvscode-server/releases/download/openvscode-server-v1.69.1/openvscode-server-v1.69.1-linux-x64.tar.gz > \
