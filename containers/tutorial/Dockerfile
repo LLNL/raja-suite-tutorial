@@ -5,13 +5,12 @@
 # SPDX-License-Identifier: (BSD-3-Clause)
 ###############################################################################
 
-FROM ghcr.io/rse-ops/cuda-ubuntu-20.04:cuda-11.1.1 AS nvcc11
+FROM ghcr.io/llnl/radiuss:ubuntu-22.04-gcc-13 AS nvcc11
 
 ARG USER=rajadev
 ENV HOME /home/${USER}
 
 RUN apt-get update && apt-get install -y supervisor
-RUN ln -s `which cmake` system_cmake
 RUN useradd --create-home --shell /bin/bash ${USER}
 
 WORKDIR /opt/archives
@@ -22,8 +21,8 @@ RUN tar xzf openvscode-server-v1.69.1-linux-x64.tar.gz && chown -R ${USER}:${USE
 USER ${USER}
 
 COPY --chown=rajadev:rajadev . $HOME/tutorial/
-RUN . /opt/spack/share/spack/setup-env.sh && spack load cuda && mkdir -p ${HOME}/tutorial/build && cd ${HOME}/tutorial/build
-RUN system_cmake -DCMAKE_CXX_COMPILER=g++ -DENABLE_CUDA=On -DBLT_CXX_STD=c++14 -DCMAKE_CUDA_STANDARD=14 -DCMAKE_CUDA_ARCHITECTURES=70 -DCMAKE_CUDA_FLAGS="--expt-extended-lambda" -DENABLE_OPENMP=On .. \
+RUN . /opt/spack/share/spack/setup-env.sh && spack load cuda && mkdir -p ${HOME}/tutorial/build && cd ${HOME}/tutorial/build && \
+    cmake -DCMAKE_CXX_COMPILER=g++ -DENABLE_CUDA=On -DBLT_CXX_STD=c++14 -DCMAKE_CUDA_STANDARD=14 -DCMAKE_CUDA_ARCHITECTURES=70 -DCMAKE_CUDA_FLAGS="--expt-extended-lambda" -DENABLE_OPENMP=On .. \
     && make -j RAJA \
     && make -j umpire
 
