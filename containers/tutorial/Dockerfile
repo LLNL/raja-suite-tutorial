@@ -10,7 +10,7 @@ FROM ghcr.io/llnl/radiuss:ubuntu-22.04-gcc-13 AS nvcc11
 ARG USER=rajadev
 ENV HOME /home/${USER}
 
-RUN apt-get update && apt-get install -y supervisor
+RUN sudo apt-get update && sudo apt-get install -y supervisor
 RUN useradd --create-home --shell /bin/bash ${USER}
 
 WORKDIR /opt/archives
