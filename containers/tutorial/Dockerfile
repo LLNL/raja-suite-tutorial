@@ -21,7 +21,7 @@ RUN sudo tar xzf openvscode-server-v1.69.1-linux-x64.tar.gz && sudo chown -R ${U
 USER ${USER}
 
 COPY --chown=rajadev:rajadev . $HOME/tutorial/
-RUN . /opt/spack/share/spack/setup-env.sh && spack load cuda && mkdir -p ${HOME}/tutorial/build && cd ${HOME}/tutorial/build && \
+RUN  mkdir -p ${HOME}/tutorial/build && cd ${HOME}/tutorial/build && \
     cmake -DCMAKE_CXX_COMPILER=g++ -DENABLE_CUDA=On -DBLT_CXX_STD=c++14 -DCMAKE_CUDA_ARCHITECTURES=70 -DCMAKE_CUDA_FLAGS="--expt-extended-lambda" -DENABLE_OPENMP=On .. \
     && make -j RAJA \
     && make -j umpire
