@@ -25,7 +25,7 @@ int main()
     }
   );
 
-  std::cout << "dot product is "<< dot << std::endl;
+  std::cout << "dot product is "<< dot.get() << std::endl;
 
   allocator.deallocate(a);
   allocator.deallocate(b);
