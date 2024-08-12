@@ -31,9 +31,9 @@ int main()
 
   using EXEC_POL =
       RAJA::KernelPolicy<
-        RAJA::statement::CudaKernel<
-          RAJA::statement::For<1, RAJA::cuda_block_x_loop,
-            RAJA::statement::For<0, RAJA::cuda_thread_x_loop,
+        RAJA::statement::CudaKernelFixed<256,
+          RAJA::statement::For<1, RAJA::cuda_global_size_y_direct<16>,
+	    RAJA::statement::For<0, RAJA::cuda_global_size_x_direct<16>,
               RAJA::statement::Lambda<0>
             >
           >
