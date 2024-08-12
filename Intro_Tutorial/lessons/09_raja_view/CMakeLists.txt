@@ -1,4 +1,4 @@
 blt_add_executable(
-  NAME nine
-  SOURCES nine.cpp
+  NAME 09_raja_view
+  SOURCES 09_raja_view.cpp
   DEPENDS_ON cuda RAJA umpire)
