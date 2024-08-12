@@ -1,4 +1,4 @@
-1;95;0c#include <iostream>
+#include <iostream>
 
 #include "RAJA/RAJA.hpp"
 #include "umpire/Umpire.hpp"
