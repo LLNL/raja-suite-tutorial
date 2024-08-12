@@ -1,7 +1,7 @@
 # Lesson 3
 
 In this lesson, you will learn how to use Umpire to allocate memory. The file
-`three.cpp` contains some `TODO:` comments where you can add code to allocate and
+`03_umpire_allocator.cpp` contains some `TODO:` comments where you can add code to allocate and
 deallocate memory.
 
 The fundamental concept for accessing memory through Umpire is the
@@ -38,7 +38,7 @@ https://umpire.readthedocs.io/en/develop/sphinx/tutorial/allocators.html
 Once you have made your changes, you can compile and run the lesson:
 
 ```
-$ make three
-$ ./bin/three
+$ make 03_umpire_allocator
+$ ./bin/03_umpire_allocator
 Address of data: 0x?????
 ```

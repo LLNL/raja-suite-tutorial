@@ -36,13 +36,13 @@ as a template parameter. Finally, as we are filling in the lambda portion of
 the `RAJA::forall`, we need to specify where it will reside in GPU memory. 
 This can be done directly or by using the `RAJA_DEVICE` macro. 
 
-There are several `TODO` comments in the `six.cpp` exercise file where you 
+There are several `TODO` comments in the `06_raja_umpire_uvm.cpp` exercise file where you 
 can modify the code to work on a GPU. When you are done, build 
 and run the example:
 
 ```
-$ make six
-$ ./bin/six
+$ make 06_raja_umpire_uvm
+$ ./bin/06_raja_umpire_uvm
 ```
 
 For more information on Umpire's resources, see our documentation:

@@ -6,7 +6,7 @@
 
 int main()
 {
-  constexpr int N{10000};
+  constexpr int N{1000};
   double* a{nullptr};
   double* b{nullptr};
   double* c{nullptr};
@@ -29,12 +29,11 @@ int main()
   RAJA::TypedRangeSegment<int> row_range(0, N);
   RAJA::TypedRangeSegment<int> col_range(0, N);
 
- // TODO: convert EXEC_POL to use CUDA
   using EXEC_POL =
       RAJA::KernelPolicy<
-        RAJA::statement::CudaKernel<
-          RAJA::statement::For<1, RAJA::cuda_block_x_loop,
-            RAJA::statement::For<0, RAJA::cuda_thread_x_loop,
+        RAJA::statement::CudaKernelFixed<256,
+          RAJA::statement::For<1, RAJA::cuda_global_size_y_direct<16>,
+	    RAJA::statement::For<0, RAJA::cuda_global_size_x_direct<16>,
               RAJA::statement::Lambda<0>
             >
           >
@@ -45,7 +44,7 @@ int main()
     [=] RAJA_DEVICE (int col, int row) {
       A(row, col) = row;
       B(row, col) = col;
-   });
+  });
 
   RAJA::kernel<EXEC_POL>(RAJA::make_tuple(col_range, row_range),
     [=] RAJA_DEVICE (int col, int row) {

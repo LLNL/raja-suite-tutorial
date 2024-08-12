@@ -27,8 +27,8 @@ all the source code files that make up your application:
 
 ```
 blt_add_executable(
-    NAME one
-    SOURCES one.cpp)
+    NAME 01_blt_cmake
+    SOURCES 01_blt_cmake.cpp)
 ```
 
 For now, we have filled these out for you, but in later lessons you will need to
@@ -53,14 +53,14 @@ practice when using CMake.  Once you are in the build directory, you can use the
 `make` command to compile the executable:
 
 ```
-$ make one
+$ make 01_blt_cmake
 ```
 
 You will see some output as the code is compiled. You can then run the
 executable:
 
 ```
-$ ./bin/one
+$ ./bin/01_blt_cmake
 Hello, world!
 ```
 

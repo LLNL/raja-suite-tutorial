@@ -21,13 +21,13 @@ To create a new memory pool allocator using the `QuickPool` strategy, we can use
 
 This newly created `pool` is an `umpire::Allocator` using the `QuickPool` strategy. As you can see above, we can use the `ResourceManager::makeAllocator` function to create the pool allocator. We just need to pass 
 in: (1) the name we would like the pool to have, and (2) the allocator we previously created with the `ResourceManager` (see line 17 in the
-file `eight.cpp`). Remember that you will also need to include the `umpire/strategy/QuickPool.hpp` header file.
+file `08_raja_umpire_quick_pool.cpp`). Remember that you will also need to include the `umpire/strategy/QuickPool.hpp` header file.
 
 There are other arguments that could be passed to the pool constructor if needed. These additional option arguments are a bit advanced and are beyond the scope of this tutorial. However, you can visit the documentation page for more: https://umpire.readthedocs.io/en/develop/doxygen/html/index.html
 
 When you have created your QuickPool allocator, uncomment the COMPILE define on line 7;
 then compile and run the code:
 ```
-$ make eight
-$ ./bin/eight
+$ make 08_raja_umpire_quick_pool
+$ ./bin/08_raja_umpire_quick_pool
 ```

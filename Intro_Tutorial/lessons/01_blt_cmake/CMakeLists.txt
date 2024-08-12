@@ -1,3 +1,3 @@
 blt_add_executable(
-  NAME one
-  SOURCES one.cpp)
+  NAME 01_blt_cmake
+  SOURCES 01_blt_cmake.cpp)

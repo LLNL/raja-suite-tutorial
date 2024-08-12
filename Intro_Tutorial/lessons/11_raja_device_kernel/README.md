@@ -17,8 +17,8 @@ before this will work!
 Once you are ready, uncomment the COMPILE define on line 7; then you can build and run the example:
 
 ```
-$ make eleven
-$ ./bin/eleven
+$ make 11_raja_device_kernel
+$ ./bin/11_raja_device_kernel
 ```
 
 For reference, lesson 12 contains the solution, so don't worry if you get stuck!

@@ -1,7 +1,7 @@
 if (ENABLE_CUDA)
   blt_add_executable(
-    NAME six
-    SOURCES six.cpp
+    NAME 06_raja_umpire_uvm
+    SOURCES 06_raja_umpire_uvm.cpp
     DEPENDS_ON RAJA umpire cuda)
 endif()
 

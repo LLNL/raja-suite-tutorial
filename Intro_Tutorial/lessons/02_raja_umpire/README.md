@@ -16,8 +16,8 @@ use to list dependencies.
 
 ```
 blt_add_executable(
-    NAME one
-    SOURCES one.cpp
+    NAME 01_blt_cmake
+    SOURCES 01_blt_cmake.cpp
     DEPENDS_ON )
 ```
 
@@ -33,8 +33,8 @@ $ cd build
 You can then compile and run the lesson:
 
 ```
-$ make two
-$ ./bin/two
+$ make 02_raja_umpire
+$ ./bin/02_raja_umpire
 Hello, world (with RAJA and Umpire)!
 ```
 

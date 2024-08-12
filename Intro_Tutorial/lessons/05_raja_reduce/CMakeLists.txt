@@ -1,4 +1,4 @@
 blt_add_executable(
-  NAME five
-  SOURCES five.cpp
+  NAME 05_raja_reduce
+  SOURCES 05_raja_reduce.cpp
   DEPENDS_ON RAJA umpire)
