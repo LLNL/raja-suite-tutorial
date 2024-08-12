@@ -68,6 +68,6 @@ When you have finished making your changes, uncomment the COMPILE define on line
 then compile and run the code:
 
 ```
-$ make ten
-$ ./bin/ten
+$ make raja_kernel
+$ ./bin/raja_kernel
 ```
