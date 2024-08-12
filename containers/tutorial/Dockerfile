@@ -5,24 +5,24 @@
 # SPDX-License-Identifier: (BSD-3-Clause)
 ###############################################################################
 
-FROM ghcr.io/rse-ops/cuda-ubuntu-20.04:cuda-11.1.1 AS nvcc11
+FROM ghcr.io/llnl/radiuss:cuda-12-3-ubuntu-22.04
 
 ARG USER=rajadev
 ENV HOME /home/${USER}
 
-RUN apt-get update && apt-get install -y supervisor
-RUN useradd --create-home --shell /bin/bash ${USER}
+RUN sudo apt-get update && sudo apt-get install -y supervisor
+RUN sudo useradd --create-home --shell /bin/bash ${USER}
 
 WORKDIR /opt/archives
-RUN curl -L https://github.com/gitpod-io/openvscode-server/releases/download/openvscode-server-v1.69.1/openvscode-server-v1.69.1-linux-x64.tar.gz > \
+RUN sudo curl -L https://github.com/gitpod-io/openvscode-server/releases/download/openvscode-server-v1.69.1/openvscode-server-v1.69.1-linux-x64.tar.gz > \
     /opt/archives/openvscode-server-v1.69.1-linux-x64.tar.gz
-RUN tar xzf openvscode-server-v1.69.1-linux-x64.tar.gz && chown -R ${USER}:${USER} openvscode-server-v1.69.1-linux-x64
+RUN sudo tar xzf openvscode-server-v1.69.1-linux-x64.tar.gz && sudo chown -R ${USER}:${USER} openvscode-server-v1.69.1-linux-x64
 
 USER ${USER}
 
 COPY --chown=rajadev:rajadev . $HOME/tutorial/
-RUN . /opt/spack/share/spack/setup-env.sh && spack load cuda && mkdir -p ${HOME}/tutorial/build && cd ${HOME}/tutorial/build && \
-    cmake -DCMAKE_CXX_COMPILER=g++ -DENABLE_CUDA=On -DBLT_CXX_STD=c++14 -DCMAKE_CUDA_STANDARD=14 -DCMAKE_CUDA_ARCHITECTURES=70 -DCMAKE_CUDA_FLAGS="--expt-extended-lambda" -DENABLE_OPENMP=On .. \
+RUN  mkdir -p ${HOME}/tutorial/build && cd ${HOME}/tutorial/build && \
+    cmake -DCMAKE_CXX_COMPILER=g++ -DCUDAToolkit_ROOT=/usr/local/cuda-12.3 -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-12.3 -DCMAKE_CUDA_COMPILER=/usr/local/cuda-12.3/bin/nvcc -DENABLE_CUDA=On -DBLT_CXX_STD=c++14 -DCMAKE_CUDA_ARCHITECTURES=70 -DCMAKE_CUDA_FLAGS="--expt-extended-lambda" -DENABLE_OPENMP=On .. \
     && make -j RAJA \
     && make -j umpire
 
