@@ -32,17 +32,16 @@ this example, we will use the `RAJA::seq_exec` policy to execute this loop on
 the CPU. In later lessons, we will learn about other policies that allow us to
 run code on a GPU.
 
-In the file four.cpp, you will see a `TODO` comment where you can add a 
-`RAJA::forall` loop to initialize the array you allocated in the previous 
+In the file 04_raja_forall.cpp, you will see a `TODO` comment where you can add a
+`RAJA::forall` loop to initialize the array you allocated in the previous
 lesson.
 
 When you have made your changes, compile and run the code in the same way as the
 other lessons:
 
 ```
-$ make four
-$ ./bin/four
-Address of data: 
+$ make 04_raja_forall
+$ ./bin/04_raja_forall
+Address of data:
 data[50] = 50
 ```
-
