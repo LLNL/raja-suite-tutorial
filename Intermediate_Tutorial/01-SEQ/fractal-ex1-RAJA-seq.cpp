@@ -16,7 +16,10 @@
 
 int main(int argc, char *argv[])
 {
-#if defined(COMPILE)
+#if !defined(COMPILE)
+RAJA_UNUSED_VAR(argc);
+RAJA_UNUSED_VAR(argv);
+#else
 
   double dx, dy;
   int width;
