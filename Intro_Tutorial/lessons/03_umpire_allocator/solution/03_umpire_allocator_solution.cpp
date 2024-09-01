@@ -10,12 +10,12 @@ int main()
   // TODO: allocate an array of 100 doubles using the HOST allocator
   auto& rm = umpire::ResourceManager::getInstance();
   auto allocator = rm.getAllocator("HOST");
-  void* memory = allocator.allocate(100*sizeof(double));
+  data = static_cast<double*>(allocator.allocate(100*sizeof(double)));
 
   std::cout << "Address of data: " << data << std::endl;
 
   // TODO: deallocate the array
-  allocator.deallocate(memory);
+  allocator.deallocate(data);
 
   return 0;
 }
