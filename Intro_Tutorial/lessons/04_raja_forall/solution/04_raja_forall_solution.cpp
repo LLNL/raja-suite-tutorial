@@ -16,7 +16,7 @@ int main()
 
   std::cout << "Address of data: " << data << std::endl;
 
-  // TODO: write a RAJA forall loop to initialize each element of a to the value
+  // TODO: write a RAJA forall loop to initialize each element of the array to the value
   // of the index
   RAJA::forall<RAJA::seq_exec>(RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
       data[i] = i;
