@@ -3,4 +3,8 @@ if (ENABLE_CUDA)
     NAME 11_raja_device_kernel
     SOURCES 11_raja_device_kernel.cpp
     DEPENDS_ON RAJA umpire cuda)
+  blt_add_executable(
+    NAME 11_raja_transpose_kernel
+    SOURCES 11_raja_transpose_kernel.cpp
+    DEPENDS_ON RAJA umpire cuda)
 endif()
