@@ -7,10 +7,12 @@ int main()
 {
   double* data{nullptr};
 
+  constexpr int N = 100;
+
   auto& rm = umpire::ResourceManager::getInstance();
   auto allocator = rm.getAllocator("HOST");
 
-  data = static_cast<double*>(allocator.allocate(100*sizeof(double)));
+  data = static_cast<double*>(allocator.allocate(N*sizeof(double)));
 
   std::cout << "Address of data: " << data << std::endl;
 
