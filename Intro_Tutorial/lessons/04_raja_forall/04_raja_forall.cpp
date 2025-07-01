@@ -16,8 +16,8 @@ int main()
 
   std::cout << "Address of data: " << data << std::endl;
 
-  // TODO: write a RAJA forall loop to initialize each element of the array to the value
-  // of the index
+  // TODO: write a RAJA forall loop to set each element of the array 'data' to
+  // the value of the loop index
 
   std::cout << "data[50] = " << data[50] << std::endl;
 

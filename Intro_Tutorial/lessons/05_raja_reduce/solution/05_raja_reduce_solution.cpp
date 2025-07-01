@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 
 #include "RAJA/RAJA.hpp"
 #include "umpire/Umpire.hpp"
@@ -15,12 +16,26 @@ int main()
   a = static_cast<double*>(allocator.allocate(N*sizeof(double)));
   b = static_cast<double*>(allocator.allocate(N*sizeof(double)));
 
-  RAJA::ReduceSum< RAJA::seq_reduce, double > dot(0.0);
+  std::srand(4793);
 
+  // Initialize data arrays to random positive and negative values
   RAJA::forall< RAJA::seq_exec >(
     RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
-      a[i] = 1.0;
-      b[i] = 1.0;
+      double signfact = static_cast<double>(std::rand()/RAND_MAX);
+      signfact = ( signfact < 0.5 ? -1.0 : 1.0 );
+
+      a[i] = signfact * (i + 1.1)/(i + 1.12);
+      b[i] = (i + 1.1)/(i + 1.12);
+    }
+  );
+
+  // TODO: Change this dot variable to instead use a RAJA OpenMP parallel
+  // reduction
+  RAJA::ReduceSum< RAJA::omp_reduce, double > dot(0.0);
+
+  // TODO: Calculate and output the dot product of a and b using a RAJA::forall
+  RAJA::forall< RAJA::omp_parallel_for_exec >(
+    RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
       dot += a[i] * b[i];
     }
   );
