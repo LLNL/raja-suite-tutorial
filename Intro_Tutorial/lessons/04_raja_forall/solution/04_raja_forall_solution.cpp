@@ -18,6 +18,7 @@ int main()
 
   // TODO: write a RAJA forall loop to set each element of the array 'data' to 
   // the value of the loop index
+
   RAJA::forall<RAJA::seq_exec>(RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
       data[i] = i;
   });
