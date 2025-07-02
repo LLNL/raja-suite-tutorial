@@ -45,7 +45,7 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
   auto v_B = RAJA::make_permuted_view<RAJA::layout_right>(B, n, p);
   auto v_C = RAJA::make_permuted_view<RAJA::layout_right>(C, m, p);
 
-#if 0
+#if 1
   const int threads = p;
   const int teams = m;
 
@@ -63,7 +63,9 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
 
   using loop1_pol = RAJA::LoopPolicy<RAJA::cuda_block_x_loop>;
   using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_thread_x_loop>;
-#else
+#endif
+
+#if 0
   const int threads = 16;
   const int teams_x = (n - 1)/threads + 1;
   const int teams_y = (m - 1)/threads + 1;
