@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
   }
 
   int n = std::atoi(argv[1]);
-  std::cout<<"using matrix size "<<n<<" x "<<n<<std::endl;
+  std::cout<<"Using matrix size "<<n<<" x "<<n<<std::endl;
 
   double* A{nullptr};
   double* B{nullptr};
