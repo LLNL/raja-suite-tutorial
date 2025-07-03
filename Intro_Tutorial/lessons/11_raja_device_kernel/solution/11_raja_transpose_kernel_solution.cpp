@@ -30,8 +30,8 @@ int main()
   using EXEC_POL =
       RAJA::KernelPolicy<
         RAJA::statement::CudaKernel<
-          RAJA::statement::For<1, RAJA::cuda_thread_y_loop,
-	          RAJA::statement::For<0, RAJA::cuda_thread_x_loop,
+          RAJA::statement::For<1, RAJA::cuda_global_size_y_loop<8>,
+	          RAJA::statement::For<0, RAJA::cuda_global_size_x_direct<32>,
               RAJA::statement::Lambda<0>
             >
           >
