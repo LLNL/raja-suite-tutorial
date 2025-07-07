@@ -7,7 +7,7 @@ deallocate memory.
 The fundamental concept for accessing memory through Umpire is the
 `umpire::Allocator`. An `umpire::Allocator` is a C++ object that can be used to
 allocate and deallocate memory, as well as query a pointer to get
-information about it.
+information about it. (Note: in this lesson, we will see how to query the name of the Allocator!)
 
 All `umpire::Allocator` objects are created and managed by Umpire’s
 `umpire::ResourceManager`. To create an allocator, first obtain a handle to the
@@ -30,6 +30,14 @@ the desired size for your allocation:
 void* memory = allocator.allocate(size in bytes);
 ```
 
+Moving and modifying data in a heterogenous memory system can be annoying since you 
+have to keep track of the source and destination, and often use vendor-specific APIs 
+to perform the modifications. In Umpire, all data modification and movement is 
+wrapped up in a concept we call Operations. 
+
+Next, we will use the `memset` Operator provided by Umpire's Resource Manager to
+set the memory we just allocated to zero.
+
 Don't forget to deallocate your memory afterwards!
 
 For more details, you can check out the Umpire documentation:
@@ -40,5 +48,5 @@ Once you have made your changes, you can compile and run the lesson:
 ```
 $ make 03_umpire_allocator
 $ ./bin/03_umpire_allocator
-Address of data: 0x?????
+Allocated 800 bytes and set to 0 using the HOST allocator.
 ```
