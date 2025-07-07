@@ -1,24 +1,24 @@
 # Lesson Four
 
-In this lesson, you will learn to write a loop using the `RAJA::forall` statement.
+In this lesson, you will learn about the `RAJA::forall` loop kernel execution method.
 
-The `RAJA::forall` loop execution method is a template that takes an execution
-policy type template parameter. A `RAJA::forall` method takes two arguments: an
-iteration space object, such as a contiguous range of loop indices as shown
-here, and a single lambda expression representing the loop kernel body:
+The `RAJA::forall` template method is specialized on an execution policy type parameter
+that specifies how the kernel will be compiled to run. A `RAJA::forall` method takes
+two arguments: an iteration space object, such as a contiguous range of loop indices
+as shown in this lesson, and a C++ lambda expression that represents the loop kernel body:
 
 ```
 RAJA::forall<EXEC_POLICY>( ITERATION SPACE, LAMBDA);
 ```
 
-We can create a `RAJA::TypedRangeSegment` to describe an iteration space
-that is a contiguous sequence of integers `[0, N)`.
+To describe an iteration space that is a contiguous sequence of integers `[0, N)`,
+we create a `RAJA::TypedRangeSegment` as follows:
 
 ```
 RAJA::TypedRangeSegment<int>(0, N)
 ```
 
-The lambda expression needs to take one argument, the loop index:
+The lambda expression takes one argument, the loop iterate index:
 
 ```
 [=](int i) { // loop body }
@@ -27,14 +27,19 @@ The lambda expression needs to take one argument, the loop index:
 The `[=]` syntax tells the lambda to capture arguments by value (e.g. create a
 copy, rather than a reference).
 
-The `EXEC_POLICY` template argument controls how the loop will be executed. In
-this example, we will use the `RAJA::seq_exec` policy to execute this loop on
-the CPU. In later lessons, we will learn about other policies that allow us to
-run code on a GPU.
+The code for this lesson resides in the file `04_raja_forall.cpp`. It provides a
+RAJA implementation of a kernel that sets each element of an array `data` to the value
+of its array index using the `RAJA::seq_exec` policy. With this policy, the loop will
+execute sequentially on a CPU. The code will record the time of the loop execution and
+print it out along with a few values of the array to show that the array entries are set
+as expected. 
 
-In the file 04_raja_forall.cpp, you will see a `TODO` comment where you can add a
-`RAJA::forall` loop to initialize the array you allocated in the previous
-lesson.
+Following that, you will see a `TODO` comment where you can add a similar `RAJA::forall`
+kernel to set the elements of the array `data1` in the same way as the sequential kernel.
+However, you will use an OpenMP execution policy `RAJA::omp_parallel_for_exec` to 
+run the loop in parallel on a CPU. Again, the code will record and print the kernel
+execution time and array values for comparison to the previous case and verification
+that they are set as you expect.
 
 When you have made your changes, compile and run the code in the same way as the
 other lessons:
@@ -42,6 +47,11 @@ other lessons:
 ```
 $ make 04_raja_forall
 $ ./bin/04_raja_forall
-Address of data:
-data[50] = 50
 ```
+
+You can compare your version of the code to the solution code in the tutorial using the command
+`diff 04_raja_forall.cpp solution/04_raja_forall_solution.cpp`.
+
+Are the array elements that are printed out the same in each case? How do the 
+execution times compare? Which kernel ran faster?
+
