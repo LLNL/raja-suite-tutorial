@@ -15,24 +15,32 @@ int main()
   constexpr std::size_t CUDA_BLOCK_SIZE{????};
   double* a{nullptr};
   double* b{nullptr};
+  double* a_h{nullptr};
+  double* b_h{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
-  // TODO: allocate with device unified memory
+  // TODO: create 2 allocators, one with device memory and one with host memory
   auto allocator = rm.getAllocator("??");
+  auto host_allocator = rm.getAllocator("??");
 
   a = static_cast<double*>(allocator.allocate(N*sizeof(double)));
   b = static_cast<double*>(allocator.allocate(N*sizeof(double)));
+  a_h = static_cast<double*>(host_allocator.allocate(N*sizeof(double)));
+  b_h = static_cast<double*>(host_allocator.allocate(N*sizeof(double)));
 
-  //TODO: fill in the forall statement with the CUDA execution policy
-  //TODO: and its block size argument. Then be sure to use RAJA_DEVICE
-  RAJA::forall<????? <?????> >(
-    RAJA::TypedRangeSegment<int>(0, N), [=] ?????? (int i) {
+  //TODO: fill in the forall statement with the sequential exec policy.
+  //TODO: Alternatively, you could use the memset operator to do this instead...
+  RAJA::forall< ????? >(
+    RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
       a[i] = 1.0;
       b[i] = 1.0;
     }
   );
 
+  // TODO: copy data from a_h to a, and b_h to b (i.e. from the host to the device vars)
+
   double dot{0.0};
+
   //TODO: create a RAJA::ReduceSum with cuda_reduce called "cudot" for the GPU
 
   //TODO: fill in the forall statement with the CUDA execution policy
@@ -48,6 +56,9 @@ int main()
 
   allocator.deallocate(a);
   allocator.deallocate(b);
+  host_allocator.deallocate(a_h);
+  host_allocator.deallocate(b_h);
+
 #endif
   return 0;
 }

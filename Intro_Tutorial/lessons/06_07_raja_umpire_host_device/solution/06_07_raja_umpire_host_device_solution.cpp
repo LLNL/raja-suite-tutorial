@@ -28,6 +28,9 @@ int main()
     }
   );
 
+  //rm.memset(a_h, 1.0);
+  //rm.memset(b_h, 1.0);
+
   // TODO: copy data from a_h to a, and b_h to b
   rm.copy(a, a_h, N*sizeof(double));
   rm.copy(b, b_h, N*sizeof(double));
