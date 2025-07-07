@@ -1,12 +1,14 @@
 # Lesson 6 and 7
 
+## Part 1: Lesson 6
+
 For lesson 6, you will learn about Umpire's different memory resources and in
 particular, those used to allocate memory on a GPU. 
 
 Each computer system will have a number of distinct places in which the system
-will allow you to allocate memory. In Umpire’s world, these are memory
+will allow you to allocate memory. In Umpire's world, these are memory
 resources. A memory resource can correspond to a hardware resource, but can also
-be used to identify memory with a particular characteristic, like “pinned”
+be used to identify memory with a particular characteristic, like `pinned`
 memory in a GPU system.
 
 Umpire creates predefined allocators for each of the available resources, and
@@ -26,6 +28,8 @@ Other memory resources include:
 - "SHARED": Includes POSIX shared memory which can be accessible by the CPU or GPU depending
 on what your system accommodates and the MPI3 shared memory that is accessible on the CPU.
 - "UNKNOWN": If an incorrect name is used or if the allocator was not set up correctly.
+
+## Part 2: Lesson 7
 
 For lesson 7, you will learn how to use Umpire's operations to copy data
 between CPU and GPU memory in a portable way, using the memory resources you learned 
