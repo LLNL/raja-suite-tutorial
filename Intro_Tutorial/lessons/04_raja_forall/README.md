@@ -1,6 +1,30 @@
 # Lesson Four
 
-In this lesson, you will learn about the `RAJA::forall` loop kernel execution method.
+Data parallel kernels are common in many parallel HPC applications. In a data parallel loop
+kernel, the processing of data that occurs at each iterate is independent of the processing
+of data at all other iterates. This is sometimes referred to as "embarrassingly parallel"
+because it is relatively easy to parallelize compared to other kernels where iterates are not
+independent.
+
+A simple example of a data parallel loop kernel that is parallelized using OpenMP is:
+
+```
+double data* = new....;
+
+#pragma omp parallel for
+for (int i = 0; i < N; ++i) {
+  data[i] = i;
+}
+```
+Each loop iterate sets the array element at the iterate index to the index value. Clearly, 
+each iterate is independent of the others. If the loop takes T time units to run on one
+process/thread, then ideally it would run on T / M time units in parallel when using M
+processors/threads (M <= N). However, parallel overheads often prevent one from observing
+this optimal speed up. Indeed, depending on the kernel, number of iterates, number of threads,
+etc., a kernel may run slower in parallel than it does sequentially.
+
+In this lesson, you will learn about the `RAJA::forall` loop kernel execution method to 
+parallelize this kernel.
 
 The `RAJA::forall` template method is specialized on an execution policy type parameter
 that specifies how the kernel will be compiled to run. A `RAJA::forall` method takes
