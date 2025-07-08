@@ -1,5 +1,46 @@
 # Lesson 5
 
+In lesson 4, we looked at a data parallel loop kernel. A kernel with a data dependence 
+between iterates is **not data parallel**. A data dependence occurs when multiple threads
+(or tasks) could write to the same memory location at the same time. This is often called
+a **race condition**. A race condition can cause an algorithm to produce **non-deterministic**,
+for example order-dependent, results. 
+
+Consider an attempt to write an OpenMP parallel kernel to computed the sum of the elements in
+an array:
+
+```
+double sum = 0;
+
+#pragma omp parallel for
+for (int i = 0; i < N; ++i) {
+  sum += data[i];
+}
+```
+
+This kernel has a race condition since multiple loop iterates could write to the `sum`
+variable at the same time. As a result, the computed `sum` value could be correct, but probably
+not. OpenMP provides a reduction clause that allows a user to write a kernel to compute a
+reduction without a race condition -- meaning only one thread writes to the reduction variable
+at a time. For example:
+
+```
+double sum = 0;
+
+#pragma omp parallel for reduction(+:sum)
+for (int i = 0; i < N; ++i) {
+  sum += data[i];
+}
+```
+
+This kernel will compute the sum in parallel correctly, although the results could be
+non-deterministic due to order in which the values are accumulated in the sum.
+
+It is important to note that not all parallel programming models provide a mechanism to write
+a parallel reduction correctly. For example, CUDA and HIP do not. RAJA provides a reduction
+construct allowing a user to write a parallel reduction in each of its supported programming
+model back-ends.
+
 In this lesson, you will learn how to use a `RAJA::ReduceSum` object to approximate
 pi, the ratio of the area in a circle over its diameter. Some parallel programming models,
 like OpenMP, provide a mechanism to perform a reduction in a kernel, while others like CUDA
