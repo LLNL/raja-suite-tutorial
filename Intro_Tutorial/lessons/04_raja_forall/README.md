@@ -1,10 +1,10 @@
 # Lesson Four
 
 Data parallel kernels are common in many parallel HPC applications. In a data parallel loop
-kernel, the processing of data that occurs at each iterate is independent of the processing
+kernel, the processing of data that occurs at each iterate **is independent** of the processing
 of data at all other iterates. This is sometimes referred to as "embarrassingly parallel"
-because it is relatively easy to parallelize compared to other kernels where iterates are not
-independent.
+because it is relatively easy to parallelize a kernel when there is no chance for the computation
+done for one iterate can impact the computation done at any other iterate.
 
 A simple example of a data parallel loop kernel that is parallelized using OpenMP is:
 
