@@ -6,8 +6,7 @@ parallel constructs that implement specific algorithms that are important for ma
 applications. These include atomic operations, scans, and sorts, and
 which are available in RAJA for all supported programming model back-ends.
 We discuss atomic operations and scans in detail in this lesson. For more information
-about RAJA support for sorting algorithms, please see:
-https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/sort.html#
+about RAJA support for sorting algorithms, please see [RAJA Sort User Guide](https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/sort.html).
 
 ## Atomic Operations
 
