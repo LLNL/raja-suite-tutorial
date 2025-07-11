@@ -5,7 +5,9 @@ kernel body to implement a parallel algorithm that she defines. RAJA provides ot
 parallel constructs that implement specific algorithms that are important for many HPC
 applications. These include atomic operations, scans, and sorts, and
 which are available in RAJA for all supported programming model back-ends.
-We discuss each of these constructs in this section.
+We discuss atomic operations and scans in detail in this lesson. For more information
+about RAJA support for sorting algorithms, please see:
+https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/sort.html#
 
 ## Atomic Operations
 
@@ -36,7 +38,7 @@ RAJA::forall<EXEC_POL>(RAJA::TypedRangeSegment<int>(0, N),
 double pi_val = 4.0 * pi.get();
 ```
 
-An analogous implementation of this pi approximation using a RAJA atomic operation
+An alternative implementation of this $\pi$ approximation using a RAJA atomic operation
 looks like this:
 
 ```
@@ -50,18 +52,19 @@ RAJA::forall<EXEC_POL>(RAJA::TypedRangeSegment<int>(0, N),
     double x = (double(i) + 0.5) * dx;
     RAJA::atomicAdd<ATOMIC_POL>( pi, dx / (1.0 + x * x) );
   });
-double pi_val = 4.0 * pi;
+double pi_val = 4.0 * (*pi);
 ```
 
-The only substantial difference in the atomic version of the kernel is that a
+The main difference between the previous kernel and this one is that in this one a
 call to the `RAJA::atomicAdd` method is made to perform the atomic update to the
 memory location defined by the pointer `pi`. Note that the method is specialized
 to be compatible with the programming model used, OpenMP in this case. This is 
-similar to the specialization of the `RAJA::ReduceSum` object above.
+similar to the specialization of the `RAJA::ReduceSum` object in the reduction
+implementation.
 
-Feel free to experiment with other RAJA atomic methods and execution policies in the
-example code located in the lesson sub-directory as in the other lessons. To
-compile and run:
+In the file `NEW_raja_atomic.cpp`, you will see `TODO` comments where you can
+implement other RAJA atomic methods and use other RAJA policies to run them 
+with other programming model back-ends. To compile and run the code:
 
 ```
 $ make NEW_raja_atomic
@@ -74,12 +77,14 @@ A **scan operation** is an important building block for parallel algorithms. It 
 a key primitive to convert sequential operations into parallel implementations.
 Scans are based on *reduction tree* and *reverse reduction tree* structures. It is
 an example of a computation that looks inherently serial, but for which there exist
-efficient parallel implementations. A useful reference that describes usage of
-parallel scans is [Prefix Sums and Their Applications by Guy E. Blelloch](https://www.cs.cmu.edu/~guyb/papers/Ble93.pdf).
+efficient parallel implementations. A useful reference that describes how parallel
+scans are used is [Prefix Sums and Their Applications by Guy E. Blelloch](https://www.cs.cmu.edu/~guyb/papers/Ble93.pdf).
 
-RAJA provides common forms of scan operations, including operators that allow users to implement a particular type of scan. First, we illustrate the former with a **parallel prefix sum**, which is the most common scan operation. A prefix sum operation takes
-an array as input and produces an output array containing partial sums of the input
-array. Consider the following code:
+RAJA provides commonly-applied scan algorithms, with operators that allow users to
+implement particular types of scans. First, we illustrate the former with a 
+**parallel prefix sum**, which is the most common scan operation. A prefix sum
+operation takes an array as input and produces an output array containing partial 
+sums of the input array. Consider the following code:
 
 ```
 constexpr N = 10;
@@ -114,19 +119,19 @@ Output (exclusive): 0  8  7  9  18  28  31  35  36  42
 
 We point out a couple of things about the code itself. First, each scan method
 is specialized on an execution policy. RAJA scan methods use the same execution
-policies as `RAJA::forall`. Second, the arguments to RAJA scan methods are RAJA
+policies as `RAJA::forall` methods. Second, the arguments to RAJA scan methods are RAJA
 *span* objects which can be created using the `RAJA::make_span` helper method that
-takes the address of an array element and the number of elements to define the span
-over, in this example `N`.
+takes the address of an array element and the number of elements in the span; i.e.,
+`N` in this example.
 
-Regarding the code output, the inclusive scan fills the output array with partial
+Regarding the code output, the *inclusive scan* fills the output array with partial
 sums of the output array. Here, the first element of the input array is 8, so the
 first element of the output array is 8. The second element of the input array is
 -1, so the second element of the output array is 7, which is 8 + (-1). And so on.
-The exclusive scan produces the same partial sums but shifts them one slot to the 
+The *exclusive scan* produces the same partial sums but shifts them one slot to the 
 right in the output array. The first element in the output array for the exclusive
-scan is `0`, the identity of the scan operator, which is `+`, since the RAJA default
-scan is a prefix sum when no operator is specified.
+scan is `0`, the identity of the scan operator, which is `+` in this example because
+the RAJA default scan is a prefix sum when no operator is specified.
 
 RAJA also provides **in-place** scan operations where the scan output is produced
 directly in the input array. For example:
@@ -150,20 +155,18 @@ Will produce the following output, which is the same as in the previous code exa
 Output (inclusive-inplace): 8  7  9  18  28  31  35  36  42  49
 ```
 
-RAJA provides other operators that can be used with all scan methods. These include
+RAJA provides operators that can be used with all scan methods, such as
 `RAJA::operators::minimum<T>`, `RAJA::operators::maximum<T>`, and
 `RAJA::operators::plus<T>`. These operator types are specialized on data type `T`,
-which must match the data type of the array(s) you pass to the methods to produce
-what you expect. When no operator is specified, as in the code examples above, the 
-plus operator will be used.
+which must match the data type of the array(s) you pass to the scan methods to produce
+the results you expect. When no operator is specified, as in the code examples above,
+the plus operator `RAJA::operators::plus<T>` is used.
 
-Feel free to experiment with other RAJA scan operations and execution policies in the
-example code located in the lesson sub-directory as in the other lessons. To
-compile and run:
+In the file `NEW_raja_scan.cpp`, you will see `TODO` comments where you can implement
+other RAJA scans and use other RAJA policies to run them with other programming model
+back-ends. To compile and run the code:
 
 ```
 $ make NEW_raja_scan
 $ .bin/NEW_raja_scan
 ```
-
-## Parallel Sort
