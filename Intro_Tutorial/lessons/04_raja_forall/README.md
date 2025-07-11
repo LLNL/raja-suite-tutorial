@@ -73,8 +73,7 @@ $ make 04_raja_forall
 $ ./bin/04_raja_forall
 ```
 
-You can compare your version of the code to the solution code in the tutorial using the command
-`diff 04_raja_forall.cpp solution/04_raja_forall_solution.cpp`.
+If you need help, you can compare your version of the code to the solution code using the command `diff 04_raja_forall.cpp solution/04_raja_forall_solution.cpp`.
 
 Are the array elements that are printed out the same in each case? How do the 
 execution times compare? Which kernel ran faster?
