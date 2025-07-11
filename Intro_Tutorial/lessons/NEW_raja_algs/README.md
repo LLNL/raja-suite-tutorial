@@ -1,25 +1,25 @@
 # Lesson NEW
 
 So far, we've looked at RAJA kernel launch methods, where a user provides a 
-kernel body to implement a parallel algorithm. RAJA provides other parallel
-constructs that are important for HPC applications and which can be specialized
-for application needs. Such constructs include atomic operations, scans, and sorts,
+kernel body to implement a parallel algorithm that she defines. RAJA provides other
+parallel constructs that implement specific algorithms that are important for many HPC
+applications. These include atomic operations, scans, and sorts, and
 which are available in RAJA for all supported programming model back-ends.
 We discuss each of these constructs in this section.
 
 ## Atomic Operations
 
-An **atomic operation** is a parallel construct that allows only one thread or
-process at a time to modify data at a memory location. When a thread/process is 
-about to write to a memory location, the address is "locked" until the write 
-operation is complete. Then, the lock is released and another thread/process can
-write to the memory location. If the memory location is locked when a thread/process
-is about to write to it, the thread/process must wait until the lock is released
-to do so. Such atomic behavior prevents potential memory corruption and can be 
-essential for a parallel algorithm to be correct and generate reproducible results.
+An **atomic operation** is one that allows only one thread or process to modify data
+at a memory location at a time. When a thread/process is about to write to a memory
+location, the address is "locked" until the write operation is complete. Then, the
+lock is released and another thread/process can write to the memory location. If the
+memory location is locked when a thread/process is about to write to it, the
+thread/process must wait until the lock is released to do so. Such atomic behavior
+prevents potential memory corruption and can be essential for a parallel algorithm
+to be correct and generate reproducible results.
 
 In lesson 5, we looked at a kernel that used a `RAJA::ReduceSum` object to 
-approximate pi by computing a discrete Riemann integral. The OpenMP parallel
+approximate $\pi$ by computing a discrete Riemann integral. The OpenMP parallel
 implementation looked like the following:
 
 ```
