@@ -6,8 +6,7 @@ between iterates is **not data parallel**. A data dependence occurs when multipl
 a **race condition**. A race condition can cause an algorithm to produce **non-deterministic**,
 for example order-dependent, results. 
 
-Consider an attempt to write an OpenMP parallel kernel to computed the sum of the elements in
-an array:
+Consider an attempt to write an OpenMP parallel kernel to computed the sum of the elements in an array:
 
 ```
 double sum = 0;
@@ -39,20 +38,17 @@ non-deterministic due to order in which the values are accumulated in the sum.
 It is important to note that not all parallel programming models provide a mechanism to write
 a parallel reduction correctly. For example, CUDA and HIP do not. RAJA provides a reduction
 construct allowing a user to write a parallel reduction in each of its supported programming
-model back-ends.
-
-In this lesson, you will learn how to use a `RAJA::ReduceSum` object to approximate
-$\pi$, the ratio of the area in a circle over its diameter. Some parallel programming models,
-like OpenMP, provide a mechanism to perform a reduction in a kernel, while others like CUDA
-do not. RAJA provides portable reduction types that make it easy to perform a reduction 
-operation in a kernel that is syntactically similar for any programming model back-end that
-RAJA supports.
-
-Although this lesson uses only `RAJA::ReduceSum`, RAJA provides other reduction types,
-such as `RAJA::ReduceMin` and `RAJA::ReduceMax`. More information on RAJA reductions can 
-be found at:
+model back-ends. Although this lesson uses only `RAJA::ReduceSum`, RAJA provides other
+reduction types, such as `RAJA::ReduceMin` and `RAJA::ReduceMax`. More information on
+RAJA reductions can be found at:
 https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/reduction.html#
 
+In this lesson, you will learn how to use a `RAJA::ReduceSum` object to approximate
+$\pi$, the ratio of the area in a circle over its diameter, using Riemann integrataion
+and the formula
+```
+\frac{ \pi }{4} = \tan^{-1}(1) = \int_0^1 \frac{1}{1+x^2}\,dx 
+```
 We can create a sum reduction variable `pi` for a reduction policy and data type, and
 initialize the reduction value to `0.0` as follows:
 
