@@ -46,7 +46,7 @@ https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/reduction.html#
 In this lesson, you will learn how to use a `RAJA::ReduceSum` object to approximate
 $\pi$, the ratio of the area in a circle over its diameter, using Riemann integrataion
 and the formula
-```
+```math
 \frac{ \pi }{4} = \tan^{-1}(1) = \int_0^1 \frac{1}{1+x^2}\,dx 
 ```
 We can create a sum reduction variable `pi` for a reduction policy and data type, and
