@@ -40,8 +40,7 @@ a parallel reduction correctly. For example, CUDA and HIP do not. RAJA provides 
 construct allowing a user to write a parallel reduction in each of its supported programming
 model back-ends. Although this lesson uses only `RAJA::ReduceSum`, RAJA provides other
 reduction types, such as `RAJA::ReduceMin` and `RAJA::ReduceMax`. More information on
-RAJA reductions can be found at:
-https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/reduction.html#
+RAJA reductions can be found in the [RAJA Reductions User Guide](https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/reduction.html).
 
 In this lesson, you will learn how to use a `RAJA::ReduceSum` object to approximate
 $\pi$, the ratio of the area in a circle over its diameter, using Riemann integrataion
