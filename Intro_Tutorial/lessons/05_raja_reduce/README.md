@@ -47,8 +47,10 @@ In this lesson, you will learn how to use a `RAJA::ReduceSum` object to approxim
 $\pi$, the ratio of the area in a circle over its diameter, using Riemann integrataion
 and the formula
 ```math
-\frac{ \pi }{4} = \tan^{-1}(1) = \int_0^1 \frac{1}{1+x^2}\,dx \approx \frac{1}{N} \sum_{i=0}^{N} 1 / (1 + (i+0.5)\frac{1}{N})^{2}
+\frac{ \pi }{4} = \tan^{-1}(1) = \int_0^1 \frac{1}{1+x^2}\,dx \approx \Delta x \sum_{i=0}^{N} 1 / [1 + ( (i+0.5) \Delta x )^{2}]
 ```
+where $\Delta x = \frac{1}{N}$.
+
 We can create a sum reduction variable `pi` for a reduction policy and data type, and
 initialize the reduction value to `0.0` as follows:
 
