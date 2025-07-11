@@ -42,7 +42,7 @@ construct allowing a user to write a parallel reduction in each of its supported
 model back-ends.
 
 In this lesson, you will learn how to use a `RAJA::ReduceSum` object to approximate
-pi, the ratio of the area in a circle over its diameter. Some parallel programming models,
+$\pi$, the ratio of the area in a circle over its diameter. Some parallel programming models,
 like OpenMP, provide a mechanism to perform a reduction in a kernel, while others like CUDA
 do not. RAJA provides portable reduction types that make it easy to perform a reduction 
 operation in a kernel that is syntactically similar for any programming model back-end that
@@ -71,7 +71,7 @@ The second parameter, the `TYPE` parameter, is just the data type of the reduced
 such as `int` or `double`.
 
 The code for this lesson resides in the file `05_raja_reduce.cpp`. It provides a
-RAJA implementation of a kernel that approximates the value of pi using the 
+RAJA implementation of a kernel that approximates the value of $\pi$ using the 
 `RAJA::seq_exec` policy. With this policy, the loop will execute sequentially on a CPU.
 The code will print out the result which should look familiar `3.145...`.
 as expected. 
