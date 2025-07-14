@@ -4,6 +4,9 @@
 
 #include "RAJA/RAJA.hpp"
 
+//TODO: uncomment this out in order to build!
+//#define COMPILE
+
 int main()
 {
   constexpr int N{1000000};
@@ -24,12 +27,12 @@ int main()
               << std::setprecision(20) << tpi << std::endl;
   }
 
-
+#if defined(COMPILE)
   // OpenMP kernel that approximates pi
   {
     // TODO: write a parallel RAJA forall loop using OpenMP to approximate pi.
-    // Note that you will also have to define the RAJA::ReduceSum object to have the correct type.
-    // Don't forget to uncomment the lines below so you can see the results.
+    // First, will have to define create a RAJA::ReduceSum object that will
+    // work in an OpenMP kernel.
     RAJA::ReduceSum<RAJA::omp_reduce, double> pi(0.0);
 
     RAJA::forall<RAJA::omp_parallel_for_exec>(RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
@@ -41,6 +44,7 @@ int main()
     std::cout << "OpenMP pi approximation " << " = "
               << std::setprecision(20) << tpi << std::endl;
   }
+#endif  // if defined(COMPILE)
 
   return 0;
 }
