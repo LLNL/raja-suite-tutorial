@@ -11,14 +11,21 @@ int main()
   constexpr int M{7000};
   double* a{nullptr};
   double* a_t{nullptr};
+  double* a_h{nullptr};
+  double* a_t_h{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
 
-  auto allocator = rm.getAllocator("UM");
-  auto pool = rm.makeAllocator<umpire::strategy::QuickPool>("POOL", allocator);
+  auto allocator = rm.getAllocator("DEVICE");
+  auto host_allocator = rm.getAllocator("HOST");
 
-  a = static_cast<double *>(pool.allocate(N*M*sizeof(double)));
-  a_t = static_cast<double *>(pool.allocate(N*M*sizeof(double)));
+  a = static_cast<double *>(allocator.allocate(N*M*sizeof(double)));
+  a_t = static_cast<double *>(allocator.allocate(N*M*sizeof(double)));
+  a_h = static_cast<double *>(host_allocator.allocate(N*M*sizeof(double)));
+  a_t_h = static_cast<double *>(host_allocator.allocate(N*M*sizeof(double)));
+
+  rm.copy(a, a_h, N*M*sizeof(double));
+  rm.copy(a_t, a_t_h, N*M*sizeof(double));
 
   constexpr int DIM = 2;
 
@@ -27,21 +34,26 @@ int main()
 
   using EXEC_POL =
       RAJA::cuda_launch_t<false>;
-  using teams_x = /*what policy do we need here?*/
-  using threads_x = /*what loop policy do we need here?*/
+  using outer_loop = RAJA::LoopPolicy<RAJA::cuda_block_x_direct>;
+  using inner_loop = RAJA::LoopPolicy<RAJA::cuda_thread_x_loop>;
 
-  RAJA::launch<EXEC_POL>(RAJA::ExecPlace::DEVICE,
-    /*What type of parameters do we need to specify bounds*/,
+  RAJA::launch<EXEC_POL>(
+    // TODO: Which numbers of Teams and Threads should be used in this launch?
+    RAJA::LaunchParams(RAJA::Teams(???), RAJA::Threads(???)),
       [=] RAJA_HOST_DEVICE(RAJA::LaunchContext ctx) {
-      RAJA::loop<teams_x>(ctx, col_range, [&] (int col) {
-        RAJA::loop<threads_x>(ctx, row_range, [&] (int row) {
-          A_t(col, row) = A(row, col);
+      RAJA::loop<outer_loop>(ctx, RAJA::TypedRangeSegment<int>(0,N), [&] (int col) {
+        RAJA::loop<inner_loop>(ctx, RAJA::TypedRangeSegment<int>(0,M), [&] (int row) {
+          // TODO: What indexing should be used to fill in the transposed View?
+          A_t(???, ???) = A(row, col);
         });
       });
     });
 
-  pool.deallocate(a);
-  pool.deallocate(a_t);
+  allocator.deallocate(a);
+  allocator.deallocate(a_t);
+  host_allocator.deallocate(a_h);
+  host_allocator.deallocate(a_t_h);
 #endif
+
   return 0;
 }
