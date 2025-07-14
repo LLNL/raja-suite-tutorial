@@ -29,10 +29,10 @@ int main()
   a_h = static_cast<double*>(host_allocator.allocate(N*sizeof(double)));
   b_h = static_cast<double*>(host_allocator.allocate(N*sizeof(double)));
 
-  //TODO: fill in the forall statement with the sequential exec policy.
-  //TODO: Alternatively, you could use the memset operator to do this instead...
-  RAJA::forall< ????? >(
-    RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
+  //TODO: fill in the forall statement with the CUDA execution policy.
+  //TODO: and its block size argument. Then be sure to use RAJA_DEVICE
+  RAJA::forall< ????? < ?????> >(
+    RAJA::TypedRangeSegment<int>(0, N), [=] ????? (int i) {
       a[i] = 1.0;
       b[i] = 1.0;
     }
