@@ -1,23 +1,25 @@
 # Lesson NEW
 
-So far, we've looked at RAJA kernel launch methods, where a user provides a 
-kernel body to implement a parallel algorithm that she defines. RAJA provides other
-parallel constructs that implement specific algorithms that are important for many HPC
-applications. These include atomic operations, scans, and sorts, and
-which are available in RAJA for all supported programming model back-ends.
-We discuss atomic operations and scans in detail in this lesson. For more information
-about RAJA support for sorting algorithms, please see [RAJA Sort User Guide](https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/sort.html).
+So far, we've looked at RAJA kernel launch methods, where a user provides a
+kernel body to implement a parallel algorithm that she defines. RAJA provides
+other parallel constructs that implement specific algorithms that are important
+for many HPC applications. These include atomic operations, scans, and sorts.
+These constructs are available in RAJA for all supported programming model
+back-ends. We discuss atomic operations and scans in detail in this lesson.
+For more information about RAJA support for sorting algorithms, please see
+[RAJA Sort User Guide](https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/sort.html).
 
 ## Atomic Operations
 
-An **atomic operation** is one that allows only one thread or process to modify data
-at a memory location at a time. When a thread/process is about to write to a memory
-location, the address is "locked" until the write operation is complete. Then, the
-lock is released and another thread/process can write to the memory location. If the
-memory location is locked when a thread/process is about to write to it, the
-thread/process must wait until the lock is released to do so. Such atomic behavior
-prevents potential memory corruption and can be essential for a parallel algorithm
-to be correct and generate reproducible results.
+An **atomic operation** is one that allows only one thread or process at a time
+to modify data at a memory location. When a thread/process is about to write to
+a memory location, the address is "locked" until the write operation is
+complete. Then, the lock is released and another thread/process can write to
+the memory location. If the memory location is locked when a thread/process is
+about to write to it, the thread/process must wait until the lock is released
+to do so. Such atomic behavior prevents potential memory corruption and can be
+essential for a parallel algorithm to be correct and generate reproducible
+results.
 
 In lesson 5, we looked at a kernel that used a `RAJA::ReduceSum` object to 
 approximate $\pi$ by computing a discrete Riemann integral. The OpenMP parallel
@@ -37,29 +39,40 @@ RAJA::forall<EXEC_POL>(RAJA::TypedRangeSegment<int>(0, N),
 double pi_val = 4.0 * pi.get();
 ```
 
-An alternative implementation of this $\pi$ approximation using a RAJA atomic operation
-looks like this:
+An alternative implementation of this $\pi$ approximation using a RAJA atomic
+operation looks like this:
 
 ```
 using EXEC_POL   = RAJA::omp_parallel_for_exec;
 using ATOMIC_POL = RAJA::omp_atomic;
 
-double* pi = new double{0.0};
+double* pi_h{nullptr};
+
+auto& rm = umpire::ResourceManager::getInstance();
+auto host_allocator = rm.getAllocator("HOST");
+
+pi_h = static_cast<double*>(host_allocator.allocate(1*sizeof(double)));
+
+pi_h[0] = 0.0;
 
 RAJA::forall<EXEC_POL>(RAJA::TypedRangeSegment<int>(0, N),
   [=] (int i) {
     double x = (double(i) + 0.5) * dx;
-    RAJA::atomicAdd<ATOMIC_POL>( pi, dx / (1.0 + x * x) );
+    RAJA::atomicAdd<ATOMIC_POL>( pi_h, dx / (1.0 + x * x) );
   });
-double pi_val = 4.0 * (*pi);
+pi_h[0] *= 4.0;
+
+host_allocator.deallocate(pi_h);
 ```
 
-The main difference between the previous kernel and this one is that in this one a
-call to the `RAJA::atomicAdd` method is made to perform the atomic update to the
-memory location defined by the pointer `pi`. Note that the method is specialized
-to be compatible with the programming model used, OpenMP in this case. This is 
-similar to the specialization of the `RAJA::ReduceSum` object in the reduction
-implementation.
+The main difference between the previous kernel and this one is that in this
+one a call to the `RAJA::atomicAdd` method is made to perform the atomic
+update to the memory location defined by the pointer `pi_h`. Note that the
+atomic method is specialized to be compatible with the programming model used,
+OpenMP in this case. This is similar to the specialization of the
+`RAJA::ReduceSum` object in the reduction implementation. Also, we use 
+an Umpire host allocator to allocate an array of size 1 to hold the value of 
+$\pi$. 
 
 In the file `NEW_raja_atomic.cpp`, you will see `TODO` comments where you can
 implement other RAJA atomic methods and use other RAJA policies to run them 
