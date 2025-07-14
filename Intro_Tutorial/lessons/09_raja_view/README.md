@@ -33,7 +33,7 @@ RAJA::View<double, RAJA::Layout<2, int>> view(data, N, N);
 where `data` is a `double*`, and `N` is the size of each dimension. The size of
 `data` should be at least `N*N`.
 
-In the file `09_raja_view.cpp`, there is a `TODO` comment where you should create three
+In the file `09_raja_view_makepermuted.cpp`, there is a `TODO` comment where you should create three
 views, A, B, and C. You will notice that we are doing the same dot product 
 calculation, but this time for matrices. Thus, we are now doing a matrix
 multiplication. When you are ready, uncomment the COMPILE define on line 7;
