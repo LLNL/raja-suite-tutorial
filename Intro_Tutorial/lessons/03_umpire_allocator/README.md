@@ -32,8 +32,8 @@ void* memory = allocator.allocate(size in bytes);
 
 Moving and modifying data in a heterogenous memory system can be annoying since you 
 have to keep track of the source and destination, and often use vendor-specific APIs 
-to perform the modifications. In Umpire, all data modification and movement is 
-wrapped up in a concept we call Operations. 
+to perform the modifications. In Umpire, all data modification and movement, regardless
+of memory resource or platform, is done using Operations. 
 
 Next, we will use the `memset` Operator provided by Umpire's Resource Manager to
 set the memory we just allocated to zero.
