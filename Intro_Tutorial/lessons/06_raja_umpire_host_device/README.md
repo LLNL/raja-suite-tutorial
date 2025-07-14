@@ -1,8 +1,6 @@
-# Lesson 6 and 7
+# Lesson 6
 
-## Part 1: Lesson 6
-
-For lesson 6, you will learn about Umpire's different memory resources and in
+Now, let's learn about Umpire's different memory resources and in
 particular, those used to allocate memory on a GPU. 
 
 Each computer system will have a number of distinct places in which the system
@@ -14,26 +12,16 @@ memory in a GPU system.
 Umpire creates predefined allocators for each of the available resources, and
 they can be accessed using the `ResourceManager::getAllocator` method.
 
-The predefined names can include:
+For this lesson, these 2 memory resources are the most important:
 
 - "HOST": CPU memory, like `malloc`.
 - "DEVICE": device memory, and a "::<N>" suffix can be added to request memory on a specific device.
-- "UM": unified memory that can be accessed by both the CPU and GPU.
-- "PINNED": CPU memory that is pinned and will be accessible by the GPU.
 
-Other memory resources include:
+There are many more kinds of memory resources that Umpire offers. Check out a list of other memory 
+resources at the bottom of this README!
 
-- "DEVICE_CONST": constant, read-only GPU memory
-- "FILE": mmapped file memory that is accessible by the CPU.
-- "SHARED": Includes POSIX shared memory which can be accessible by the CPU or GPU depending
-on what your system accommodates and the MPI3 shared memory that is accessible on the CPU.
-- "UNKNOWN": If an incorrect name is used or if the allocator was not set up correctly.
-
-## Part 2: Lesson 7
-
-For lesson 7, you will learn how to use Umpire's operations to copy data
-between CPU and GPU memory in a portable way, using the memory resources you learned 
-about in lesson 6.
+Now, let's learn how to use Umpire's operations to copy data
+between CPU and GPU memory in a portable way, using Umpire's memory resources.
 
 In `07_raja_umpire_host_device.cpp`, we create an allocator for the GPU with:
 ```  
@@ -81,9 +69,25 @@ as a template parameter. Finally, as we are filling in the lambda portion of
 the `RAJA::forall`, we need to specify where it will reside in GPU memory. 
 This can be done directly or by using the `RAJA_DEVICE` macro. 
 
+For more information on why we need the CUDA_BLOCK_SIZE and RAJA_DEVICE, check out these links:
+https://cuda-programming.blogspot.com/2013/01/thread-and-block-heuristics-in-cuda.html
+https://stevengong.co/notes/CUDA-Architecture
+https://docs.nvidia.com/cuda/cuda-c-programming-guide/
+
 When you are done editing the file, compile and run it:
 
 ```
 $ make 07_raja_umpire_host_device
 $ ./bin/07_raja_umpire_host_device
 ```
+
+Want to learn more about Umpire memory resources? Check out the list below! You can also learn more by
+going to Umpire's documentation here: https://umpire.readthedocs.io/en/develop/sphinx/tutorial/resources.html
+
+- "UM": unified memory that can be accessed by both the CPU and GPU.
+- "PINNED": CPU memory that is pinned and will be accessible by the GPU.
+- "DEVICE_CONST": constant, read-only GPU memory
+- "FILE": mmapped file memory that is accessible by the CPU.
+- "SHARED": Includes POSIX shared memory which can be accessible by the CPU or GPU depending
+on what your system accommodates and the MPI3 shared memory that is accessible on the CPU.
+- "UNKNOWN": If an incorrect name is used or if the allocator was not set up correctly.
