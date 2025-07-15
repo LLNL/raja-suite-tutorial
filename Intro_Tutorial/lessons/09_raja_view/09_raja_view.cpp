@@ -4,8 +4,11 @@
 #include "umpire/Umpire.hpp"
 #include "umpire/strategy/QuickPool.hpp"
 
+//#define COMPILE
+
 int main()
 {
+  #if defined(COMPILE)
   constexpr int M{3};
   constexpr int N{5};
   double* a{nullptr};
@@ -78,6 +81,7 @@ int main()
   pool.deallocate(a);
   pool.deallocate(result_right);
   pool.deallocate(result_left);
+  #endif // COMPILE
 
   return 0;
 }
