@@ -1,24 +1,38 @@
 # Lesson 6
 
-Now, let's learn about Umpire's different memory resources and in
+Now, let's learn about Umpire's different memory resources and, in
 particular, those used to allocate memory on a GPU. 
 
-Each computer system will have a number of distinct places in which the system
-will allow you to allocate memory. In Umpire's world, these are memory
-resources. A memory resource can correspond to a hardware resource, but can also
-be used to identify memory with a particular characteristic, like `pinned`
-memory in a GPU system.
+Each computer system has distinct places in which the system
+will allow you to allocate memory. For example, most GPU systems have distinct
+processors and memory spaces called *host* and *device*. Host refers to the
+CPU and its memory space. Device refers to the GPU and its memory space. Host
+and device memory spaces are physically separate and data must be copied between
+them. This is illustrated in the figure.
 
-Umpire creates predefined allocators for each of the available resources, and
-they can be accessed using the `ResourceManager::getAllocator` method.
+<figure>
+<img src="./images/CPU_GPU.png">
+</figure>
 
-For this lesson, these 2 memory resources are the most important:
+Understanding how to manage the different memory types is crucial for
+efficient GPU programming. GPU programming models provide routines to
+allocate/deallocate memory in either space, copy data between spaces, etc.
+
+In Umpire's world, distinct places where memory allocation can be done are 
+called **memory resources**. A memory resource can correspond to a hardware
+resource, but can also be used to identify memory with particular access and/or
+performance characteristics, like *pinned* memory in a GPU system. Umpire
+creates predefined **allocators** for each available resource on a system
+when it is configured to build. All allocators can be accessed using the 
+`ResourceManager::getAllocator` method.
+
+For this lesson, two memory resources are important:
 
 - "HOST": CPU memory, like `malloc`.
 - "DEVICE": device memory, and a "::<N>" suffix can be added to request memory on a specific device.
 
-There are many more kinds of memory resources that Umpire offers. Check out a list of other memory 
-resources at the bottom of this README!
+There are more memory resources that Umpire offers. Check out the list of
+memory resources at the bottom of this README!
 
 Now, let's learn how to use Umpire's operations to copy data
 between CPU and GPU memory in a portable way, using Umpire's memory resources.
@@ -35,8 +49,8 @@ and a separate allocator on the CPU with:
 ```
 
 We will initialize the data on the CPU, but we want to do computations on
-the GPU. Therefore, we have to take advantage of some Umpire "Operators".
-In lesson 3, we learned how to use Umpire's `memset` operator. This lesson
+the GPU. To do this, we use Umpire **operators**. Recall, in lesson 3, that
+we learned how to use Umpire's `memset` operator. This lesson
 builds on top of that to show other available operators.
 
 Umpire provides a number of operations implemented as methods on the
@@ -57,22 +71,16 @@ calls to copy data from the CPU memory to the DEVICE memory.
 
 You will also find that we are adjusting the `RAJA::forall` to now work on the GPU.
 In order for this to happen, we need a few extra things. First, we create a 
-`CUDA_BLOCK_SIZE` variable to tell RAJA how big we want our CUDA blocks to be.
-Since there are 32 threads in a warp, 256 tends to be a good value for a block size.
-Other sizes will work too, such as 128 or 512. This just depends on your GPU.
+`CUDA_BLOCK_SIZE` variable to tell RAJA how big we want our CUDA thread-blocks to be.
+Since there are 32 threads in a warp, 256 tends to be a good block size value to try. Other sizes will work too, such as 128 or 512. This just depends on your GPU.
 
-Additionally, the `RAJA::forall` needs the CUDA execution policy. More on GPU
-execution policies can be found here: https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/policies.html#gpu-policies-for-cuda-and-hip
-
-The `cuda_exec` policy takes the cuda block size argument we created before
-as a template parameter. Finally, as we are filling in the lambda portion of
-the `RAJA::forall`, we need to specify where it will reside in GPU memory. 
-This can be done directly or by using the `RAJA_DEVICE` macro. 
-
-For more information on why we need the CUDA_BLOCK_SIZE and RAJA_DEVICE, check out these links:
-https://cuda-programming.blogspot.com/2013/01/thread-and-block-heuristics-in-cuda.html
-https://stevengong.co/notes/CUDA-Architecture
-https://docs.nvidia.com/cuda/cuda-c-programming-guide/
+The `RAJA::forall` needs a CUDA execution policy. We will use the 
+`RAJA::cuda_exec` policy and specialize it with the `CUDA_BLOCK_SIZE` variable
+we created by giving that as a template parameter. Finally, the lambda
+expression passed to the `RAJA::forall` method, which contains the kernel
+body, will need to be callable in the GPU device execution
+environment. So we need to qualify it with the `__device__` annotation.
+This can be done directly or by using the `RAJA_DEVICE` macro.
 
 When you are done editing the file, compile and run it:
 
@@ -80,9 +88,7 @@ When you are done editing the file, compile and run it:
 $ make 07_raja_umpire_host_device
 $ ./bin/07_raja_umpire_host_device
 ```
-
-Want to learn more about Umpire memory resources? Check out the list below! You can also learn more by
-going to Umpire's documentation here: https://umpire.readthedocs.io/en/develop/sphinx/tutorial/resources.html
+Want to learn more about Umpire memory resources? Check out the list below! You can also learn more by going to [Umpire Resources](https://umpire.readthedocs.io/en/develop/sphinx/tutorial/resources.html).
 
 - "UM": unified memory that can be accessed by both the CPU and GPU.
 - "PINNED": CPU memory that is pinned and will be accessible by the GPU.
@@ -91,3 +97,12 @@ going to Umpire's documentation here: https://umpire.readthedocs.io/en/develop/s
 - "SHARED": Includes POSIX shared memory which can be accessible by the CPU or GPU depending
 on what your system accommodates and the MPI3 shared memory that is accessible on the CPU.
 - "UNKNOWN": If an incorrect name is used or if the allocator was not set up correctly.
+
+More on RAJA GPU execution policies can be found here: [RAJA GPU Policies](https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/policies.html#gpu-policies-for-cuda-and-hip).
+
+More information on CUDA programming concepts is available at these links:
+
+* [CUDA Architecture](https://stevengong.co/notes/CUDA-Architecture)
+* [CUDA Thread and Block Heuristics](https://cuda-programming.blogspot.com/2013/01/thread-and-block-heuristics-in-cuda.html)
+* [CUDA C++ Programming](https://docs.nvidia.com/cuda/cuda-c-programming-guide/)
+
