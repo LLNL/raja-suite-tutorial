@@ -1,48 +1,48 @@
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
+#include <iomanip>
 
 #include "RAJA/RAJA.hpp"
-#include "umpire/Umpire.hpp"
+
+//TODO: uncomment this out in order to build!
+//#define COMPILE
 
 int main()
 {
-  constexpr int N{1000};
-  double* a{nullptr};
-  double* b{nullptr};
+  constexpr int N{1000000};
 
-  auto& rm = umpire::ResourceManager::getInstance();
-  auto allocator = rm.getAllocator("HOST");
+  constexpr double dx{1.0 / N}; 
 
-  a = static_cast<double*>(allocator.allocate(N*sizeof(double)));
-  b = static_cast<double*>(allocator.allocate(N*sizeof(double)));
+  // Sequential kernel that approximates pi 
+  {
+    RAJA::ReduceSum<RAJA::seq_reduce, double> pi(0.0);
+  
+    RAJA::forall<RAJA::seq_exec>(RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
+        double x = (double(i) + 0.5) * dx;
+        pi += dx / (1.0 + x * x);
+    });
+    double tpi = 4.0 * pi.get(); 
 
-  std::srand(4793);
+    std::cout << "Sequential pi approximation " << " = " 
+              << std::setprecision(20) << tpi << std::endl;
+  }
 
-  // Initialize data arrays to random positive and negative values
-  RAJA::forall< RAJA::seq_exec >(
-    RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
-      double signfact = static_cast<double>(std::rand()/RAND_MAX);
-      signfact = ( signfact < 0.5 ? -1.0 : 1.0 );
+#if defined(COMPILE)
+  // OpenMP kernel that approximates pi
+  {
+    // TODO: write a parallel RAJA forall loop using OpenMP to approximate pi.
+    // First, will have to define create a RAJA::ReduceSum object that will
+    // work in an OpenMP kernel.
 
-      a[i] = signfact * (i + 1.1)/(i + 1.12);
-      b[i] = (i + 1.1)/(i + 1.12);
-    }
-  );
+    RAJA::forall<RAJA::omp_parallel_for_exec>( ??? 
 
-  // TODO: Change this dot variable to instead use a RAJA OpenMP parallel
-  // reduction 
-  double dot{0.0};
+    ); 
+    double tpi = 4.0 * pi.get();
 
-  // TODO: Calculate and output the dot product of a and b using a RAJA::forall
-  RAJA::forall< RAJA::omp_parallel_for_exec >(
-    RAJA::TypedRangeSegment<int>(0, N), [=] (int i) {
-    }
-  );
-
-  std::cout << "dot product is "<< dot << std::endl;
-
-  allocator.deallocate(a);
-  allocator.deallocate(b);
+    std::cout << "OpenMP pi approximation " << " = "
+              << std::setprecision(20) << tpi << std::endl;
+  }
+#endif  // if defined(COMPILE)
 
   return 0;
 }
