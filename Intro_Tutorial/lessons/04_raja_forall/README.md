@@ -26,7 +26,10 @@ kernel were run with M thread, then depending on how the loop work is
 scheduled, iterates may be partitioned into chunks of size N/M with each 
 thread executing one chunk of iterates. This is illustrated in the figure.
 
-<img title="Kernel iterations partitioned across M processes/threads" src="./images/parchunk.png">
+<figure>
+<img src="./images/parchunk.png">
+<figcaption>Kernel iterations partitioned across M processes/threads.</figcaption>
+</figure>
 
 If the loop takes T time units to run on one process/thread, then ideally it
 would run on T / M time units in parallel when using M processors/threads
