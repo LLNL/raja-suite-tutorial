@@ -28,7 +28,6 @@ thread executing one chunk of iterates. This is illustrated in the figure.
 
 <figure>
 <img src="./images/parchunk.png">
-<figcaption>Kernel iterations partitioned across M processes/threads.</figcaption>
 </figure>
 
 If the loop takes T time units to run on one process/thread, then ideally it
