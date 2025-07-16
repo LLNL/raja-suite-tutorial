@@ -4,56 +4,100 @@
 #include "umpire/Umpire.hpp"
 #include "umpire/strategy/QuickPool.hpp"
 
+template<typename U, typename V>
+void check_solution(U &A, V &A_t, const int M, const int N);
+
+//TODO: uncomment this out in order to build!
+//#define COMPILE
+
 int main()
 {
-#if defined (COMPILE)
+#if defined(COMPILE)
   constexpr int N{10000};
   constexpr int M{7000};
-  double* a{nullptr};
-  double* a_t{nullptr};
-  double* a_h{nullptr};
-  double* a_t_h{nullptr};
+  double* h_a{nullptr};
+  double* h_a_t{nullptr};
+  double* d_a{nullptr};
+  double* d_a_t{nullptr};
 
   auto& rm = umpire::ResourceManager::getInstance();
 
-  auto allocator = rm.getAllocator("DEVICE");
+  auto device_allocator = rm.getAllocator("DEVICE");
   auto host_allocator = rm.getAllocator("HOST");
 
-  a = static_cast<double *>(allocator.allocate(N*M*sizeof(double)));
-  a_t = static_cast<double *>(allocator.allocate(N*M*sizeof(double)));
-  a_h = static_cast<double *>(host_allocator.allocate(N*M*sizeof(double)));
-  a_t_h = static_cast<double *>(host_allocator.allocate(N*M*sizeof(double)));
+  d_a = static_cast<double *>(device_allocator.allocate(N*M*sizeof(double)));
+  d_a_t = static_cast<double *>(device_allocator.allocate(N*M*sizeof(double)));
+  h_a = static_cast<double *>(host_allocator.allocate(N*M*sizeof(double)));
+  h_a_t = static_cast<double *>(host_allocator.allocate(N*M*sizeof(double)));
 
-  rm.copy(a, a_h, N*M*sizeof(double));
-  rm.copy(a_t, a_t_h, N*M*sizeof(double));
+  auto h_A   = RAJA::make_permuted_view<RAJA::layout_right>(h_a, M, N);
+  auto h_A_t   = RAJA::make_permuted_view<RAJA::layout_right>(h_a_t, N, M);
 
-  constexpr int DIM = 2;
+  // Intialize data
+  for(int row = 0; row < M; ++row) {
+    for(int col = 0; col < N; ++col) {
+      h_A(row, col) = col + N * row;
+    }
+  }
 
-  RAJA::View<double, RAJA::Layout<DIM>> A(a, N, M);
-  RAJA::View<double, RAJA::Layout<DIM>> A_t(a_t, M, N);
+  rm.copy(d_a, h_a, N*M*sizeof(double));
+  rm.copy(d_a_t, h_a_t, N*M*sizeof(double));
 
+  auto d_A   = RAJA::make_permuted_view<RAJA::layout_right>(d_a, M, N);
+  auto d_A_t = RAJA::make_permuted_view<RAJA::layout_right>(d_a_t, N, M);
+
+  constexpr int team_size = 16;
+  const int teams_x   = (M - 1) / team_size + 1;
+  const int teams_y   = (N - 1) / team_size + 1;
+
+  const bool async = false;
   using EXEC_POL =
-      RAJA::cuda_launch_t<false>;
-  using outer_loop = RAJA::LoopPolicy<RAJA::cuda_block_x_direct>;
-  using inner_loop = RAJA::LoopPolicy<RAJA::cuda_thread_x_loop>;
+    RAJA::LaunchPolicy<RAJA::cuda_launch_t<async>>;
+  using outer_loop = RAJA::LoopPolicy</*Construct the CUDA y global index policy*/>;
+  using inner_loop = RAJA::LoopPolicy</*Construct the CUDA x global index policy*/>;
 
   RAJA::launch<EXEC_POL>(
-    // TODO: Which numbers of Teams and Threads should be used in this launch?
-    RAJA::LaunchParams(RAJA::Teams(???), RAJA::Threads(???)),
+    RAJA::LaunchParams(RAJA::Teams(teams_x, teams_y), RAJA::Threads(team_size, team_size)),
       [=] RAJA_HOST_DEVICE(RAJA::LaunchContext ctx) {
-      RAJA::loop<outer_loop>(ctx, RAJA::TypedRangeSegment<int>(0,N), [&] (int col) {
         RAJA::loop<inner_loop>(ctx, RAJA::TypedRangeSegment<int>(0,M), [&] (int row) {
-          // TODO: What indexing should be used to fill in the transposed View?
-          A_t(???, ???) = A(row, col);
+          RAJA::loop<outer_loop>(ctx, RAJA::TypedRangeSegment<int>(0,N), [&] (int col) {
+          d_A_t(col, row) = d_A(row, col);
         });
       });
     });
 
-  allocator.deallocate(a);
-  allocator.deallocate(a_t);
-  host_allocator.deallocate(a_h);
-  host_allocator.deallocate(a_t_h);
-#endif
+  rm.copy(h_a, d_a, N*M*sizeof(double));
+  rm.copy(h_a_t, d_a_t, N*M*sizeof(double));
 
+  check_solution(h_A, h_A_t, M, N);
+
+  device_allocator.deallocate(d_a);
+  device_allocator.deallocate(d_a_t);
+  host_allocator.deallocate(h_a);
+  host_allocator.deallocate(h_a_t);
+
+#endif //COMPILE
+  
   return 0;
+}
+
+template<typename U, typename V>
+void check_solution(U &A, V &A_t, const int M, const int N)
+{
+  bool pass = true;
+
+  for(int row = 0; row < M; ++row) {
+    for(int col = 0; col < N; ++col) {
+      if(A(row, col) != A_t(col, row)) {
+        pass = false;
+      }
+    }
+  }
+
+  if(pass) {
+    std::cout<<"SUCCESS! Matrix transpose passed"<<std::endl;
+  }else{
+    std::cout<<"Error! Matrix transpose did not pass"<<std::endl;
+  }
+
 }
