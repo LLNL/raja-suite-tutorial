@@ -49,7 +49,7 @@ and a separate allocator on the CPU with:
 ```
 
 We will initialize the data on the CPU, but we want to do computations on
-the GPU. To do this, we use Umpire **operators**. Recall, in lesson 3, that
+the GPU. To do this, we use Umpire **operators**. Recall from lesson 3 that
 we learned how to use Umpire's `memset` operator. This lesson
 builds on top of that to show other available operators.
 
@@ -72,15 +72,18 @@ calls to copy data from the CPU memory to the DEVICE memory.
 You will also find that we are adjusting the `RAJA::forall` to now work on the GPU.
 In order for this to happen, we need a few extra things. First, we create a 
 `CUDA_BLOCK_SIZE` variable to tell RAJA how big we want our CUDA thread-blocks to be.
-Since there are 32 threads in a warp, 256 tends to be a good block size value to try. Other sizes will work too, such as 128 or 512. This just depends on your GPU.
+Since there are 32 threads in a warp, 256 tends to be a good block size value to try. 
+Other sizes will work too, such as 128 or 512. This just depends on your GPU.
 
-The `RAJA::forall` needs a CUDA execution policy. We will use the 
+Next, the `RAJA::forall` needs a CUDA execution policy. We will use the 
 `RAJA::cuda_exec` policy and specialize it with the `CUDA_BLOCK_SIZE` variable
-we created by giving that as a template parameter. Finally, the lambda
-expression passed to the `RAJA::forall` method, which contains the kernel
-body, will need to be callable in the GPU device execution
-environment. So we need to qualify it with the `__device__` annotation.
-This can be done directly or by using the `RAJA_DEVICE` macro.
+we created by giving that as a template parameter. Finally, as we are filling in 
+the lambda expression for the `RAJA::forall`, we need to specify where it will 
+reside in GPU memory. This can be done directly with the `__device__` annotation 
+or by using the `RAJA_DEVICE` macro.
+
+For more information about why we need these extra details as we prepare RAJA for the GPU,
+be sure to check out the links at the bottom of this README.
 
 When you are done editing the file, compile and run it:
 
@@ -88,7 +91,9 @@ When you are done editing the file, compile and run it:
 $ make 07_raja_umpire_host_device
 $ ./bin/07_raja_umpire_host_device
 ```
-Want to learn more about Umpire memory resources? Check out the list below! You can also learn more by going to [Umpire Resources](https://umpire.readthedocs.io/en/develop/sphinx/tutorial/resources.html).
+Want to learn more about Umpire memory resources? Check out the list below! You can also learn 
+more by going to our online documentation on 
+[Umpire Resources](https://umpire.readthedocs.io/en/develop/sphinx/tutorial/resources.html).
 
 - "UM": unified memory that can be accessed by both the CPU and GPU.
 - "PINNED": CPU memory that is pinned and will be accessible by the GPU.
