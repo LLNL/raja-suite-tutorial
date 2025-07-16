@@ -80,7 +80,7 @@ int main()
 #endif // if defined(RAJA_ENABLE_CUDA) 
 #endif // if defined(COMPILE)
 
-   host_allocator.deallocate(pi_h);
+  host_allocator.deallocate(pi_h);
 
   return 0;
 }
