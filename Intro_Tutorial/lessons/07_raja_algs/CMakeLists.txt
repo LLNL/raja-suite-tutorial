@@ -1,6 +1,6 @@
 blt_add_executable(
-  NAME NEW_raja_atomic
-  SOURCES NEW_raja_atomic.cpp
+  NAME 07_raja_atomic
+  SOURCES 07_raja_atomic.cpp
   DEPENDS_ON RAJA umpire cuda)
 
 ##blt_add_executable(
