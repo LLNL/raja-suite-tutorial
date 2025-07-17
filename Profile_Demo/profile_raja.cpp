@@ -6,8 +6,15 @@
 
 #include "caliper-plugin.cpp"
 
-const bool async = false;
-using forall_pol = RAJA::cuda_exec<1024, async>;
+//Uncomment for policy selection
+
+#define DIRECT_POLICY
+///#define LOOP_POLICY
+//#define GLOBAL_POLICY
+
+constexpr int max_threads = 1024;
+constexpr bool async = false;
+using forall_pol = RAJA::cuda_exec<max_threads, async>;
 using launch_pol = RAJA::LaunchPolicy<RAJA::cuda_launch_t<async>>;
 
 void init(double *A, double *B, double *C, int m, int n) {
@@ -45,7 +52,7 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
   auto v_B = RAJA::make_permuted_view<RAJA::layout_right>(B, n, p);
   auto v_C = RAJA::make_permuted_view<RAJA::layout_right>(C, m, p);
 
-#if 1
+#if defined(DIRECT_POLICY)
   const int threads = p;
   const int teams = m;
 
@@ -55,7 +62,7 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
   using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_thread_x_direct>;
 #endif
 
-#if 0
+#if defined(LOOP_POLICY)
   const int threads = 256;
   const int teams = m;
 
@@ -65,7 +72,7 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
   using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_thread_x_loop>;
 #endif
 
-#if 0
+#if defined(GLOBAL_POLICY)
   const int threads = 16;
   const int teams_x = (n - 1)/threads + 1;
   const int teams_y = (m - 1)/threads + 1;
