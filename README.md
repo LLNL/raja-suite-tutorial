@@ -70,6 +70,6 @@ Unlimited Open Source - BSD 3-clause Distribution
 
 For release details and restrictions, please see the information in the
 following:
-- [RELEASE](./tpl/raja/RELEASE)
-- [LICENSE](./tpl/raja/LICENSE)
-- [NOTICE](./tpl/raja/NOTICE)
+- [RELEASE](https://github.com/LLNL/RAJA/blob/develop/RELEASE)
+- [LICENSE](https://github.com/LLNL/RAJA/blob/develop/LICENSE)
+- [NOTICE](https://github.com/LLNL/RAJA/blob/develop/NOTICE)
