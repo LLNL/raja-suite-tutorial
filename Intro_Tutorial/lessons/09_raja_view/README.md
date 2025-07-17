@@ -33,14 +33,14 @@ RAJA::View<double, RAJA::Layout<2, int>> view(data, N, N);
 where `data` is a `double*`, and `N` is the size of each dimension. The size of
 `data` should be at least `N*N`.
 
-In the file `09_raja_view.cpp`, there is a `TODO` comment where you should create two
+In the file `09_raja_view.cpp`, there are two `TODO` comments where you should create two
 views, A, and R. R will be created via a permuted view with the same right-oriented layout
 as A. Knowledge of `RAJA::make_permuted_view` is not required to complete this task, but
 more information can be found here:
 https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/view.html#make-permuted-view.
 There are two `TODO` comments where you should complete the loop indexing and bounds, and fill
 in A and R with their respective index values.
-When you are ready, uncomment the COMPILE define on line 7; then you can compile and run the code:
+When you are ready, uncomment the COMPILE define on line 8; then you can compile and run the code:
 
 ```
 $ make 09_raja_view

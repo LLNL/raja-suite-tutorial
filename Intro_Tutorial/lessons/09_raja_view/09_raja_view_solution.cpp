@@ -43,7 +43,7 @@ int main()
   // "a" array.
   RAJA::View<double, RAJA::Layout<DIM>> A(a, M, N);
 
-  // A left-oriented layout view initialized with "result_left" array
+  // A left-oriented layout view initialized with the "result_left" array
   auto L = RAJA::make_permuted_view<RAJA::layout_left>(result_left, M, N);
 
   // TODO: Create a permuted MxN view with a right-oriented layout called "R",
@@ -51,7 +51,7 @@ int main()
   auto R = RAJA::make_permuted_view<RAJA::layout_right>(result_right, M, N);
 
   // Note that Views created by RAJA::make_permuted_view know the unit stride
-  // index at compile time, which prevents unnecessary index arithmetic
+  // index at compile time, which prevents unnecessary index arithmetic.
 
   // TODO: Fill in loop bounds that are appropriate for right-oriented layout
   // Views A and R.
