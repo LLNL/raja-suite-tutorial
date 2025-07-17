@@ -6,6 +6,19 @@
 
 #define COMPILE
 
+// Method to print arrays associated with the Views constructed above
+void printArrayAsMatrix( double * array, int row, int col )
+{
+  for ( int ii = 0; ii < row * col; ++ii )
+  {
+    std::cout << array[ii] << " ";
+    if ( ((ii+1) % col == 0) )
+    {
+      std::cout << std::endl;
+    }
+  }
+}
+
 int main()
 {
 #if defined(COMPILE)
@@ -69,30 +82,17 @@ int main()
     }
   }
 
-  // Method to print arrays associated with the Views constructed above
-  auto printArrayAsMatrix = [&](double * array)
-  {
-    for ( int ii = 0; ii < M*N; ++ii )
-    {
-      printf("%f ", array[ii]);
-      if ( ((ii+1) % N == 0) )
-      {
-        printf("\n");
-      }
-    }
-  };
-
   // TODO: Run the code and review the output from the following method calls
   // to make sure each array prints the same ordering of values.
   // "a" and "result_right" should match "result_left".
-  printf("\na array under View A:\n");
-  printArrayAsMatrix( a );
+  std::cout << "a array under View A:" << std::endl;
+  printArrayAsMatrix( a, M, N );
 
-  printf("\nresult_right array under View R:\n");
-  printArrayAsMatrix( result_right );
+  std::cout << "result_right array under View R:" << std::endl;
+  printArrayAsMatrix( result_right, M, N );
 
-  printf("\nresult_left array under View L:\n");
-  printArrayAsMatrix( result_left );
+  std::cout << "result_left array under View L:" << std::endl;
+  printArrayAsMatrix( result_left, M, N );
 
   pool.deallocate(a);
   pool.deallocate(result_right);
