@@ -16,7 +16,7 @@ introductory tutorial that provides a guided set of lessons to follow to
 learn how to get started with the RAJA Portability Suite. There is also an
 intermediate tutorial meant for those who would like more advanced hands-on
 instruction for RAJA and Umpire. If you are new to the RAJA Portability Suite,
-we suggest that you start intro tutorial before attempting the intermediate
+we suggest that you start the intro tutorial before attempting the intermediate
 tutorial.
 
 For more detailed information about using RAJA and Umpire, please refer
