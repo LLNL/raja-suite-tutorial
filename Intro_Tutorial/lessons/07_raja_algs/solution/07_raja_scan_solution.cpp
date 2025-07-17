@@ -55,8 +55,7 @@ int main()
   }
 #endif
 
-#if defined(COMPILE) 
-#if defined(RAJA_ENABLE_CUDA) 
+#if defined(COMPILE) && defined(RAJA_ENABLE_CUDA)
   // TODO: Implement RAJA scan to run on CUDA device
   {
     constexpr int M{20};
@@ -73,8 +72,8 @@ int main()
     }
 
     // TODO: Create a device memory alloctor, allocate array 'array_d'
-    //       on the device, and initialize the array by copying the values from
-    //       'array_h' above.
+    //       on the device, and initialize the device array by using the
+    //       Umpire copy operation to copy the values from 'array_h'.
     auto device_allocator = rm.getAllocator("DEVICE");
     array_d = static_cast<int*>(device_allocator.allocate(M*sizeof(int)));
     rm.copy(array_d, array_h, M*sizeof(int));
@@ -85,8 +84,8 @@ int main()
     RAJA::exclusive_scan_inplace<RAJA::cuda_exec<CUDA_BLOCK_SIZE>>(
       RAJA::make_span(array_d, M), RAJA::operators::maximum<int>{});    
 
-    // TODO: Copy the results of your scan operation back to the array
-    //       'array_h' so they can be printing in the loop below.
+    // TODO: Use the Umpire copy operation to copy the result in device memory
+    // to the host array 'array_h' so that the result can be printed below
     rm.copy(array_h, array_d, M*sizeof(int));
 
     std::cout << "Output (exclusive (CUDA) in-place): ";
@@ -96,8 +95,7 @@ int main()
     std::cout << std::endl;
 
   }
-#endif // if defined(RAJA_ENABLE_CUDA) 
-#endif // if defined(COMPILE)
+#endif // if defined(COMPILE) && defined(RAJA_ENABLE_CUDA)
 
   return 0;
 }

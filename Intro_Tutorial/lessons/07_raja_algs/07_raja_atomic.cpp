@@ -40,25 +40,28 @@ int main()
   }
 #endif
 
-#if defined(COMPILE) 
-#if defined(RAJA_ENABLE_CUDA) 
+#if defined(COMPILE) && defined(RAJA_ENABLE_CUDA)
   // TODO: Implement pi approximation to run on CUDA device
   {
     constexpr std::size_t CUDA_BLOCK_SIZE{256};
 
-    // TODO: Define CUDA execution policy and atomic policy
-    using EXEC_POL   = ???<CUDA_BLOCK_SIZE>;
+    // TODO: Define CUDA execution policy, using the CUDA block size defined
+    // above, and define the atomic policy
+    using EXEC_POL   = ???;
     using ATOMIC_POL = ???;
 
     pi_h[0] = 0.0;
 
     auto device_allocator = rm.getAllocator("DEVICE");
 
-    // TODO: Allocate device data for 'pi_d' using the device allocator
-    // defined above and use the Umpire memset operation to initialize the data
     double* pi_d{nullptr};
 
-    rm.memset(???, ???);
+    // TODO: Allocate device data for 'pi_d' using the device allocator
+    // defined above
+    pi_d = ???;
+
+    // TODO: Use the Umpire memset operation to initialize the data
+    rm.memset( ??? , ??? );
 
     // TODO: Write a RAJA CUDA kernel to approximate pi
     RAJA::forall<EXEC_POL>(RAJA::TypedRangeSegment<int>(0, N), [=] __device__ (int i) {
@@ -66,8 +69,9 @@ int main()
         ???
     });
    
-    // TODO: Copy result back to 'pi_h' to print result 
-    rm.copy(???, ???, ???);
+    // TODO: Use the Umpire copy operation to copy the result in device memory
+    // to the host array 'pi_h' so that the result can be printed below
+    rm.copy( ??? , ??? , ??? );
     pi_h[0] *= 4.0;
 
     std::cout << "CUDA pi approximation " << " = "
@@ -75,8 +79,7 @@ int main()
 
     device_allocator.deallocate(pi_d);
   }
-#endif // if defined(RAJA_ENABLE_CUDA) 
-#endif // if defined(COMPILE)
+#endif // if defined(COMPILE) && defined(RAJA_ENABLE_CUDA)
 
   host_allocator.deallocate(pi_h);
 
