@@ -4,8 +4,7 @@
 #include "umpire/Umpire.hpp"
 #include "umpire/strategy/QuickPool.hpp"
 
-// TODO: Uncomment this in order to build!
-//#define COMPILE
+#define COMPILE
 
 // Method to print arrays associated with the Views constructed above
 void printArrayAsMatrix( double * array, int row, int col )
@@ -42,23 +41,23 @@ int main()
 
   // TODO: Create a standard MxN RAJA::View called "A", initialized with the
   // "a" array.
-  RAJA::View<double, ???>> A(???, ???, ???);
+  RAJA::View<double, RAJA::Layout<DIM>> A(a, M, N);
 
   // A left-oriented layout view initialized with the "result_left" array
   auto L = RAJA::make_permuted_view<RAJA::layout_left>(result_left, M, N);
 
   // TODO: Create a permuted MxN view with a right-oriented layout called "R",
   // initialized with the "result_right" array.
-  auto R = ???; 
+  auto R = RAJA::make_permuted_view<RAJA::layout_right>(result_right, M, N);
 
   // Note that Views created by RAJA::make_permuted_view know the unit stride
   // index at compile time, which prevents unnecessary index arithmetic.
 
   // TODO: Fill in loop bounds that are appropriate for right-oriented layout
   // Views A and R.
-  for ( int row = 0; row < ???; ++row )
+  for ( int row = 0; row < M; ++row )
   {
-    for ( int col = 0; col < ???; ++col )
+    for ( int col = 0; col < N; ++col )
     {
       // TODO: Initialize A and R views to their index values, e.g. index 0
       // should contain 0, index 1 should contain 1, . . ., index 14 should
@@ -66,8 +65,8 @@ int main()
       //
       // Note that both A and R should print out the same sequence of values
       // in the calls to 'printArrayAsMatrix' below.
-      A(row, col) = ???;
-      R(row, col) = ???;
+      A(row, col) = row * N + col;
+      R(row, col) = row * N + col;
     }
   }
 
