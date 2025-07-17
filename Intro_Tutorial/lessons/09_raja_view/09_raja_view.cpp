@@ -8,7 +8,7 @@
 
 int main()
 {
-  #if defined(COMPILE)
+#if defined(COMPILE)
   constexpr int M{3};
   constexpr int N{5};
   double* a{nullptr};
@@ -24,31 +24,43 @@ int main()
   result_right = static_cast<double *>(pool.allocate(M*N*sizeof(double)));
   result_left = static_cast<double *>(pool.allocate(M*N*sizeof(double)));
 
-  // TODO: Create a standard MxN RAJA::View called, "A", initialized with the "a" array.
-  // TODO: Create a permuted MxN view with a right-oriented layout called, "R", initialized with the "result_right" array.
   constexpr int DIM = 2;
-  auto L = RAJA::make_permuted_view<RAJA::layout_left>(result_left, M, N);
-  // Note that Views created by RAJA::make_permuted_view perform a little more optimally
-  // because the unit stride index is known ahead of time.
 
-  // TODO: Fill in loop bounds that are appropriate for right-oriented layouts of Views A and R.
-  for ( ??? )
+  // TODO: Create a standard MxN RAJA::View called "A", initialized with the
+  // "a" array.
+  RAJA::View<double, ???>> A(???, ???, ???);
+
+  // A left-oriented layout view initialized with "result_left" array 
+  auto L = RAJA::make_permuted_view<RAJA::layout_left>(result_left, M, N);
+
+  // TODO: Create a permuted MxN view with a right-oriented layout called "R",
+  // initialized with the "result_right" array.
+  auto R = ???; 
+
+  // Note that Views created by RAJA::make_permuted_view know the unit stride
+  // index at compile time, which prevents unnecessary index arithmetic
+
+  // TODO: Fill in loop bounds that are appropriate for right-oriented layout
+  // Views A and R.
+  for ( int row = 0; row < ???; ++row )
   {
-    for ( ??? )
+    for ( int col = 0; col < ???; ++col )
     {
-      // TODO: Initialize A and R views to their index values, e.g. index 0 should contain 0,
-      // index 1 should contain 1, . . ., index 14 should contain 14. Note that both
-      // A and R should print out the same sequence of values, due to the default
-      // View for A being constructed with a right-oriented layout.
+      // TODO: Initialize A and R views to their index values, e.g. index 0
+      // should contain 0, index 1 should contain 1, . . ., index 14 should
+      // contain 14.
+      // 
+      // Note that both A and R should print out the same sequence of values
+      // in the calls to 'printArrayAsMatrix' below.
       A(row, col) = ???;
       R(row, col) = ???;
     }
   }
 
-  // The L view will receive the same values as A and R. Note to achieve this,
-  // the loop indexing is reversed from the previous initialization loops because L
-  // is a left-oriented layout. The values assigned to L also reflect left-oriented
-  // indexing arithmetic.
+  // The L view will receive the same values as A and R. To achieve this,
+  // the loop indexing is reversed from the previous initialization loops
+  // because L is a left-oriented layout. The values assigned to L also
+  // reflect left-oriented indexing arithmetic.
   for ( int col = 0; col < N; ++col )
   {
     for ( int row = 0; row < M; ++row )
@@ -57,6 +69,7 @@ int main()
     }
   }
 
+  // Method to print arrays associated with the Views constructed above
   auto printArrayAsMatrix = [&](double * array)
   {
     for ( int ii = 0; ii < M*N; ++ii )
@@ -69,7 +82,8 @@ int main()
     }
   };
 
-  // TODO: Look at the output and make sure each array prints the same ordering of values.
+  // TODO: Run the code and review the output from the following method calls
+  // to make sure each array prints the same ordering of values.
   // "a" and "result_right" should match "result_left".
   printf("\na array under View A:\n");
   printArrayAsMatrix( a );
@@ -83,7 +97,7 @@ int main()
   pool.deallocate(a);
   pool.deallocate(result_right);
   pool.deallocate(result_left);
-  #endif // COMPILE
+#endif
 
   return 0;
 }
