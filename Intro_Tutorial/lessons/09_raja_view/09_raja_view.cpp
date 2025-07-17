@@ -28,6 +28,8 @@ int main()
   // TODO: Create a permuted MxN view with a right-oriented layout called, "R", initialized with the "result_right" array.
   constexpr int DIM = 2;
   auto L = RAJA::make_permuted_view<RAJA::layout_left>(result_left, M, N);
+  // Note that Views created by RAJA::make_permuted_view perform a little more optimally
+  // because the unit stride index is known ahead of time.
 
   // TODO: Fill in loop bounds that are appropriate for right-oriented layouts of Views A and R.
   for ( ??? )

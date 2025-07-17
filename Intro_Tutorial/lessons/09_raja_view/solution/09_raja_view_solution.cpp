@@ -27,6 +27,8 @@ int main()
   RAJA::View<double, RAJA::Layout<DIM>> A(a, M, N);
   auto R = RAJA::make_permuted_view<RAJA::layout_right>(result_right, M, N);
   auto L = RAJA::make_permuted_view<RAJA::layout_left>(result_left, M, N);
+  // Note that Views created by RAJA::make_permuted_view perform a little more optimally
+  // because the unit stride index is known ahead of time.
 
   // TODO: Fill in loop bounds that are appropriate for right-oriented layouts of Views A and R.
   for ( int row = 0; row < M; ++row )
