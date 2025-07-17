@@ -6,7 +6,7 @@
 [comment]: # (# SPDX-License-Identifier: BSD-3-Clause)
 [comment]: # (#################################################################)
 
-# <img src="./tpl/raja/share/raja/logo/RAJA_LOGO_Color.png?raw=true" width="128" valign="middle" alt="RAJA"/>
+# <img src="https://github.com/LLNL/RAJA/blob/develop/share/raja/logo/RAJA_LOGO_CMYK_White_Background_large.png" width="128" valign="middle" alt="RAJA"/>
 
 # RAJA Portability Suite Tutorial
 
