@@ -38,7 +38,7 @@ views, A, and R. R will be created via a permuted view with the same right-orien
 as A. Knowledge of `RAJA::make_permuted_view` is not required to complete this task, but
 more information can be found here:
 https://raja.readthedocs.io/en/develop/sphinx/user_guide/feature/view.html#make-permuted-view.
-There are two `TODO` comments where you should complete the loop indexing and bounds, and fill
+There are two `TODO` comments where you should complete the loop bounds, and fill
 in A and R with their respective index values.
 When you are ready, uncomment the COMPILE define on line 8; then you can compile and run the code:
 
