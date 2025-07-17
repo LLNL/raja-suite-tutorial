@@ -12,7 +12,13 @@ int main()
   auto allocator = rm.getAllocator("HOST");
   data = static_cast<double*>(allocator.allocate(100*sizeof(double)));
 
-  std::cout << "Address of data: " << data << std::endl;
+  // TODO: use the resource manager to memset your array to 0
+  rm.memset(data, 0);
+
+  // TODO: uncomment this print statement
+  std::cout << "Allocated " << (100 * sizeof(double)) << " bytes and set to "
+            << data[0] << " using the " << allocator.getName() << " allocator."
+            << std::endl;
 
   // TODO: deallocate the array
   allocator.deallocate(data);
