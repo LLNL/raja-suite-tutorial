@@ -13,6 +13,9 @@ Once the suite is built, you can invoke the following command to profile a set o
 
 ``CALI_CONFIG=runtime-report ./bin/profile_raja 1024``
 
+This example provides three different kernel policies, allowing users to observe runtime performance differences between the kernels. 
+To switch between them, uncomment the desired variable at the top of the file.
+
 For more information on Caliper we refer the reader to the following pages:
 
 - [RAJA-Caliper Quick Start Documentation](https://raja.readthedocs.io/en/develop/sphinx/user_guide/profiling_with_caliper.html)
