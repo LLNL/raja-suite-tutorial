@@ -9,7 +9,7 @@
 //Uncomment for policy selection
 
 #define DIRECT_POLICY
-///#define LOOP_POLICY
+//#define LOOP_POLICY
 //#define GLOBAL_POLICY
 
 constexpr int max_threads = 1024;
