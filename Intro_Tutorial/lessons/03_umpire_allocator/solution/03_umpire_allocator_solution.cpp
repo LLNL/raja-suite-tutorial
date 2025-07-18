@@ -3,8 +3,12 @@
 #include "RAJA/RAJA.hpp"
 #include "umpire/Umpire.hpp"
 
+// TODO: Uncomment this in order to build!
+#define COMPILE
+
 int main()
 {
+#if defined(COMPILE)
   double* data{nullptr};
 
   // TODO: allocate an array of 100 doubles using the HOST allocator
@@ -23,5 +27,6 @@ int main()
   // TODO: deallocate the array
   allocator.deallocate(data);
 
+#endif
   return 0;
 }
