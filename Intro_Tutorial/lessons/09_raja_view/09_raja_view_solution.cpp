@@ -6,7 +6,7 @@
 
 #define COMPILE
 
-// Method to print arrays associated with the Views constructed above
+// Method to print arrays associated with the Views in the lesson
 void printArrayAsMatrix( double * array, int row, int col )
 {
   for ( int ii = 0; ii < row * col; ++ii )
