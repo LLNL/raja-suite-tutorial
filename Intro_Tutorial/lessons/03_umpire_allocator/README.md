@@ -1,4 +1,4 @@
-# Lesson 3
+# Lesson 3: Umpire Allocators
 
 In this lesson, you will learn how to use Umpire to allocate memory. The file
 `03_umpire_allocator.cpp` contains `TODO:` comments where you will code to

@@ -1,4 +1,4 @@
-# Lesson 9
+# Lesson 9: RAJA Views and Layouts
 
 In this lesson, you will learn how to use `RAJA::View` to simplify
 multidimensional indexing in a matrix-matrix multiplication kernel.

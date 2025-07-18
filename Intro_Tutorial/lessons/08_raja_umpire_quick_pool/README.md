@@ -1,6 +1,6 @@
-# Lesson 8
+# Lesson 8: Umpire Memory Pools
 
-In this lesson, you will learn to create and use an Umpire  memory pool.
+In this lesson, you will learn to create and use an Umpire memory pool.
 
 Frequently allocating and deallocating memory can be quite costly, especially
 when you are making large allocations or allocating on different memory
