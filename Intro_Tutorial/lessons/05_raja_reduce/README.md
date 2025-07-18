@@ -1,4 +1,4 @@
-# Lesson 5
+# Lesson 5: RAJA Reductions 
 
 In lesson 4, we looked at a data parallel loop kernel in which each loop
 iterate was independent of the others. In this lesson, we consider a kernel 

@@ -1,4 +1,4 @@
-# Lesson 6
+# Lesson 6: Host-Device Memory and Device Kernels
 
 Now, let's learn about Umpire's different memory resources and, in
 particular, those used to allocate memory on a GPU. 

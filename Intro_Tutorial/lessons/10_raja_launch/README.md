@@ -1,4 +1,4 @@
-# Lesson ten
+# Lesson 10: RAJA Launch
 
 In this lesson, we begin exploring the RAJA abstraction for exposing parallelism within nested loops and the GPU thread/block programming model.
 

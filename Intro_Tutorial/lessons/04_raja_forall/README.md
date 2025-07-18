@@ -1,4 +1,4 @@
-# Lesson Four
+# Lesson 4: RAJA Simple Loops
 
 Data parallel kernels are common in many parallel HPC applications. In a data
 parallel loop kernel, the processing of data that occurs at each iterate **is

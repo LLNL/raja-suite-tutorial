@@ -1,18 +1,14 @@
-# Lesson 2
+# Lesson 2: RAJA and Umpire as Build Dependencies
 
 In this lesson, you will learn how to add RAJA and Umpire as dependencies 
 to your application.
 
-Like the previous lesson, we have a CMakeLists.txt file that will describe our
-application using the `blt_add_executable` macro.
+RAJA and Umpire are included in this project as **targets** that we tell CMake
+our application depends on: [RAJA and Umpire Depend](https://github.com/LLNL/raja-suite-tutorial/blob/main/tpl/CMakeLists.txt).
 
-RAJA and Umpire are included in this project (look at tpl/CMakeLists.txt) and so
-they exist as "targets" that we can tell CMake our application depends on.
-Additionally, since we have configured this project to use CUDA, BLT provides a
-`cuda` target to ensure that executables will be built with CUDA support.
-
-The `blt_add_executable` macro has another argument, `DEPENDS_ON`, that you can
-use to list dependencies.
+Additionally, we can specify other dependency targets, such as CUDA, in the
+`blt_add_executable` macro for our application executable. The macro has
+an argument for this, `DEPENDS_ON`, that you can use to list dependencies.
 
 ```
 blt_add_executable(
@@ -21,9 +17,11 @@ blt_add_executable(
     DEPENDS_ON )
 ```
 
-Once you have added the dependencies, uncomment out the RAJA and Umpire header
-includes in the source code. Then, you can build and run the lesson as
-before. As a reminder, open the VSCode terminal (Shift + ^ + `), and then 
+In the `CMakeLists.txt` file in this lesson, you will find a `TODO:` comment
+asking you to add the RAJA, umpire, and cuda dependencies to build the lesson 
+code. After you have added the dependencies, uncomment the RAJA and Umpire
+header file includes in the source code. Then, you can build and run the lesson.
+As a reminder, open the VSCode terminal (Shift + ^ + `), and then
 move to the build directory: 
 
 ```

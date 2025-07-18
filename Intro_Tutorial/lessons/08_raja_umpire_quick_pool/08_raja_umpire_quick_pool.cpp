@@ -2,6 +2,8 @@
 
 #include "RAJA/RAJA.hpp"
 #include "umpire/Umpire.hpp"
+// TODO: include the header file for the Umpire QuickPool strategy so you can
+// use it in the code below
 
 //Uncomment to compile
 //#define COMPILE
