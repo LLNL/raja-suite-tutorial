@@ -1,4 +1,4 @@
-# Lesson 07: RAJA Algorithms
+# Lesson 7: RAJA Algorithms
 
 So far, we've looked at RAJA kernel launch methods, where a user passes a kernel
 body that defines what an algorithm does at each iterate. RAJA provides
