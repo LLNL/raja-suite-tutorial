@@ -87,6 +87,9 @@ $ make 07_raja_atomic
 $ .bin/07_raja_atomic
 ```
 
+Additional information about RAJA atomic operation support can be found in
+[RAJA Atomic Operations](https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/atomic_histogram.html).
+
 ## Parallel Scan
 
 A **scan operation** is an important building block for parallel algorithms. It
@@ -204,3 +207,6 @@ $ .bin/07_raja_scan
 
 Is the result what you expected it to be? Can you explain why the first value
 in the output is what it is?
+
+Additional information about RAJA scan operations can be found in
+[RAJA Parallel Scan Operations](https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/scan.html).
