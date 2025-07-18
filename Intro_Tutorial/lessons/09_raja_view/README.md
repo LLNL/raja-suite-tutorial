@@ -54,7 +54,7 @@ wish to learn more details, please see [RAJA Make Permuted View](https://raja.re
 
 There are additional `TODO` comments asking you to insert bounds of nested
 for-loops, and fill in `A` and `R` with their respective index values.
-When you are ready, compiler and run the code:
+When you are ready, uncomment the `COMPILE` macro and compile and run the code:
 ```
 $ make 09_raja_view
 $ ./bin/09_raja_view
