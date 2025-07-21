@@ -14,6 +14,7 @@
 
 add_subdirectory(umpire)
 add_subdirectory(raja)
+add_subdirectory(caliper)
 
 blt_add_library(
     NAME writeBMP
