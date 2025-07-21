@@ -6,6 +6,15 @@
 
 #include "caliper-plugin.cpp"
 
+// Basic profiling:
+//  CALI_CONFIG=runtime-report ./bin/profile_raja 1024
+//
+// Show cuda activity
+//  CALI_CONFIG=cuda-activity-report,show_kernels ./bin/profile_raja 1024
+//
+// Generate nsys profile
+// nsys profile --trace=nvtx,cuda -o my_profile ./bin/profile_raja 1024
+
 //Uncomment for policy selection
 
 #define DIRECT_POLICY
@@ -137,27 +146,38 @@ int main(int argc, char* argv[])
   int n = std::atoi(argv[1]);
   std::cout<<"Using matrix size "<<n<<" x "<<n<<std::endl;
 
-  double* A{nullptr};
-  double* B{nullptr};
-  double* C{nullptr};
+  double* h_A{nullptr};
+  double* h_B{nullptr};
+  double* h_C{nullptr};
+
+  double* d_A{nullptr};
+  double* d_B{nullptr};
+  double* d_C{nullptr};
 
   //Use host and device memory
   auto& rm = umpire::ResourceManager::getInstance();
-  auto allocator = rm.getAllocator("UM");
+  auto host_allocator = rm.getAllocator("HOST");
+  auto device_allocator = rm.getAllocator("DEVICE");
 
-  A = static_cast<double*>(allocator.allocate(n*n*sizeof(double)));
-  B = static_cast<double*>(allocator.allocate(n*n*sizeof(double)));
-  C = static_cast<double*>(allocator.allocate(n*n*sizeof(double)));
+  h_A = static_cast<double*>(host_allocator.allocate(n*n*sizeof(double)));
+  h_B = static_cast<double*>(host_allocator.allocate(n*n*sizeof(double)));
+  h_C = static_cast<double*>(host_allocator.allocate(n*n*sizeof(double)));
 
-  init(A, B, C, n, n);
+  d_A = static_cast<double*>(device_allocator.allocate(n*n*sizeof(double)));
+  d_B = static_cast<double*>(device_allocator.allocate(n*n*sizeof(double)));
+  d_C = static_cast<double*>(device_allocator.allocate(n*n*sizeof(double)));
 
-  matrix_add(A, B, C, n, n);
+  init(d_A, d_B, d_C, n, n);
 
-  matrix_scalar_mult(A, C, 2.0, n, n);
+  matrix_add(d_A, d_B, d_C, n, n);
 
-  matrix_multiply(A, B, C, n, n, n);
+  matrix_scalar_mult(d_A, d_C, 2.0, n, n);
 
-  bool pass = check_matrix_multiply(C, n);
+  matrix_multiply(d_A, d_B, d_C, n, n, n);
+
+  rm.copy(h_C, d_C, n*n*sizeof(double));
+
+  bool pass = check_matrix_multiply(h_C, n);
 
   if(!pass) {
     throw std::runtime_error("matrix_multiply did not pass");
@@ -165,10 +185,13 @@ int main(int argc, char* argv[])
 
   std::cout<<"Matrix multiply passed"<<std::endl;
 
-  allocator.deallocate(A);
-  allocator.deallocate(B);
-  allocator.deallocate(C);
+  host_allocator.deallocate(h_A);
+  host_allocator.deallocate(h_B);
+  host_allocator.deallocate(h_C);
 
+  device_allocator.deallocate(d_A);
+  device_allocator.deallocate(d_B);
+  device_allocator.deallocate(d_C);
 
   return 0;
 }
