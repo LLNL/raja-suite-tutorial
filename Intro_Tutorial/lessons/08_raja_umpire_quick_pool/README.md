@@ -1,29 +1,38 @@
-# Lesson 8
+# Lesson 8: Umpire Memory Pools
 
-In this lesson, you will learn to create a memory pool using Umpire.
+In this lesson, you will learn to create and use an Umpire memory pool.
 
-Frequently allocating and deallocating memory can be quite costly, especially when you are making large allocations or allocating on different memory resources. 
-Memory pools are a more efficient way to allocate large amounts of memory, especially when dealing with HPC environments.
+Frequently allocating and deallocating memory can be quite costly, especially
+when you are making large allocations or allocating on different memory
+resources. Memory pools are a more efficient way to allocate large amounts of
+memory, especially in HPC environments.
 
-Additionally, Umpire provides allocation strategies that can be used to customize how data is obtained from the system.
-In this lesson, we will learn about one such strategy called `QuickPool`. 
+Umpire provides **allocation strategies** that can be used to customize how
+data is obtained from the system. In this lesson, we will learn about one such
+strategy called `QuickPool`. 
 
-The `QuickPool` strategy describes a certain type of pooling algorithm provided in the Umpire API. 
-As its name suggests, `QuickPool` has been shown to be performant for many use cases. 
+The `QuickPool` strategy describes a certain type of pooling algorithm provided 
+by Umpire. As its name suggests, `QuickPool` is performant for many use cases. 
 
-Umpire also provides other types of pooling strategies such as `DynamicPoolList` and `FixedPool`. 
-You can visit the documentation to learn more: https://umpire.readthedocs.io/en/develop/index.html 
+Umpire also provides other types of pooling strategies such as `DynamicPoolList`
+and `FixedPool`. More information about Umpire memory pools and other features
+is available in the [Umpire User Guide](https://umpire.readthedocs.io/en/develop/index.html).
 
-To create a new memory pool allocator using the `QuickPool` strategy, we can use the `ResourceManager`:
+To create a new memory pool allocator using the `QuickPool` strategy, we use
+the `ResourceManager`:
 ```
   umpire::Allocator pool = rm.makeAllocator<umpire::strategy::QuickPool>("pool_name", my_allocator);
 ```
 
-This newly created `pool` is an `umpire::Allocator` using the `QuickPool` strategy. As you can see above, we can use the `ResourceManager::makeAllocator` function to create the pool allocator. We just need to pass 
-in: (1) the name we would like the pool to have, and (2) the allocator we previously created with the `ResourceManager` (see line 17 in the
-file `08_raja_umpire_quick_pool.cpp`). Remember that you will also need to include the `umpire/strategy/QuickPool.hpp` header file.
-
-There are other arguments that could be passed to the pool constructor if needed. These additional option arguments are a bit advanced and are beyond the scope of this tutorial. However, you can visit the documentation page for more: https://umpire.readthedocs.io/en/develop/doxygen/html/index.html
+This newly created `pool` is an `umpire::Allocator` that uses the `QuickPool`
+allocation strategy. In the code example above, we call the
+`ResourceManager::makeAllocator` function to create the pool allocator. We
+pass in: (1) the name we choose for the the pool, and (2) an allocator we
+previously created with the `ResourceManager`. Note that you will need to
+include the Umpire header file for the pool type you wish to use, in this case
+```
+#include "umpire/strategy/QuickPool.hpp"
+```
 
 When you have created your QuickPool allocator, uncomment the COMPILE define on line 7;
 then compile and run the code:
@@ -31,3 +40,7 @@ then compile and run the code:
 $ make 08_raja_umpire_quick_pool
 $ ./bin/08_raja_umpire_quick_pool
 ```
+
+Other arguments can be passed to the pool constructor if needed. However, they
+are beyond the scope of this tutorial. Please visit the [Umpire User Guide](https://umpire.readthedocs.io/en/develop/index.html) to learn more. 
+

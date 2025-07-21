@@ -1,15 +1,17 @@
 # RAJA Portability Suite Intro Tutorial
 
-Welcome to the RAJA Portability Suite Intro tutorial. In this tutorial you will learn
-how to write an simple application that can target different hardware
-architectures using the RAJA and Umpire libraries.
+Welcome to the RAJA Portability Suite Intro tutorial. In this tutorial, you
+will learn how to use RAJA and Umpire to write simple platform portable code
+that can be compiled to target different hardware architectures.
 
 ## Lessons
 
-You can find lessons in the lessons subdirectory. Each lesson has a README file
-which will introduce new concepts and provide instructions to move forward. 
+Lessons are in the `lessons` subdirectory. Each lesson has a README file
+that introduces new concepts and provides instructions to complete the lesson.
+Each lesson builds on the previous ones to allow you to practice using RAJA
+and Umpire capabilities and to reinforce the content.
 
-Each lesson builds upon the previous one, so if you get stuck, you can look at
-the next lesson to see the complete code. Additionally, some tutorials have
-solutions folder with a provided solution.
-
+Lessons contain source files with missing code and instructions for you to fill
+in the missing parts along with solution files that contain the completed 
+lesson code. If you get stuck, you can diff the lesson and solution files to see
+the code that the lesson is asking you to fill in.

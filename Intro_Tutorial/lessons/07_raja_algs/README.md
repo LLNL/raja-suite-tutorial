@@ -1,4 +1,4 @@
-# Lesson 07
+# Lesson 7: RAJA Algorithms
 
 So far, we've looked at RAJA kernel launch methods, where a user passes a kernel
 body that defines what an algorithm does at each iterate. RAJA provides
@@ -86,6 +86,9 @@ run the code:
 $ make 07_raja_atomic
 $ .bin/07_raja_atomic
 ```
+
+Additional information about RAJA atomic operation support can be found in
+[RAJA Atomic Operations](https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/atomic_histogram.html).
 
 ## Parallel Scan
 
@@ -204,3 +207,6 @@ $ .bin/07_raja_scan
 
 Is the result what you expected it to be? Can you explain why the first value
 in the output is what it is?
+
+Additional information about RAJA scan operations can be found in
+[RAJA Parallel Scan Operations](https://raja.readthedocs.io/en/develop/sphinx/user_guide/tutorial/scan.html).
