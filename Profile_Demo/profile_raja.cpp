@@ -13,7 +13,7 @@
 //  CALI_CONFIG=cuda-activity-report,show_kernels ./bin/profile_raja 1024
 //
 // Generate nsys profile
-// nsys profile --trace=nvtx,cuda -o my_profile ./bin/profile_raja 1024
+// CALI_SERVICES_ENABLE=nvtx,cuda nsys profile -o my_profile ./bin/profile_raja 1024
 
 //Uncomment for policy selection
 
@@ -67,10 +67,10 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
 
   RAJA::LaunchParams params{RAJA::Teams(teams), RAJA::Threads(threads)};
 
-  // if (int i = blockIdx.x; i < m)
+  //Rows: if (int i = blockIdx.x; i < m)
   using loop1_pol = RAJA::LoopPolicy<RAJA::cuda_block_x_direct>;
 
-  // if (int j = threadIdx.x; j < p)
+  //Cols: if (int j = threadIdx.x; j < p)
   using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_thread_x_direct>;
 #endif
 
@@ -80,10 +80,10 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
 
   RAJA::LaunchParams params{RAJA::Teams(teams), RAJA::Threads(threads)};
 
-  // if (int i = blockIdx.x; i < m; i += gridDim.x)
+  //Rows: if (int i = blockIdx.x; i < m; i += gridDim.x)
   using loop1_pol = RAJA::LoopPolicy<RAJA::cuda_block_x_loop>;
 
-  // if (int j = threadIdx.x; j < p; j += blockDim.x)
+  //Cols: if (int j = threadIdx.x; j < p; j += blockDim.x)
   using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_thread_x_loop>;
 #endif
 
@@ -94,10 +94,10 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
 
   RAJA::LaunchParams params{RAJA::Teams(teams_x, teams_y), RAJA::Threads(threads, threads)};
 
-  // int i = threadIdx.x + blockIdx.x * blockDim.x
+  //Rows int i = threadIdx.x + blockIdx.x * blockDim.x
   using loop1_pol = RAJA::LoopPolicy<RAJA::cuda_global_thread_y>;
 
-  // int j = threadIdx.y + blockIdx.y * blockDim.y
+  //Cols int j = threadIdx.y + blockIdx.y * blockDim.y
   using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_global_thread_x>;
 #endif
 
