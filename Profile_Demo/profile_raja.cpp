@@ -22,13 +22,15 @@
 //#define GLOBAL_POLICY
 
 constexpr int max_threads = 1024;
+constexpr int threads_256 = 256;
 constexpr bool async = false;
-using forall_pol = RAJA::cuda_exec<max_threads, async>;
-using launch_pol = RAJA::LaunchPolicy<RAJA::cuda_launch_t<async>>;
+using forall_pol_1 = RAJA::cuda_exec<max_threads, async>;
+using forall_pol_2 = RAJA::cuda_exec<threads_256, async>;
+using launch_pol = RAJA::LaunchPolicy<RAJA::cuda_launch_t<async, threads_256>>;
 
 void init(double *A, double *B, double *C, int m, int n) {
 
-  RAJA::forall<forall_pol>(RAJA::RangeSegment(0, n * n),
+  RAJA::forall<forall_pol_1>(RAJA::RangeSegment(0, n * n),
                            RAJA::Name("init"),
      [=] RAJA_HOST_DEVICE (RAJA::Index_type i) {
        A[i] = 1.0;
@@ -39,7 +41,7 @@ void init(double *A, double *B, double *C, int m, int n) {
 
 void matrix_add(const double *A, const double *B, double *C, int m, int n) {
 
-  RAJA::forall<forall_pol>
+  RAJA::forall<forall_pol_1>
     (RAJA::RangeSegment(0, m * n), RAJA::Name("matrix_add"), [=] RAJA_HOST_DEVICE (RAJA::Index_type i) {
         C[i] = A[i] + B[i];
     });
@@ -48,7 +50,7 @@ void matrix_add(const double *A, const double *B, double *C, int m, int n) {
 
 void matrix_scalar_mult(const double *A, double *B, double scalar, int m, int n) {
 
-  RAJA::forall<forall_pol>
+  RAJA::forall<forall_pol_1>
     (RAJA::RangeSegment(0, m * n), RAJA::Name("matrix_scalar_mult"), [=] RAJA_HOST_DEVICE (RAJA::Index_type i) {
         B[i] = scalar * A[i];
   });
@@ -88,17 +90,17 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
 #endif
 
 #if defined(GLOBAL_POLICY)
-  const int threads = 16;
+  constexpr int threads = 16;
   const int teams_x = (n - 1)/threads + 1;
   const int teams_y = (m - 1)/threads + 1;
 
   RAJA::LaunchParams params{RAJA::Teams(teams_x, teams_y), RAJA::Threads(threads, threads)};
 
-  //Rows int i = threadIdx.x + blockIdx.x * blockDim.x
-  using loop1_pol = RAJA::LoopPolicy<RAJA::cuda_global_thread_y>;
+  //Rows: int i = threadIdx.y + blockIdx.y * blockDim.y
+  using loop1_pol = RAJA::LoopPolicy<RAJA::cuda_global_size_y_direct<threads>>;
 
-  //Cols int j = threadIdx.y + blockIdx.y * blockDim.y
-  using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_global_thread_x>;
+  //Cols: int j = threadIdx.x + blockIdx.x * blockDim.x
+  using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_global_size_x_direct<threads>>;
 #endif
 
   RAJA::launch<launch_pol>
