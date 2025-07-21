@@ -25,7 +25,7 @@ constexpr int cuda_threads = 256;
 constexpr int launch_max_threads = 256; //TODO add to cuda_launch_t
 constexpr bool async = false;
 using forall_pol = RAJA::cuda_exec<cuda_threads,async>;
-using launch_pol = RAJA::LaunchPolicy<RAJA::cuda_launch_t<async, /*launch_max_threads*/>>;
+using launch_pol = RAJA::LaunchPolicy<RAJA::cuda_launch_t<async/*,launch_max_threads*/>>;
 
 void init(double *A, double *B, double *C, int m, int n) {
 
