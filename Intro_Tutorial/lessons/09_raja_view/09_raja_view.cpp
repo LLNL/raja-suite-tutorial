@@ -42,7 +42,7 @@ int main()
 
   // TODO: Create a standard MxN RAJA::View called "A", initialized with the
   // "a" array.
-  RAJA::View<double, ???>> A(???, ???, ???);
+  RAJA::View<double, ??? >> A( ???, ???, ??? );
 
   // A left-oriented layout view initialized with the "result_left" array
   auto L = RAJA::make_permuted_view<RAJA::layout_left>(result_left, M, N);
