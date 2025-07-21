@@ -7,7 +7,7 @@
 #include "umpire/Umpire.hpp"
 
 //TODO: uncomment this out in order to build!
-//#define COMPILE
+#define COMPILE
 
 int main()
 {

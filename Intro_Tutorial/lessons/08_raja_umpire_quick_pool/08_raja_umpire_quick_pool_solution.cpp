@@ -6,8 +6,13 @@
 // use it in the code below
 #include "umpire/strategy/QuickPool.hpp"
 
+//Uncomment to compile
+//#define COMPILE
+
 int main()
 {
+#if defined(COMPILE)
+
   constexpr int N{10000};
   constexpr std::size_t CUDA_BLOCK_SIZE{256};
   double* a{nullptr};
@@ -53,6 +58,8 @@ int main()
   pool.deallocate(b);
   host_allocator.deallocate(a_h);
   host_allocator.deallocate(b_h);
+
+#endif
 
   return 0;
 }

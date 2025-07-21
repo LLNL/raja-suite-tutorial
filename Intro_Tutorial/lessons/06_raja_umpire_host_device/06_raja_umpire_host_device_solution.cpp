@@ -3,8 +3,13 @@
 #include "RAJA/RAJA.hpp"
 #include "umpire/Umpire.hpp"
 
+//TODO: uncomment this out in order to build!
+#define COMPILE
+
 int main()
 {
+#if defined(COMPILE)
+
   constexpr int N{10000};
   //TODO: Set up a block size value
   constexpr std::size_t CUDA_BLOCK_SIZE{256};
@@ -55,5 +60,6 @@ int main()
   host_allocator.deallocate(a_h);
   host_allocator.deallocate(b_h);
 
+#endif
   return 0;
 }
