@@ -4,6 +4,7 @@
 #include "umpire/Umpire.hpp"
 #include "umpire/strategy/QuickPool.hpp"
 
+// TODO: Uncomment this in order to build!
 #define COMPILE
 
 // Method to print arrays associated with the Views in the lesson
