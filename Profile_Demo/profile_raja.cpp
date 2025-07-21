@@ -21,16 +21,15 @@
 //#define LOOP_POLICY
 //#define GLOBAL_POLICY
 
-constexpr int max_threads = 1024;
-constexpr int threads_256 = 256;
+constexpr int cuda_threads = 256;
+constexpr int launch_max_threads = 256; //TODO add to cuda_launch_t
 constexpr bool async = false;
-using forall_pol_1 = RAJA::cuda_exec<max_threads, async>;
-using forall_pol_2 = RAJA::cuda_exec<threads_256, async>;
-using launch_pol = RAJA::LaunchPolicy<RAJA::cuda_launch_t<async, threads_256>>;
+using forall_pol = RAJA::cuda_exec<cuda_threads,async>;
+using launch_pol = RAJA::LaunchPolicy<RAJA::cuda_launch_t<async, /*launch_max_threads*/>>;
 
 void init(double *A, double *B, double *C, int m, int n) {
 
-  RAJA::forall<forall_pol_1>(RAJA::RangeSegment(0, n * n),
+  RAJA::forall<forall_pol>(RAJA::RangeSegment(0, n * n),
                            RAJA::Name("init"),
      [=] RAJA_HOST_DEVICE (RAJA::Index_type i) {
        A[i] = 1.0;
@@ -41,7 +40,7 @@ void init(double *A, double *B, double *C, int m, int n) {
 
 void matrix_add(const double *A, const double *B, double *C, int m, int n) {
 
-  RAJA::forall<forall_pol_1>
+  RAJA::forall<forall_pol>
     (RAJA::RangeSegment(0, m * n), RAJA::Name("matrix_add"), [=] RAJA_HOST_DEVICE (RAJA::Index_type i) {
         C[i] = A[i] + B[i];
     });
@@ -50,7 +49,7 @@ void matrix_add(const double *A, const double *B, double *C, int m, int n) {
 
 void matrix_scalar_mult(const double *A, double *B, double scalar, int m, int n) {
 
-  RAJA::forall<forall_pol_1>
+  RAJA::forall<forall_pol>
     (RAJA::RangeSegment(0, m * n), RAJA::Name("matrix_scalar_mult"), [=] RAJA_HOST_DEVICE (RAJA::Index_type i) {
         B[i] = scalar * A[i];
   });
