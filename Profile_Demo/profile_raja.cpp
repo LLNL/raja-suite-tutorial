@@ -58,7 +58,10 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
 
   RAJA::LaunchParams params{RAJA::Teams(teams), RAJA::Threads(threads)};
 
+  // if (int i = blockIdx.x; i < m)
   using loop1_pol = RAJA::LoopPolicy<RAJA::cuda_block_x_direct>;
+
+  // if (int j = threadIdx.x; j < p)
   using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_thread_x_direct>;
 #endif
 
@@ -68,7 +71,10 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
 
   RAJA::LaunchParams params{RAJA::Teams(teams), RAJA::Threads(threads)};
 
+  // if (int i = blockIdx.x; i < m; i += gridDim.x)
   using loop1_pol = RAJA::LoopPolicy<RAJA::cuda_block_x_loop>;
+
+  // if (int j = threadIdx.x; j < p; j += blockDim.x)
   using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_thread_x_loop>;
 #endif
 
@@ -79,7 +85,10 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
 
   RAJA::LaunchParams params{RAJA::Teams(teams_x, teams_y), RAJA::Threads(threads, threads)};
 
+  // int i = threadIdx.x + blockIdx.x * blockDim.x
   using loop1_pol = RAJA::LoopPolicy<RAJA::cuda_global_thread_y>;
+
+  // int j = threadIdx.y + blockIdx.y * blockDim.y
   using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_global_thread_x>;
 #endif
 
