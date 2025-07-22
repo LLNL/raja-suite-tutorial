@@ -37,7 +37,7 @@ memory resources at the bottom of this README!
 Now, let's learn how to use Umpire's operations to copy data
 between CPU and GPU memory in a portable way, using Umpire's memory resources.
 
-In `07_raja_umpire_host_device.cpp`, we create an allocator for the GPU with:
+In `06_raja_umpire_host_device.cpp`, we create an allocator for the GPU with:
 ```  
 auto allocator = rm.getAllocator("DEVICE");
 ```
@@ -66,7 +66,7 @@ void umpire::ResourceManager::copy (void* dst_ptr, void * src_ptr, std::size_t s
 
 *Note:* The destination is the first argument.
 
-In the file `07_raja_umpire_host_device.cpp`, there is a `TODO` comment where you should insert two copy
+In the file `06_raja_umpire_host_device.cpp`, there is a `TODO` comment where you should insert two copy
 calls to copy data from the CPU memory to the DEVICE memory.
 
 You will also find that we are adjusting the `RAJA::forall` to now work on the GPU.
@@ -88,8 +88,8 @@ be sure to check out the links at the bottom of this README.
 When you are done editing the file, compile and run it:
 
 ```
-$ make 07_raja_umpire_host_device
-$ ./bin/07_raja_umpire_host_device
+$ make 06_raja_umpire_host_device
+$ ./bin/06_raja_umpire_host_device
 ```
 Want to learn more about Umpire memory resources? Check out the list below! You can also learn 
 more by going to our online documentation on 
