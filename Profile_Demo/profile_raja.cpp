@@ -6,16 +6,26 @@
 
 #include "caliper-plugin.cpp"
 
+// Basic profiling:
+//  CALI_CONFIG=runtime-report ./bin/profile_raja 1024
+//
+// Show cuda activity
+//  CALI_CONFIG=cuda-activity-report,show_kernels ./bin/profile_raja 1024
+//
+// Generate nsys profile
+// CALI_SERVICES_ENABLE=nvtx,cuda nsys profile -o my_profile ./bin/profile_raja 1024
+
 //Uncomment for policy selection
 
 #define DIRECT_POLICY
 //#define LOOP_POLICY
 //#define GLOBAL_POLICY
 
-constexpr int max_threads = 1024;
+constexpr int cuda_threads = 256;
+constexpr int launch_max_threads = 256; //TODO add to cuda_launch_t
 constexpr bool async = false;
-using forall_pol = RAJA::cuda_exec<max_threads, async>;
-using launch_pol = RAJA::LaunchPolicy<RAJA::cuda_launch_t<async>>;
+using forall_pol = RAJA::cuda_exec<cuda_threads,async>;
+using launch_pol = RAJA::LaunchPolicy<RAJA::cuda_launch_t<async/*,launch_max_threads*/>>;
 
 void init(double *A, double *B, double *C, int m, int n) {
 
@@ -58,7 +68,10 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
 
   RAJA::LaunchParams params{RAJA::Teams(teams), RAJA::Threads(threads)};
 
+  //Rows: if (int i = blockIdx.x; i < m)
   using loop1_pol = RAJA::LoopPolicy<RAJA::cuda_block_x_direct>;
+
+  //Cols: if (int j = threadIdx.x; j < p)
   using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_thread_x_direct>;
 #endif
 
@@ -68,19 +81,25 @@ void matrix_multiply(const double *A, const double *B, double *C, int m, int n, 
 
   RAJA::LaunchParams params{RAJA::Teams(teams), RAJA::Threads(threads)};
 
+  //Rows: if (int i = blockIdx.x; i < m; i += gridDim.x)
   using loop1_pol = RAJA::LoopPolicy<RAJA::cuda_block_x_loop>;
+
+  //Cols: if (int j = threadIdx.x; j < p; j += blockDim.x)
   using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_thread_x_loop>;
 #endif
 
 #if defined(GLOBAL_POLICY)
-  const int threads = 16;
+  constexpr int threads = 16;
   const int teams_x = (n - 1)/threads + 1;
   const int teams_y = (m - 1)/threads + 1;
 
   RAJA::LaunchParams params{RAJA::Teams(teams_x, teams_y), RAJA::Threads(threads, threads)};
 
-  using loop1_pol = RAJA::LoopPolicy<RAJA::cuda_global_thread_y>;
-  using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_global_thread_x>;
+  //Rows: int i = threadIdx.y + blockIdx.y * blockDim.y
+  using loop1_pol = RAJA::LoopPolicy<RAJA::cuda_global_size_y_direct<threads>>;
+
+  //Cols: int j = threadIdx.x + blockIdx.x * blockDim.x
+  using loop0_pol = RAJA::LoopPolicy<RAJA::cuda_global_size_x_direct<threads>>;
 #endif
 
   RAJA::launch<launch_pol>
@@ -128,27 +147,38 @@ int main(int argc, char* argv[])
   int n = std::atoi(argv[1]);
   std::cout<<"Using matrix size "<<n<<" x "<<n<<std::endl;
 
-  double* A{nullptr};
-  double* B{nullptr};
-  double* C{nullptr};
+  double* h_A{nullptr};
+  double* h_B{nullptr};
+  double* h_C{nullptr};
+
+  double* d_A{nullptr};
+  double* d_B{nullptr};
+  double* d_C{nullptr};
 
   //Use host and device memory
   auto& rm = umpire::ResourceManager::getInstance();
-  auto allocator = rm.getAllocator("UM");
+  auto host_allocator = rm.getAllocator("HOST");
+  auto device_allocator = rm.getAllocator("DEVICE");
 
-  A = static_cast<double*>(allocator.allocate(n*n*sizeof(double)));
-  B = static_cast<double*>(allocator.allocate(n*n*sizeof(double)));
-  C = static_cast<double*>(allocator.allocate(n*n*sizeof(double)));
+  h_A = static_cast<double*>(host_allocator.allocate(n*n*sizeof(double)));
+  h_B = static_cast<double*>(host_allocator.allocate(n*n*sizeof(double)));
+  h_C = static_cast<double*>(host_allocator.allocate(n*n*sizeof(double)));
 
-  init(A, B, C, n, n);
+  d_A = static_cast<double*>(device_allocator.allocate(n*n*sizeof(double)));
+  d_B = static_cast<double*>(device_allocator.allocate(n*n*sizeof(double)));
+  d_C = static_cast<double*>(device_allocator.allocate(n*n*sizeof(double)));
 
-  matrix_add(A, B, C, n, n);
+  init(d_A, d_B, d_C, n, n);
 
-  matrix_scalar_mult(A, C, 2.0, n, n);
+  matrix_add(d_A, d_B, d_C, n, n);
 
-  matrix_multiply(A, B, C, n, n, n);
+  matrix_scalar_mult(d_A, d_C, 2.0, n, n);
 
-  bool pass = check_matrix_multiply(C, n);
+  matrix_multiply(d_A, d_B, d_C, n, n, n);
+
+  rm.copy(h_C, d_C, n*n*sizeof(double));
+
+  bool pass = check_matrix_multiply(h_C, n);
 
   if(!pass) {
     throw std::runtime_error("matrix_multiply did not pass");
@@ -156,10 +186,13 @@ int main(int argc, char* argv[])
 
   std::cout<<"Matrix multiply passed"<<std::endl;
 
-  allocator.deallocate(A);
-  allocator.deallocate(B);
-  allocator.deallocate(C);
+  host_allocator.deallocate(h_A);
+  host_allocator.deallocate(h_B);
+  host_allocator.deallocate(h_C);
 
+  device_allocator.deallocate(d_A);
+  device_allocator.deallocate(d_B);
+  device_allocator.deallocate(d_C);
 
   return 0;
 }
