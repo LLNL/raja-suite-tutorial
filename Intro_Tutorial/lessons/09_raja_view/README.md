@@ -1,10 +1,10 @@
 # Lesson 9: RAJA Views and Layouts
 
 In this lesson, you will learn how to use `RAJA::View` to simplify
-multidimensional indexing in a matrix-matrix multiplication kernel.
+multidimensional indexing.
 
-As is commonly done for efficiency in C and C++, we have allocated the data for
-the matrices as one-dimensional arrays. Thus, we need to manually compute the
+As is commonly done for efficiency in C and C++, we have allocated the data as
+one-dimensional arrays. Thus, we need to manually compute the
 data pointer offsets for the row and column indices in the kernel.
 
 A `RAJA::View<TYPE, LAYOUT>` type takes two template parameters. The `TYPE`
@@ -54,6 +54,8 @@ wish to learn more details, please see [RAJA Make Permuted View](https://raja.re
 
 There are additional `TODO` comments asking you to insert bounds of nested
 for-loops, and fill in `A` and `R` with their respective index values.
+Finally, check the output to make sure that `A`, `R`, and `L` all print out
+the same ordering of index values.
 When you are ready, uncomment the `COMPILE` macro and compile and run the code:
 ```
 $ make 09_raja_view
