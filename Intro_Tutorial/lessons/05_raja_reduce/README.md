@@ -8,7 +8,7 @@ write to the same memory location at the same time. This is often called a
 **race condition** and can cause an algorithm to produce **non-deterministic**,
 order-dependent results. 
 
-Consider an attempt to write an OpenMP parallel kernel to computed the sum of
+Consider an attempt to write an OpenMP parallel kernel to compute the sum of
 the elements in an array:
 
 ```
