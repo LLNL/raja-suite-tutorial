@@ -5,17 +5,24 @@ In this lesson, you will learn to create and use an Umpire memory pool.
 Frequently allocating and deallocating memory can be quite costly, especially
 when you are making large allocations or allocating on different memory
 resources. Memory pools are a more efficient way to allocate large amounts of
-memory, especially in HPC environments.
+memory, especially in HPC environments. Below is a visual representation of a
+memory pool which contains multiple "chunks" or "blocks" of memory. The pool is
+accessible by the underlying Allocator that it is built on top of.
 
-Umpire provides **allocation strategies** that can be used to customize how
-data is obtained from the system. In this lesson, we will learn about one such
-strategy called `QuickPool`. 
+<figure>
+<img src="./images/Umpire-Picture1.png">
+</figure>
+
+Umpire provides **allocation strategies** (such as memory pools) that can be 
+used to customize how data is obtained from the system. In this lesson, we 
+will learn about one such strategy called `QuickPool`. 
 
 The `QuickPool` strategy describes a certain type of pooling algorithm provided 
 by Umpire. As its name suggests, `QuickPool` is performant for many use cases. 
 
-Umpire also provides other types of pooling strategies such as `DynamicPoolList`
-and `FixedPool`. More information about Umpire memory pools and other features
+We recommend users start with `QuickPool`, but Umpire also provides other 
+types of pooling strategies such as `DynamicPoolList` and `FixedPool`. 
+More information about Umpire memory pools and other features
 is available in the [Umpire User Guide](https://umpire.readthedocs.io/en/develop/index.html).
 
 To create a new memory pool allocator using the `QuickPool` strategy, we use
